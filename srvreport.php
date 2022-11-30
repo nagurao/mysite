@@ -44,6 +44,9 @@ else
     $currYTDSelQuery = "SELECT NetImportUnits, NetExportUnits,NetUnitsPerDay,NetImportYTDUnits,NetExportYTDUnits,NetYTDUnits FROM NetReadings WHERE NetReadingDate=?";
     $currYTDSelStmt = $conn->prepare($currYTDSelQuery);
     
+    $prevBillSelQuery = "SELECT BillImportReading, BillExportReading, MeterImportReading, MeterExportReading FROM NetMeterBillData ORDER BY BillDate DESC LIMIT 0,1";
+    $prevBillSelStmt = $conn->prepare($prevBillSelQuery);
+
     $reportType = testinput($_GET['reportType']);
     $reportOrder = testinput($_GET['reportOrder']);
     $fromDate = testinput($_GET['fromDate']);

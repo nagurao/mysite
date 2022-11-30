@@ -9,6 +9,7 @@ function prepareReport()
     global $reportType;
     global $currSelStmt;
     global $currYTDSelStmt;
+    global $prevBillSelStmt;
     global $responseArray;
     global $echoResponse;
     global $reportSrc;
@@ -38,6 +39,7 @@ function prepareReport()
     $netExportUnits = $netImportUnits = $netImportYTDUnits = 0;
     $netExportYTDUnits = $netYTDUnits = $netUnitsPerDay = 0;
     $defaultValue = sprintf("%.2f",0);
+    $readingImport = $readingExport = $defaultValue;
     if ($reportType == "ROL")
     {
         $repNetImport=$defaultValue;
@@ -56,6 +58,11 @@ function prepareReport()
             {
                $currImportValue = $row["ReadingImport"];
                $currExportValue = $row["ReadingExport"];
+               if($currImportValue !=0 )
+               {
+                    $readingImport = $currImportValue;
+                    $readingExport = $currExportValue;
+               }
             }
             if ($currImportValue !=0 )
                 $count = $count + 1;
@@ -157,6 +164,15 @@ function prepareReport()
     }
 
     $resultData = $resultData."</table>";
+    $prevBillSelStmt->execute();
+    $result = $prevBillSelStmt->get_result();
+    while ($row = $result->fetch_assoc())
+    {
+        $echoResponse["prevBillImport"] = $row["BillImportReading"];
+        $echoResponse["prevBillExport"] = $row["BillExportReading"];
+        $echoResponse["prevBillDateImport"]= $row["MeterImportReading"];
+        $echoResponse["prevBillDateExport"]= $row["MeterExportReading"];
+    }
 
     if ($count >= 1)
     {
@@ -165,6 +181,8 @@ function prepareReport()
         $echoResponse["message"] = $responseArray["3"];
         $echoResponse["importData"] = $importData;
         $echoResponse["exportData"] = $exportData;
+        $echoResponse["readingImport"] = $readingImport;
+        $echoResponse["readingExport"] = $readingExport;
     }
     else
     {
