@@ -20,12 +20,12 @@
       var reportOrder = "ASC";
 		  var reportType = "ROL";
       var date = new Date();
-      var firstDay = new Date(date.getFullYear(), date.getMonth(), 2);
-      var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+      var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+      var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 2);
       var fromDate =  firstDay.toJSON().slice(0,10);
       var toDate = lastDay.toJSON().slice(0,10);
       const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-      var monthName = month[date.getMonth()];
+      var monthName = "Net Import Export for the Month of " + month[date.getMonth()];
       //alert("Load completed");
       $.ajax(
       {
@@ -61,7 +61,6 @@
             //dataPointsImport.push({x: importData[key].date,y: importData[key].value	});
             //dataPointsExport.push({x: exportData[key].date,y: exportData[key].value	});
           }
-          
           new Chart("myChart",
           {
             type: "line",
@@ -86,7 +85,10 @@
                 fill: true  
               }
             ]},
-            options: { legend: {display: true}},
+            options: { legend: {display: true},
+                       plugins: { title: {  text: monthName, display: true}}
+                     }
+
           });
         }
 	    });
