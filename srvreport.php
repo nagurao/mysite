@@ -11,6 +11,7 @@ $resultData = "";
 $responseArray = array();
 fillResponseArray();
 $debugMessage = "";
+$reportSrc = "";
 
 $scriptVersion = "1.0";
 $echoResponse["version"] = $scriptVersion;
@@ -47,12 +48,17 @@ else
     $reportOrder = testinput($_GET['reportOrder']);
     $fromDate = testinput($_GET['fromDate']);
     $toDate = testinput($_GET['toDate']);
-    /*
-    $reportType = "FIX";
-    $reportOrder = "DESC";
+    
+    if (isset($_GET['reportSrc']))
+        $reportSrc = testinput($_GET['reportSrc']);
+
+    /* 
+    $reportType = "ROL";
+    $reportOrder = "ASC";
     $fromDate = "2022-11-10";
-    $toDate = "2022-11-10";
-    */
+    $toDate = "2022-11-12";
+    $reportSrc = "HOME";
+    /**/
     prepareReport();
     closeConnection();
     $echoResponse["trace"] = $traceMessage;

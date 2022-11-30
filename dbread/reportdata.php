@@ -11,7 +11,10 @@ function prepareReport()
     global $currYTDSelStmt;
     global $responseArray;
     global $echoResponse;
+    global $reportSrc;
     
+    $importData = array();
+    $exportData = array();
     $resultData = "";
     $count = 0;
     if ($reportOrder == "DESC")
@@ -124,17 +127,21 @@ function prepareReport()
                 $resultData = $resultData."<td>".$netYTDUnits."</td>";
             }
             $resultData = $resultData."</tr>";
-        }/*
-        else
-        {
-            $resultData = $resultData."<tr>";
-            $resultData = $resultData."<td>".dateinDDMMMYYY($currDate)."</td>";
-            $resultData = $resultData."<td>".$currImportValue."</td>";
-            $resultData = $resultData."<td>".$currExportValue."</td>";
-            $resultData = $resultData."<td>".$netImportUnits."</td>";
-            $resultData = $resultData."<td>".$netExportUnits."</td>";
-            $resultData = $resultData."<td>".$netUnitsPerDay."</td>"; 
-        } */
+
+            if ($reportSrc == "HOME")
+            {
+                $tempImportArray = array();
+                $tempExportArray = array();
+
+                $tempImportArray["date"] = dateinDDMMMYYY($currDate);
+                $tempImportArray["value"] = $netImportUnits;
+                array_push($importData,$tempImportArray);
+
+                $tempExportArray["date"] = dateinDDMMMYYY($currDate);
+                $tempExportArray["value"] = $netExportUnits;
+                array_push($exportData,$tempExportArray);
+            }
+        }
         if ($reportOrder == "DESC")
         {
             $currDate = date("Y-m-d", (strtotime($currDate) - 86400));
@@ -156,6 +163,8 @@ function prepareReport()
         $echoResponse["resultData"] =  $resultData;
         $echoResponse["result"] = "OK";
         $echoResponse["message"] = $responseArray["3"];
+        $echoResponse["importData"] = $importData;
+        $echoResponse["exportData"] = $exportData;
     }
     else
     {

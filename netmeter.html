@@ -1,12 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>BHR's Net Meter</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+  <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+  <script type="text/javascript">
+    window.onload = function() 
+    {
+      var scriptVersion = "1.0";
+      var reportSrc = "HOME";
+      var reportOrder = "ASC";
+		  var reportType = "ROL";
+      var date = new Date();
+      var firstDay = new Date(date.getFullYear(), date.getMonth(), 2);
+      var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+      var fromDate =  firstDay.toJSON().slice(0,10);
+      var toDate = lastDay.toJSON().slice(0,10);
+      const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+      var monthName = month[date.getMonth()];
+      //alert("Load completed");
+      $.ajax(
+      {
+		    url: "srvreport.php",
+		    type: "GET",
+		    data: 
+        {
+			    scriptVersion: scriptVersion,
+          reportSrc: reportSrc,
+			    reportType: reportType,
+				  reportOrder: reportOrder,
+          fromDate: fromDate,
+			    toDate: toDate
+		    },
+		    cache: false,
+		    success: function(dataResult)
+        {
+			    var dataResult = JSON.parse(dataResult);
+				  var importData = dataResult.importData;
+          var exportData = dataResult.exportData;
+          var dataPointsData = [];
+          var dataPointsImport = [];
+          var dataPointsExport = [];
+          var dataPointsNet = [];
+          var i = 0;
+          for (var key in importData)
+          {
+            dataPointsData[i] = importData[key].date;
+            dataPointsImport[i] = numeral(importData[key].value).format('00.00');
+            dataPointsExport[i] = numeral(exportData[key].value).format('00.00');
+            dataPointsNet[i++] = numeral(importData[key].value - exportData[key].value).format('00.00');
+            
+            //dataPointsImport.push({x: importData[key].date,y: importData[key].value	});
+            //dataPointsExport.push({x: exportData[key].date,y: exportData[key].value	});
+          }
+          
+          new Chart("myChart",
+          {
+            type: "line",
+            data: {
+              labels: dataPointsData,
+              datasets: [{
+                label:"Imported Units (kW)",
+                data: dataPointsImport,
+                borderColor: "red",
+                fill: true
+              },
+              {
+                label:"Exported Units (kW)",
+                data: dataPointsExport,
+                borderColor: "green",
+                fill: true
+              },
+              {
+                label:"Net Units (kW)",
+                data: dataPointsNet,
+                borderColor: "blue",
+                fill: true  
+              }
+            ]},
+            options: { legend: {display: true}},
+          });
+        }
+	    });
+    }
+  </script>
 </head>
 <body>
 
@@ -24,5 +109,11 @@
       </ul>
     </div>
   </nav>
+  <div class="form-group">
+
+  </div>
+  <div style="margin: auto;width: 100%;"></div>
+    <canvas id="myChart" style="width:100%;max-width:1000px"></canvas>
+  </div>
 </body>
 </html>
