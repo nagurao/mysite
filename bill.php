@@ -98,7 +98,7 @@ if (isNaN(billImport) || isNaN(billExport) || isNaN(meterImport) || isNaN(meterE
 if(billDate!="" && billImport!="" && billExport!="" && meterImport!="" && meterExport!="" && !nanFlag)
 {
 	$.ajax({
-		url: "srvnetmeterbill.php",
+		url: "srvbill.php",
 		type: "POST",
 		data: 
         {
