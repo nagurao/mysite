@@ -2,4 +2,4 @@
 !*.html
 !*.ino
 
-database.php
+*database.php
