@@ -15,6 +15,7 @@ function getNetMeterReadings($readingDate)
     $netImportYTDUnits = 0;
     $netExportYTDUnits = 0;
     $netYTDUnits = 0;
+    $currReadingTimeStamp="";
     if($currSelStmt->bind_param("s",$readingDate))
     {
         $currSelStmt->execute();
@@ -43,7 +44,8 @@ function getNetMeterReadings($readingDate)
     if ($src == "ESP")
     {
         $echoResponse["Source"] = $src;
-        $echoResponse["ReadingDate"] = strtoupper(dateinDDMMMYYY($readingDate));
+        //$echoResponse["ReadingDate"] = strtoupper(dateinDDMMMYYY($readingDate));
+        $echoResponse["ReadingDate"] = strtoupper(dateinDDMMMYYY($currReadingTimeStamp));
         $echoResponse["ReadingTimeHHMM"] = date("H:i",strtotime($currReadingTimeStamp));
         $echoResponse["ReadingTimeStamp"] = $currReadingTimeStamp;
         //$echoResponse["ReadingTime"] = date("H:i",strtotime("now"));

@@ -23,26 +23,41 @@ if ($conn->connect_error)
 else
 {
     $currSelQuery = "SELECT ReadingDate, ReadingImport, ReadingExport , ReadingTimestamp FROM DailyReadings WHERE ReadingDate<=? ORDER BY ReadingDate DESC LIMIT 0, 1";
-    $currSelStmt = $conn->prepare($currSelQuery);
+    $lastSelQuery = "SELECT ReadingDate, ReadingImport, ReadingExport , ReadingTimestamp FROM DailyReadings ORDER BY ReadingDate DESC LIMIT 0, 1";
+   
 
     $currYTDSelQuery = "SELECT NetImportUnits, NetExportUnits,NetUnitsPerDay,NetImportYTDUnits,NetExportYTDUnits,NetYTDUnits FROM NetReadings WHERE NetReadingDate<=? ORDER BY NetReadingDate DESC LIMIT 0,1";
     $currYTDSelStmt = $conn->prepare($currYTDSelQuery);
 
     $src = "";
     $prevFlag = "false";
-    $readingDate = testinput($_GET['readingDate']);
     if (isset($_GET['src']))
     {
         $src = testinput($_GET['src']);
+        if ($src == "ESP")
+        {
+            $currSelStmt = $conn->prepare($lastSelQuery);
+            $currSelStmt->execute();
+            $result = $currSelStmt->get_result();
+            while ($row = $result->fetch_assoc())
+            {
+                $readingDate = $row["ReadingDate"];
+            }
+        }
         //$readingDate = date("Y-m-d",strtotime($readingDate) - 86400);
     }
+    else
+    {        
+        $readingDate = testinput($_GET['readingDate']);
+    }    
 
-    if (isset($_GET['prev']))
+    $currSelStmt = $conn->prepare($currSelQuery);
+    /*if (isset($_GET['prev']))
     {
         $prevFlag = testinput($_GET['prev']);
         if($prevFlag == "true")
             $readingDate = date("Y-m-d",strtotime($readingDate) - 86400);
-    }
+    }*/
     $checkQuery = "SELECT ReadingDate, ReadingImport, ReadingExport FROM DailyReadings WHERE ReadingDate=?";
     $checkStmtByDate = $conn->prepare($checkQuery);
 
