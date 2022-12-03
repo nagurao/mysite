@@ -48,7 +48,10 @@ else
     }
     else
     {        
-        $readingDate = testinput($_GET['readingDate']);
+        if (isset($_GET['readingDate']))
+            $readingDate = testinput($_GET['readingDate']);
+        else
+            $readingDate = date("Y-m-d");
     }    
 
     $currSelStmt = $conn->prepare($currSelQuery);
@@ -60,6 +63,9 @@ else
     }*/
     $checkQuery = "SELECT ReadingDate, ReadingImport, ReadingExport FROM DailyReadings WHERE ReadingDate=?";
     $checkStmtByDate = $conn->prepare($checkQuery);
+
+    $prevBillSelQuery = "SELECT BillImportReading, BillExportReading, MeterImportReading, MeterExportReading FROM NetMeterBillData ORDER BY BillDate DESC LIMIT 0,1";
+    $prevBillSelStmt = $conn->prepare($prevBillSelQuery);
 
     if (readingExists($readingDate))
         getNetMeterReadings($readingDate);
