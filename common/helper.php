@@ -162,4 +162,62 @@ function populateBillTable()
     }
     $resultData = $resultData."</table>";
 }
+
+function populateBillGraph()
+{
+    global $traceMessage;
+    $traceMessage = $traceMessage."->".__FUNCTION__;
+    global $responseArray;
+    global $reportBillDataStmt; 
+    global $maxReadings; 
+    global $echoResponse;
+    $importData = array();
+    $exportData = array();
+    $importBillData = array();
+    $exportBillData = array(); 
+    
+    $rowCount = 0;
+    $reportBillDataStmt->execute();
+    $result = $reportBillDataStmt->get_result();
+    while ($row = $result->fetch_assoc())
+    {
+        $rowCount = $rowCount + 1;
+        if ($maxReadings != 0 && $rowCount > $maxReadings)
+            break;
+        $tempImportData = array();
+        $tempExportData = array();
+        $tempImportBillData = array();
+        $tempExportBillData = array();
+
+        $tempImportBillData["date"] = date("M-Y",strtotime($row["BillDate"]));
+        $tempImportBillData["value"] = $row["BillImportedUnits"];
+        array_push($importBillData,$tempImportBillData);
+
+        $tempExportBillData["date"] = date("M-Y",strtotime($row["BillDate"]));
+        $tempExportBillData["value"] = $row["BillExportedUnits"];
+        array_push($exportBillData,$tempExportBillData);
+
+        $tempImportData["date"] = date("M-Y",strtotime($row["BillDate"]));
+        $tempImportData["value"] = $row["MeterImportedUnits"];
+        array_push($importData,$tempImportData);
+
+        $tempExportData["date"] = date("M-Y",strtotime($row["BillDate"]));
+        $tempExportData["value"] = $row["MeterExportedUnits"];
+        array_push($exportData,$tempExportData);
+    }
+    if ($rowCount >= 1)
+    {
+        $echoResponse["result"] = "OK";
+        $echoResponse["message"] = $responseArray["3"];
+        $echoResponse["importData"] = $importData;
+        $echoResponse["exportData"] = $exportData;
+        $echoResponse["importBillData"] = $importBillData;
+        $echoResponse["exportBillData"] = $exportBillData;
+    }
+    else
+    {
+        $echoResponse["result"] = "NoData";
+        $echoResponse["message"] = $responseArray["4"];
+    }
+}
 ?>

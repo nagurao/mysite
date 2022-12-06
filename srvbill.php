@@ -12,7 +12,7 @@ $resultData = "";
 $responseArray = array();
 fillResponseArray();
 $debugMessage = "";
-
+$maxReadings = 0;
 //$scriptVersion = testinput($_POST['scriptVersion']);
 $scriptVersion = "1.0";
 $echoResponse["version"] = $scriptVersion;
@@ -87,6 +87,12 @@ else if($action == "REP")
 {
     populateBillTable();
     $echoResponse["result"] = "OK";
+}
+else if($action == "GRAPH")
+{
+    if (isset($_GET['maxReadings']))
+        $maxReadings = testinput($_GET['maxReadings']);
+    populateBillGraph();
 }
 else
 {

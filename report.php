@@ -4,6 +4,10 @@
 	<title>Net Meter Detailed Report</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 	<style>
         table
         {
@@ -40,10 +44,11 @@
       <a class="navbar-brand" href="netmeter.html">BHR's Net Meter Details</a>
     </div>
     <ul class="nav navbar-nav">
-      <li class="active"><a href="netmeter.html">Home</a></li>
+      <li><a href="netmeter.html">Home</a></li>
       <li><a href="reading.php">Net Meter Daily Readings</a></li>
-      <li><a href="report.php">Net Meter Units Report</a></li>
+      <li class="active"><a href="report.php">Net Meter Units Report</a></li>
       <li><a href="billreport.php">Net Meter Billing Report</a></li>
+	  <li><a href="billgraph.php">Net Meter Billing Graph</a></li>
       <li><a href="bill.php">Net Meter Monthly Bill</a></li>
     </ul>
   </div>
