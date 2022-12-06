@@ -3,4 +3,4 @@
 !*.ino
 
 *database.php
-*secrets.hcro
+*secrets.h
