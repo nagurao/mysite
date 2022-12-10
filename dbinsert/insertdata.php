@@ -55,6 +55,21 @@ function insertReadingData($readingDate,$importReading,$exportReading)
     }
 }
 
+function insertEnvoyReadingData($readingDate,$productionReading,$consumptionReading)
+{
+    global $traceMessage;
+    $traceMessage = $traceMessage.__FUNCTION__.$readingDate.$productionReading.$consumptionReading;
+    global $insertStmtProdConsumptionByDate;
+    $productionReadingRounded = sprintf("%05.2f",round($productionReading/1000,1));
+    $consumptionReadingRounded = sprintf("%05.2f",round($consumptionReading/1000,1));;
+    if ($insertStmtProdConsumptionByDate->bind_param("sssss",$readingDate,$productionReading,$consumptionReading,$productionReadingRounded,$consumptionReadingRounded))
+    {
+        $insertStmtProdConsumptionByDate->execute();
+        $result = $insertStmtProdConsumptionByDate->get_result();
+        commitNow();
+    }
+}
+
 function insertMissingReadingData($readingDate)
 {
     global $traceMessage;

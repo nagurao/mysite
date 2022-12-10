@@ -38,6 +38,9 @@ else
     $currSelQuery = "SELECT ReadingDate, ReadingImport, ReadingExport FROM DailyReadings WHERE ReadingDate=?";
     $currSelStmt = $conn->prepare($currSelQuery);
 
+    $currEnvoySelQuery = "SELECT EnvoyReadingDate, EnvoyProduction, EnvoyConsumption FROM EnvoyReadings WHERE EnvoyReadingDate=?";
+    $currEnvoySelStmt = $conn->prepare($currEnvoySelQuery);
+
     $currYTDSelQuery = "SELECT NetImportUnits, NetExportUnits,NetUnitsPerDay,NetImportYTDUnits,NetExportYTDUnits,NetYTDUnits FROM NetReadings WHERE NetReadingDate<=? ORDER BY NetReadingDate DESC LIMIT 1,1";
     $currYTDSelStmt = $conn->prepare($currYTDSelQuery);
 

@@ -91,6 +91,43 @@ function populateResponseTable($readingDate)
     $resultData = $resultData."</table>";
 }
 
+function populateEnvoyResponseTable($readingDate)
+{
+    global $traceMessage;
+    $traceMessage = $traceMessage."->".__FUNCTION__.$readingDate;
+    global $conn;
+    global $resultData;
+    $envoyReadingSelectQuery ="SELECT EnvoyReadingDate, EnvoyProductionActual, EnvoyConsumptionActual, EnvoyProduction, EnvoyConsumption FROM EnvoyReadings WHERE EnvoyReadingDate>=?";
+    $envoyReadingSelectStmt = $conn->prepare($envoyReadingSelectQuery);
+
+    $resultData = "<table><tr>";
+    $resultData = $resultData."<th>Date</th>";
+    $resultData = $resultData."<th>Production (W)</th>";
+    $resultData = $resultData."<th>Consumption (W)</th>";
+    $resultData = $resultData."<th>Production (kW)</th>";
+    $resultData = $resultData."<th>Consumption (kW)</th>";
+    $resultData = $resultData."</tr>";
+    
+
+    if ($envoyReadingSelectStmt->bind_param("s",$readingDate))
+    {
+        $envoyReadingSelectStmt->execute();
+        $result = $envoyReadingSelectStmt->get_result();
+        while ($row = $result->fetch_assoc())
+        {
+            $resultData = $resultData."<tr>";
+            $resultData = $resultData."<td>".dateinDDMMMYYY($row["EnvoyReadingDate"])."</td>";
+            $resultData = $resultData."<td>".$row["EnvoyProductionActual"]."</td>";
+            $resultData = $resultData."<td>".$row["EnvoyConsumptionActual"]."</td>";
+            $resultData = $resultData."<td>".$row["EnvoyProduction"]."</td>";
+            $resultData = $resultData."<td>".$row["EnvoyConsumption"]."</td>";
+            $resultData = $resultData."</tr>";
+        }
+    }
+
+    $resultData = $resultData."</table>";
+}
+
 function fillResponseArray()
 {
     global $responseArray;
@@ -99,6 +136,7 @@ function fillResponseArray()
     $responseArray["2"] = "Net Meter Data Updated successfully.";
     $responseArray["3"] = "Net Meter Data Reterived successfully.";
     $responseArray["4"] = "No Net Meter Data available.";
+    $responseArray["5"] = "Envoy Reading Data Inserted successfully.";
     $responseArray["-1"] = "Error inserting Net Meter details.";
     $responseArray["-2"] = "Error updating Net Meter details.";
     $responseArray["-97"] = "Database Auto Commit Issue.".
@@ -219,5 +257,34 @@ function populateBillGraph()
         $echoResponse["result"] = "NoData";
         $echoResponse["message"] = $responseArray["4"];
     }
+}
+
+function getDataFromEnphase($envoyReadingDate,$url,$key)
+{
+    global $traceMessage;
+    $traceMessage = $traceMessage."->".__FUNCTION__;
+    global $enphaseKey;
+    global $enphaseUserId;
+    global $enphaseReadingStartDate;
+    global $enphaseReadingEndDate;
+
+    $dataURL = $url.$enphaseKey.$enphaseUserId.$enphaseReadingStartDate.$envoyReadingDate.$enphaseReadingEndDate.$envoyReadingDate;
+    $returnValue = 0;
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => $dataURL,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+    ));
+    $response = json_decode(curl_exec($curl),true);
+    curl_close($curl);
+    if($response["start_date"] == $envoyReadingDate && count($response[$key]) > 0)
+        $returnValue = $response[$key][0];
+    return $returnValue;
 }
 ?>

@@ -10,12 +10,15 @@ function prepareReport()
     global $currSelStmt;
     global $currYTDSelStmt;
     global $prevBillSelStmt;
+    global $currEnvoySelStmt;
     global $responseArray;
     global $echoResponse;
     global $reportSrc;
     
     $importData = array();
     $exportData = array();
+    $envoyProd = array();
+    $envoyCons = array();
     $resultData = "";
     $count = 0;
     if ($reportOrder == "DESC")
@@ -33,6 +36,8 @@ function prepareReport()
     $resultData = $resultData."<th>Imported Units</th>";
     $resultData = $resultData."<th>Exported Units</th>";
     $resultData = $resultData."<th>Net Units</th>";
+    $resultData = $resultData."<th>Generated Units</th>";
+    $resultData = $resultData."<th>Consumed Units</th>";
     $resultData = $resultData."</tr>";
 
 
@@ -85,6 +90,18 @@ function prepareReport()
             }
         }
 
+        $envoyGenerated = $envoyConsumed = $defaultValue;
+        if($currEnvoySelStmt->bind_param("s",$currDate))
+        {
+            $currEnvoySelStmt->execute();
+            $result = $currEnvoySelStmt->get_result();
+            while ($row = $result->fetch_assoc())
+            {
+                $envoyGenerated = $row["EnvoyProduction"];
+                $envoyConsumed = $row["EnvoyConsumption"];
+            }
+        }
+
         if ($reportType == "ROL")
         {
             $repNetImport = sprintf("%.2f",$repNetImport + $netImportUnits);
@@ -133,12 +150,16 @@ function prepareReport()
                 $resultData = $resultData."<td>".$netExportYTDUnits."</td>";
                 $resultData = $resultData."<td>".$netYTDUnits."</td>";
             }
+            $resultData = $resultData."<td>".$envoyGenerated."</td>";
+            $resultData = $resultData."<td>".$envoyConsumed."</td>";
             $resultData = $resultData."</tr>";
 
             if ($reportSrc == "HOME")
             {
                 $tempImportArray = array();
                 $tempExportArray = array();
+                $tempProdArray = array();
+                $tempConsArray = array();
 
                 $tempImportArray["date"] = dateinDDMMMYYY($currDate);
                 $tempImportArray["value"] = $netImportUnits;
@@ -147,6 +168,14 @@ function prepareReport()
                 $tempExportArray["date"] = dateinDDMMMYYY($currDate);
                 $tempExportArray["value"] = $netExportUnits;
                 array_push($exportData,$tempExportArray);
+                
+                $tempProdArray["date"] = dateinDDMMMYYY($currDate);
+                $tempProdArray["value"] = $envoyGenerated;
+                array_push($envoyProd,$tempProdArray);
+
+                $tempConsArray["date"] = dateinDDMMMYYY($currDate);
+                $tempConsArray["value"]= $envoyConsumed;
+                array_push($envoyCons,$tempConsArray);
             }
         }
         if ($reportOrder == "DESC")
@@ -183,6 +212,9 @@ function prepareReport()
         $echoResponse["exportData"] = $exportData;
         $echoResponse["readingImport"] = $readingImport;
         $echoResponse["readingExport"] = $readingExport;
+        $echoResponse["envoyProd"] = $envoyProd;
+        $echoResponse["envoyCons"] = $envoyCons;
+
     }
     else
     {

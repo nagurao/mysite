@@ -46,22 +46,30 @@
 			    var dataResult = JSON.parse(dataResult);
 				  var importData = dataResult.importData;
           var exportData = dataResult.exportData;
+          var envoyProd = dataResult.envoyProd;
+          var envoyCons = dataResult.envoyCons;
           var dataPointsData = [];
           var dataPointsImport = [];
           var dataPointsExport = [];
           var dataPointsNet = [];
+          var dataPointsEnvoyProd = [];
+          var dataPointsEnvoyCons = [];
           var i = 0;
           var numEntries = -1;
           var importYTD = 0;
           var exportYTD = 0;
           var netYTD = 0;
-
+          var avgGeneration = 0;
+          var avgConsumption = 0;
           for (var key in importData)
           {
             dataPointsData[i] = importData[key].date;
             dataPointsImport[i] = numeral(importData[key].value).format('00.00');
             dataPointsExport[i] = numeral(exportData[key].value).format('00.00');
             dataPointsNet[i] = numeral(importData[key].value - exportData[key].value).format('00.00');
+            dataPointsEnvoyProd[i] = numeral(envoyProd[key].value).format('00.00');
+            dataPointsEnvoyCons[i] = numeral(envoyCons[key].value).format('00.00');
+
             if (numeral(importData[key].value).format('00.00') > 0 )
             {
               numEntries = numEntries + 1;
@@ -69,6 +77,8 @@
               {
                 importYTD = importYTD + parseFloat(numeral(importData[key].value).format('00.00'));
                 exportYTD = exportYTD + parseFloat(numeral(exportData[key].value).format('00.00'));
+                avgGeneration = avgGeneration + parseFloat(numeral(envoyProd[key].value).format('00.00'));
+                avgConsumption = avgConsumption + parseFloat(numeral(envoyCons[key].value).format('00.00'));
               }
             }
             i++; 
@@ -76,10 +86,13 @@
           importYTD = parseFloat(numeral(importYTD).format('00.00'));
           exportYTD = parseFloat(numeral(exportYTD).format('00.00'));
           netYTD = parseFloat(numeral(importYTD - exportYTD).format('00.00'));
+
           $("#idLabelMMMYYYY").text(monthName);
           $("#idLabelAvgImp").text(numeral(importYTD / numEntries).format('00.00'));
           $("#idLabelAvgExp").text(numeral(exportYTD / numEntries).format('00.00'));
           $("#idLabelAvgNet").text(numeral(netYTD / numEntries).format('00.00'));
+          $("#idLabelAvgSolGen").text(numeral(avgGeneration / numEntries).format('00.00'));
+          $("#idLabelDailyCons").text(numeral(avgConsumption / numEntries).format('00.00'));
           $("#idLabelImport").text(numeral(dataResult.readingImport - dataResult.prevBillImport).format('00.00'));
           $("#idLabelExport").text(numeral(dataResult.readingExport - dataResult.prevBillExport).format('00.00'));
           $("#idLabelImportBillDate").text(numeral(dataResult.readingImport - dataResult.prevBillDateImport).format('00.00'));
@@ -106,7 +119,19 @@
                 data: dataPointsNet,
                 borderColor: "blue",
                 fill: true  
-              }
+              },
+              {
+                label:"Solar Generated Units (kW)",
+                data: dataPointsEnvoyProd,
+                borderColor: "orange",
+                fill: true  
+              },
+              {
+                label:"Consumed Units (kW)",
+                data: dataPointsEnvoyCons,
+                borderColor: "purple",
+                fill: true  
+              }                              
             ]},
             options: { legend: {display: true},
                        plugins: { title: {  text: monthName, display: true}}
@@ -161,6 +186,18 @@
   <div class="form-group">
     <label>Average Net Units : </label>
     <label for="labelAvgNet" id="idLabelAvgNet" name="nameLabelAvgNet"></label>
+    <label> (kW)</label>
+  </div>
+
+  <div class="form-group">
+    <label>Average Daily Solar Generation : </label>
+    <label for="labelAvgSolGen" id="idLabelAvgSolGen" name="nameLabelAvgSolGen"></label>
+    <label> (kW)</label>
+  </div>
+
+  <div class="form-group">
+    <label>Average Daily Consumption : </label>
+    <label for="labelAvgDailyCons" id="idLabelDailyCons" name="nameLabelDailyCons"></label>
     <label> (kW)</label>
   </div>
 
