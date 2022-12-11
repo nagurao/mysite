@@ -5,6 +5,7 @@ function getNetMeterReadings($readingDate)
     global $currSelStmt;
     global $currYTDSelStmt;
     global $prevBillSelStmt;
+    global $lastEnvoySelStmt;
     global $echoResponse;
     global $responseArray;
     global $src;
@@ -19,6 +20,9 @@ function getNetMeterReadings($readingDate)
     $billImportYTDUnits = 0;
     $billExportYTDUnits = 0;
     $currReadingTimeStamp="";
+    $envoyProduction = 0;
+    $envoyConsumption = 0;
+
     if($currSelStmt->bind_param("s",$readingDate))
     {
         $currSelStmt->execute();
@@ -55,7 +59,16 @@ function getNetMeterReadings($readingDate)
         $echoResponse["PrevBillDateImport"]= sprintf("%06.1f",$row["MeterImportReading"]);;
         $echoResponse["PrevBillDateExport"]= sprintf("%06.1f",$row["MeterExportReading"]);
     }
-
+    if($lastEnvoySelStmt->bind_param("s",$readingDate))
+    {
+        $lastEnvoySelStmt->execute();
+        $result = $lastEnvoySelStmt->get_result();
+        while ($row = $result->fetch_assoc())
+        {
+           $envoyProduction = $row["EnvoyProduction"];
+           $envoyConsumption = $row["EnvoyConsumption"];
+        }
+    }
     if ($src == "ESP")
     {
         $echoResponse["Source"] = $src;
@@ -75,6 +88,8 @@ function getNetMeterReadings($readingDate)
         $echoResponse["NetYTDUnits"] = sprintf("%06.1f",$netYTDUnits);//$netYTDUnits;
         $echoResponse["BillYTDImportUnits"] = sprintf("%06.1f",($currImportValue - $billImportYTDUnits));
         $echoResponse["BillYTDExportUnits"] = sprintf("%06.1f",($currExportValue - $billExportYTDUnits));
+        $echoResponse["EnvoyProduced"] = sprintf("%04.1f",$envoyProduction);
+        $echoResponse["EnvoyConsumed"] = sprintf("%04.1f",$envoyConsumption);
     }
     else
     {
@@ -89,6 +104,8 @@ function getNetMeterReadings($readingDate)
         $echoResponse["NetImportYTDUnits"] = $netImportYTDUnits;
         $echoResponse["NetExportYTDUnits"] = $netExportYTDUnits;
         $echoResponse["NetYTDUnits"] = $netYTDUnits;
+        $echoResponse["EnvoyProduced"] = $envoyProduction;
+        $echoResponse["EnvoyConsumed"] = $envoyConsumption;
     }
     $echoResponse["result"] = "OK";
     $echoResponse["message"] = $responseArray["3"];

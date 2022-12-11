@@ -24,8 +24,10 @@ else
 {
     $currSelQuery = "SELECT ReadingDate, ReadingImport, ReadingExport , ReadingTimestamp FROM DailyReadings WHERE ReadingDate<=? ORDER BY ReadingDate DESC LIMIT 0, 1";
     $lastSelQuery = "SELECT ReadingDate, ReadingImport, ReadingExport , ReadingTimestamp FROM DailyReadings ORDER BY ReadingDate DESC LIMIT 0, 1";
-    $lastEnvoyQuery = "";
-
+    
+    $lastEnvoySelQuery = "SELECT EnvoyReadingDate, EnvoyProduction, EnvoyConsumption FROM EnvoyReadings WHERE EnvoyReadingDate<=? ORDER BY EnvoyReadingDate DESC LIMIT 0,1";
+    $lastEnvoySelStmt = $conn->prepare($lastEnvoySelQuery);
+    
     $currYTDSelQuery = "SELECT NetImportUnits, NetExportUnits,NetUnitsPerDay,NetImportYTDUnits,NetExportYTDUnits,NetYTDUnits FROM NetReadings WHERE NetReadingDate<=? ORDER BY NetReadingDate DESC LIMIT 0,1";
     $currYTDSelStmt = $conn->prepare($currYTDSelQuery);
 
