@@ -150,6 +150,6 @@ if(readingDate!="" && importReading!="" && exportReading!="" && !nanFlag)
 </script>
 </body>
 <footer>
-      &copy; Nagu
+<label>&copy; Nagu </label>
 </footer>
 </html>

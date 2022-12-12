@@ -50,6 +50,12 @@ else
     $prevBillSelQuery = "SELECT BillDate, BillImportReading, BillExportReading, MeterImportReading, MeterExportReading FROM NetMeterBillData ORDER BY BillDate DESC LIMIT 0,1";
     $prevBillSelStmt = $conn->prepare($prevBillSelQuery);
 
+    $lastYTDSelQuery = "SELECT NetImportUnits, NetExportUnits,NetUnitsPerDay FROM NetReadings ORDER BY NetReadingDate DESC LIMIT 0,1";
+    $lastYTDSelStmt = $conn->prepare($lastYTDSelQuery);
+ 
+    $lastEnvoySelQuery = "SELECT EnvoyProduction, EnvoyConsumption FROM EnvoyReadings ORDER BY EnvoyReadingDate DESC LIMIT 0,1";
+    $lastEnvoySelStmt = $conn->prepare($lastEnvoySelQuery);
+
     $reportType = testinput($_GET['reportType']);
     $reportOrder = testinput($_GET['reportOrder']);
     $fromDate = testinput($_GET['fromDate']);

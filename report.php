@@ -177,6 +177,6 @@ $(document).ready(function()
 </script>
 </body>
 <footer>
-      &copy; Nagu
+<label>&copy; Nagu </label>
 </footer>
 </html>

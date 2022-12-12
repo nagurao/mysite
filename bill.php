@@ -159,6 +159,6 @@ if(billDate!="" && billImport!="" && billExport!="" && meterImport!="" && meterE
 </script>
 </body>
 <footer>
-      &copy; Nagu
+<label>&copy; Nagu </label>
 </footer>
 </html>

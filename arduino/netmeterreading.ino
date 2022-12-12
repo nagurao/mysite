@@ -36,6 +36,7 @@
 #define ROW_3 2
 #define ROW_4 3
 
+#define MAX_PAGES 5
 #define ARG_LCDBACKLIGHT "backlight"
 #define ARG_LCDBACKLIGHTTIME "backlightTime"
 
@@ -56,6 +57,8 @@ char ReadingImportG[7];
 char ReadingExportG[7];
 char NetImportUnitsG[5];
 char NetExportUnitsG[5];
+char EnvoyProdG[5];
+char EnvoyConsG[5];
 char BillYTDImportUnitsG[7];
 char BillYTDExportUnitsG[7];
 char PrevBillImportG[7];
@@ -153,8 +156,9 @@ void displayLCDData()
     case 1:displayPageTwo();break;
     case 2:displayPageThree();break;
     case 3:displayPageFour();break;
+    case 4:displayPageFive();break;
   }
-  currPage = (currPage + 1 ) % 4;
+  currPage = (currPage + 1 ) % MAX_PAGES;
 }
 
 void displayPageOne()
@@ -164,6 +168,7 @@ void displayPageOne()
   printLCDVal(ROW_3,0,"CURR EXP UNIT:",true);
   printLCDVal(ROW_3,14,ReadingExportG,true);
 }
+
 void displayPageTwo()
 {  
   printLCDVal(ROW_2,0,"PREV DAY IMPORT:",true);
@@ -173,6 +178,14 @@ void displayPageTwo()
 }
 
 void displayPageThree()
+{  
+  printLCDVal(ROW_2,0,"PREV ENVOY PROD:",true);
+  printLCDVal(ROW_2,16,EnvoyProdG,true);
+  printLCDVal(ROW_3,0,"PREV ENVOY CONS:",true); 
+  printLCDVal(ROW_3,16,EnvoyConsG,true);
+}
+
+void displayPageFour()
 {
   printLCDVal(ROW_2,0,"CURR BILL IMP:",true);
   printLCDVal(ROW_3,0,"CURR BILL EXP:",true);
@@ -180,7 +193,7 @@ void displayPageThree()
   printLCDVal(ROW_3,14,BillYTDExportUnitsG,true);  
 }
 
-void displayPageFour()
+void displayPageFive()
 {
   printLCDVal(ROW_2,0,"LAST BILL IMP:",true);
   printLCDVal(ROW_3,0,"LAST BILL EXP:",true);
@@ -215,6 +228,8 @@ void pullData()
     const char* ReadingExport = doc["ReadingExport"]; 
     const char* NetImportUnits = doc["NetImportUnits"]; 
     const char* NetExportUnits = doc["NetExportUnits"]; 
+    const char* EnvoyProd = doc["EnvoyProduced"]; 
+    const char* EnvoyCons = doc["EnvoyConsumed"];     
     const char* PrevBillImport = doc["PrevBillImport"]; 
     const char* PrevBillExport = doc["PrevBillExport"];
     const char* BillYTDImportUnits = doc["BillYTDImportUnits"];
@@ -224,6 +239,8 @@ void pullData()
     strncpy(ReadingExportG,ReadingExport,6);
     strncpy(NetImportUnitsG,NetImportUnits,4);
     strncpy(NetExportUnitsG,NetExportUnits,4);
+    strncpy(EnvoyProdG,EnvoyProd,4);
+    strncpy(EnvoyConsG,EnvoyCons,4);
     strncpy(PrevBillImportG,PrevBillImport,6);
     strncpy(PrevBillExportG,PrevBillExport,6);
     strncpy(BillYTDImportUnitsG,BillYTDImportUnits,6);

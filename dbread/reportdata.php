@@ -11,6 +11,8 @@ function prepareReport()
     global $currYTDSelStmt;
     global $prevBillSelStmt;
     global $currEnvoySelStmt;
+    global $lastYTDSelStmt;
+    global $lastEnvoySelStmt;
     global $responseArray;
     global $echoResponse;
     global $reportSrc;
@@ -195,6 +197,7 @@ function prepareReport()
     }
 
     $resultData = $resultData."</table>";
+
     $prevBillSelStmt->execute();
     $result = $prevBillSelStmt->get_result();
     while ($row = $result->fetch_assoc())
@@ -204,6 +207,23 @@ function prepareReport()
         $echoResponse["prevBillExport"] = $row["BillExportReading"];
         $echoResponse["prevBillDateImport"]= $row["MeterImportReading"];
         $echoResponse["prevBillDateExport"]= $row["MeterExportReading"];
+    }
+
+    $lastYTDSelStmt->execute();
+    $result = $lastYTDSelStmt->get_result();
+    while ($row = $result->fetch_assoc())
+    {
+        $echoResponse["prevImport"] = $row["NetImportUnits"];
+        $echoResponse["prevExport"] = $row["NetExportUnits"];
+        $echoResponse["prevNet"] = $row["NetUnitsPerDay"];
+    }
+
+    $lastEnvoySelStmt->execute();
+    $result = $lastEnvoySelStmt->get_result();
+    while ($row = $result->fetch_assoc())
+    {
+        $echoResponse["prevGenerated"] = $row["EnvoyProduction"];
+        $echoResponse["prevConsumed"] = $row["EnvoyConsumption"];
     }
 
     if ($count >= 1)
