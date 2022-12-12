@@ -44,6 +44,7 @@ function prepareReport()
     $netExportUnits = $netImportUnits = $netImportYTDUnits = 0;
     $netExportYTDUnits = $netYTDUnits = $netUnitsPerDay = 0;
     $defaultValue = sprintf("%.2f",0);
+    $readingDate = "";
     $readingImport = $readingExport = $defaultValue;
     if ($reportType == "ROL")
     {
@@ -65,6 +66,7 @@ function prepareReport()
                $currExportValue = $row["ReadingExport"];
                if($currImportValue !=0 )
                {
+                    $readingDate =   $row["ReadingTimestamp"];
                     $readingImport = $currImportValue;
                     $readingExport = $currExportValue;
                }
@@ -197,6 +199,7 @@ function prepareReport()
     $result = $prevBillSelStmt->get_result();
     while ($row = $result->fetch_assoc())
     {
+        $echoResponse["lastBilledDate"] = date("d-M-Y",strtotime($row["BillDate"]));
         $echoResponse["prevBillImport"] = $row["BillImportReading"];
         $echoResponse["prevBillExport"] = $row["BillExportReading"];
         $echoResponse["prevBillDateImport"]= $row["MeterImportReading"];
@@ -210,6 +213,7 @@ function prepareReport()
         $echoResponse["message"] = $responseArray["3"];
         $echoResponse["importData"] = $importData;
         $echoResponse["exportData"] = $exportData;
+        $echoResponse["readingDate"] = date("d-M-Y H:i",strtotime($readingDate));
         $echoResponse["readingImport"] = $readingImport;
         $echoResponse["readingExport"] = $readingExport;
         $echoResponse["envoyProd"] = $envoyProd;

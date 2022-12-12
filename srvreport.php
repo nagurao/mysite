@@ -35,7 +35,7 @@ if ($conn->connect_error)
 }
 else
 {
-    $currSelQuery = "SELECT ReadingDate, ReadingImport, ReadingExport FROM DailyReadings WHERE ReadingDate=?";
+    $currSelQuery = "SELECT ReadingImport, ReadingExport, ReadingTimestamp FROM DailyReadings WHERE ReadingDate=?";
     $currSelStmt = $conn->prepare($currSelQuery);
 
     $currEnvoySelQuery = "SELECT EnvoyReadingDate, EnvoyProduction, EnvoyConsumption FROM EnvoyReadings WHERE EnvoyReadingDate=?";
@@ -47,7 +47,7 @@ else
     $currYTDSelQuery = "SELECT NetImportUnits, NetExportUnits,NetUnitsPerDay,NetImportYTDUnits,NetExportYTDUnits,NetYTDUnits FROM NetReadings WHERE NetReadingDate=?";
     $currYTDSelStmt = $conn->prepare($currYTDSelQuery);
     
-    $prevBillSelQuery = "SELECT BillImportReading, BillExportReading, MeterImportReading, MeterExportReading FROM NetMeterBillData ORDER BY BillDate DESC LIMIT 0,1";
+    $prevBillSelQuery = "SELECT BillDate, BillImportReading, BillExportReading, MeterImportReading, MeterExportReading FROM NetMeterBillData ORDER BY BillDate DESC LIMIT 0,1";
     $prevBillSelStmt = $conn->prepare($prevBillSelQuery);
 
     $reportType = testinput($_GET['reportType']);

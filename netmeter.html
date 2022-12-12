@@ -88,15 +88,42 @@
           netYTD = parseFloat(numeral(importYTD - exportYTD).format('00.00'));
 
           $("#idLabelMMMYYYY").text(monthName);
-          $("#idLabelAvgImp").text(numeral(importYTD / numEntries).format('00.00'));
-          $("#idLabelAvgExp").text(numeral(exportYTD / numEntries).format('00.00'));
-          $("#idLabelAvgNet").text(numeral(netYTD / numEntries).format('00.00'));
-          $("#idLabelAvgSolGen").text(numeral(avgGeneration / numEntries).format('00.00'));
-          $("#idLabelDailyCons").text(numeral(avgConsumption / numEntries).format('00.00'));
-          $("#idLabelImport").text(numeral(dataResult.readingImport - dataResult.prevBillImport).format('00.00'));
-          $("#idLabelExport").text(numeral(dataResult.readingExport - dataResult.prevBillExport).format('00.00'));
-          $("#idLabelImportBillDate").text(numeral(dataResult.readingImport - dataResult.prevBillDateImport).format('00.00'));
-          $("#idLabelExportBillDate").text(numeral(dataResult.readingExport - dataResult.prevBillDateExport).format('00.00'));
+          //$("#idLabelAvgImp").text(numeral(importYTD / numEntries).format('00.00'));
+          document.getElementById("idLabelLastUpdTable").innerHTML = dataResult.readingDate;
+          document.getElementById("idLabelImportReadingTable").innerHTML = numeral(dataResult.readingImport).format('00.00');
+          document.getElementById("idLabelExportReadingTable").innerHTML = numeral(dataResult.readingExport).format('00.00');
+          document.getElementById("idLabelLastBilledDateTable").innerHTML = dataResult.lastBilledDate;
+          document.getElementById("idLabelPrevBillImportReadingTable").innerHTML = dataResult.prevBillImport;
+          document.getElementById("idLabelPrevBillExportReadingTable").innerHTML = dataResult.prevBillExport;
+          document.getElementById("idLabelPrevImportBillDateReadingTable").innerHTML = dataResult.prevBillDateImport;
+          document.getElementById("idLabelPrevExportBillDateReadingTable").innerHTML = dataResult.prevBillDateExport;
+
+          document.getElementById("idLabelAvgImpTable").innerHTML = numeral(importYTD / numEntries).format('00.00');
+          
+          //$("#idLabelAvgExp").text(numeral(exportYTD / numEntries).format('00.00'));
+          document.getElementById("idLabelAvgExpTable").innerHTML = (numeral(exportYTD / numEntries).format('00.00'));
+
+          //$("#idLabelAvgNet").text(numeral(netYTD / numEntries).format('00.00'));
+          document.getElementById("idLabelAvgNetTable").innerHTML = (numeral(netYTD / numEntries).format('00.00'));
+
+          //$("#idLabelAvgSolGen").text(numeral(avgGeneration / numEntries).format('00.00'));
+          document.getElementById("idLabelAvgSolGenTable").innerHTML = (numeral(avgGeneration / numEntries).format('00.00'));
+
+          //$("#idLabelDailyCons").text(numeral(avgConsumption / numEntries).format('00.00'));
+          document.getElementById("idLabelDailyConsTable").innerHTML = (numeral(avgConsumption / numEntries).format('00.00'));
+
+          //$("#idLabelImport").text(numeral(dataResult.readingImport - dataResult.prevBillImport).format('00.00'));
+          document.getElementById("idLabelImportTable").innerHTML = (numeral(dataResult.readingImport - dataResult.prevBillImport).format('00.00'));
+
+          //$("#idLabelExport").text(numeral(dataResult.readingExport - dataResult.prevBillExport).format('00.00'));
+          document.getElementById("idLabelExportTable").innerHTML = (numeral(dataResult.readingExport - dataResult.prevBillExport).format('00.00'));
+
+          //$("#idLabelImportBillDate").text(numeral(dataResult.readingImport - dataResult.prevBillDateImport).format('00.00'));
+          document.getElementById("idLabelImportBillDateTable").innerHTML = (numeral(dataResult.readingImport - dataResult.prevBillDateImport).format('00.00'));
+
+          //$("#idLabelExportBillDate").text(numeral(dataResult.readingExport - dataResult.prevBillDateExport).format('00.00'));
+          document.getElementById("idLabelExportBillDateTable").innerHTML = (numeral(dataResult.readingExport - dataResult.prevBillDateExport).format('00.00'));
+
           new Chart("myChart",
           {
             type: "line",
@@ -170,7 +197,9 @@
   <div style="margin: auto;width: 100%;"></div>
     <canvas id="myChart" style="width:100%;max-width:1000px"></canvas>
   </div>
-
+  
+  <!----
+  
   <div class="form-group">
     <label>Average Units Imported : </label>
     <label for="labelAvgImp" id="idLabelAvgImp" name="nameLabelAvgImp"></label>
@@ -223,6 +252,95 @@
     <label>Approx. Units Exported from Last Bill Date : </label>
     <label for="labelExportBillDate" id="idLabelExportBillDate" name="nameLabelExportBillDate"></label>
     <label> (kW)</label>
+  </div>
+  
+  -->
+  <div class="form-group">
+    <table id="tableStats">
+      <tr>
+        <td style="text-align:center" colspan="3"><label>Net Meter Stats (Last Updated:</label><label id="idLabelLastUpdTable"></label><label>)</label></td>
+      </tr>
+      <tr>
+        <td style="text-align:left"><label>Import Reading</label></td>
+        <td style="text-align:left"><label>:</label></td>
+        <td style="text-align:right"><label id="idLabelImportReadingTable"></label><label> (kW)</label></td>
+      </tr>  
+      <tr>
+        <td style="text-align:left"><label>Export Reading</label></td>
+        <td style="text-align:left"><label>:</label></td>
+        <td style="text-align:right"><label id="idLabelExportReadingTable"></label><label> (kW)</label></td>
+      </tr>        
+      <tr>
+        <td style="text-align:left"><label>Average Units Imported</label></td>
+        <td style="text-align:left"><label>:<pre> </pre></label></td>
+        <td style="text-align:right"><label id="idLabelAvgImpTable"></label><label> (kW)</label></td>
+      </tr>
+      <tr>
+        <td style="text-align:left"><label>Average Units Exported</label></td>
+        <td style="text-align:left"><label>:</label></td>
+        <td style="text-align:right"><label id="idLabelAvgExpTable"></label><label> (kW)</label></td>
+      </tr>
+      <tr>
+        <td style="text-align:left"><label>Average Net Units</label></td>
+        <td style="text-align:left"><label>:</label></td>
+        <td style="text-align:right"><label id="idLabelAvgNetTable"></label><label> (kW)</label></td>
+      </tr>   
+      <tr>
+        <td style="text-align:left"><label>Average Daily Solar Generation</label></td>
+        <td style="text-align:left"><label>:</label></td>
+        <td style="text-align:right"><label id="idLabelAvgSolGenTable"></label><label> (kW)</label></td>
+      </tr>  
+      <tr>
+        <td style="text-align:left"><label>Average Daily Consumption</label></td>
+        <td style="text-align:left"><label>:</label></td>
+        <td style="text-align:right"><label id="idLabelDailyConsTable"></label><label> (kW)</label></td>
+      </tr>
+      <tr>
+        <td style="text-align:left"><label>Last Billed Date</label></td>
+        <td style="text-align:left"><label>:</label></td>
+        <td style="text-align:right"><label id="idLabelLastBilledDateTable"></label></td>
+      </tr>      
+      <tr>
+        <td style="text-align:left"><label>Prev. Billed Import Reading</label></td>
+        <td style="text-align:left"><label>:</label></td>
+        <td style="text-align:right"><label id="idLabelPrevBillImportReadingTable"></label><label> (kW)</label></td>
+      </tr>  
+      <tr>
+        <td style="text-align:left"><label>Prev. Billed Export Reading</label></td>
+        <td style="text-align:left"><label>:</label></td>
+        <td style="text-align:right"><label id="idLabelPrevBillExportReadingTable"></label><label> (kW)</label></td>
+      </tr>        
+      <tr>
+        <td style="text-align:left"><label>Approx. Units Imported from Last Bill</label></td>
+        <td style="text-align:left"><label>:</label></td>
+        <td style="text-align:right"><label id="idLabelImportTable"></label><label> (kW)</label></td>
+      </tr> 
+      <tr>
+        <td style="text-align:left"><label>Approx. Units Exported from Last Bill</label></td>
+        <td style="text-align:left"><label>:</label></td>
+        <td style="text-align:right"><label id="idLabelExportTable"></label><label> (kW)</label></td>
+      </tr> 
+      <tr>
+        <td style="text-align:left"><label>Import Reading on Billed Date</label></td>
+        <td style="text-align:left"><label>:</label></td>
+        <td style="text-align:right"><label id="idLabelPrevImportBillDateReadingTable"></label><label> (kW)</label></td>
+      </tr>  
+      <tr>
+        <td style="text-align:left"><label>Export Reading on Billed Date</label></td>
+        <td style="text-align:left"><label>:</label></td>
+        <td style="text-align:right"><label id="idLabelPrevExportBillDateReadingTable"></label><label> (kW)</label></td>
+      </tr>          
+      <tr>
+        <td style="text-align:left"><label>Approx. Units Imported from Last Bill Date</label></td>
+        <td style="text-align:left"><label>:</label></td>
+        <td style="text-align:right"><label id="idLabelImportBillDateTable"></label><label> (kW)</label></td>
+      </tr> 
+      <tr>
+        <td style="text-align:left"><label>Approx. Units Exported from Last Bill Date</label></td>
+        <td style="text-align:left"><label>:</label></td>
+        <td style="text-align:right"><label id="idLabelExportBillDateTable"></label><label> (kW)</label></td>
+      </tr>                           
+    </table>
   </div>
 </body>
 <footer>
