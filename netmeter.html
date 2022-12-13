@@ -102,9 +102,16 @@
           document.getElementById("idLabelNetUnitsTable").innerHTML = dataResult.prevNet;
           document.getElementById("idLabelGeneratedUnitsTable").innerHTML = dataResult.prevGenerated;
           document.getElementById("idLabelConsumedUnitsTable").innerHTML = dataResult.prevConsumed;
-
+          document.getElementById("idLabelImpExpUnitsTable").innerHTML = numeral(dataResult.prevConsumed - dataResult.prevGenerated).format('00.00');
           document.getElementById("idLabelAvgImpTable").innerHTML = numeral(importYTD / numEntries).format('00.00');
-          
+          document.getElementById("idLabelDelta300Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 300).format('00.00');
+          document.getElementById("idLabelDelta350Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 350).format('00.00');
+          document.getElementById("idLabelDelta400Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 400).format('00.00');
+          document.getElementById("idLabelDelta450Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 450).format('00.00');
+          document.getElementById("idLabelDelta500Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 500).format('00.00');
+          document.getElementById("idLabelDelta550Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 550).format('00.00');
+          document.getElementById("idLabelDelta600Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 600).format('00.00');
+          document.getElementById("idLabelDelta650Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 650).format('00.00');
           //$("#idLabelAvgExp").text(numeral(exportYTD / numEntries).format('00.00'));
           document.getElementById("idLabelAvgExpTable").innerHTML = (numeral(exportYTD / numEntries).format('00.00'));
 
@@ -295,15 +302,20 @@
         <td style="text-align:right"><label id="idLabelNetUnitsTable"></label><label> (kWh)</label></td>
       </tr>  
       <tr>
-        <td style="text-align:left"><label>Generated Units</label></td>
+        <td style="text-align:left"><label>Generated Units (Enphase)</label></td>
         <td style="text-align:left"><label>:</label></td>
         <td style="text-align:right"><label id="idLabelGeneratedUnitsTable"></label><label> (kWh)</label></td>
       </tr> 
       <tr>
-        <td style="text-align:left"><label>Consumed Units</label></td>
+        <td style="text-align:left"><label>Consumed Units (Enphase)</label></td>
         <td style="text-align:left"><label>:</label></td>
         <td style="text-align:right"><label id="idLabelConsumedUnitsTable"></label><label> (kWh)</label></td>
-      </tr>                            
+      </tr> 
+      <tr>
+        <td style="text-align:left"><label>Net Units (Enphase)</label></td>
+        <td style="text-align:left"><label>:</label></td>
+        <td style="text-align:right"><label id="idLabelImpExpUnitsTable"></label><label> (kWh)</label></td>
+      </tr>                                   
       <tr>
         <td style="text-align:center" colspan="3"><label><u>Current Month Average Details</u></label></td>
       </tr>             
@@ -379,7 +391,22 @@
         <td style="text-align:left"><label>Approx. Units Exported from Last Bill Date</label></td>
         <td style="text-align:left"><label>:</label></td>
         <td style="text-align:right"><label id="idLabelExportBillDateTable"></label><label> (kWh)</label></td>
-      </tr>                           
+      </tr> 
+      <tr>
+        <td style="text-align:center" colspan="3"><label><u>Δ Details Post Latest Bill</u></label></td>
+      </tr>    
+      <tr>
+        <td style="text-align:left"><label>Δ300 :&nbsp </label><label id="idLabelDelta300Table"></label><label>&nbsp&nbsp&nbsp&nbspΔ350 :&nbsp</label><label id="idLabelDelta350Table"></label></td>
+      </tr>   
+      <tr>
+        <td style="text-align:left"><label>Δ400 :&nbsp </label><label id="idLabelDelta400Table"></label><label>&nbsp&nbsp&nbsp&nbspΔ450 :&nbsp</label><label id="idLabelDelta450Table"></label></td>
+      </tr>       
+      <tr>
+        <td style="text-align:left"><label>Δ500 :&nbsp </label><label id="idLabelDelta500Table"></label><label>&nbsp&nbsp&nbsp&nbspΔ550 :&nbsp</label><label id="idLabelDelta550Table"></label></td>
+      </tr>  
+      <tr>
+        <td style="text-align:left"><label>Δ600 :&nbsp </label><label id="idLabelDelta600Table"></label><label>&nbsp&nbsp&nbsp&nbspΔ650 :&nbsp</label><label id="idLabelDelta650Table"></label></td>
+      </tr>  
     </table>
   </div>
 </body>
