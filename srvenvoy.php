@@ -84,6 +84,8 @@ if($source == "SCRIPT")
 if($action == "INS")
 {
     insertEnvoyReadingData($readingDate,$productionReading,$consumptionReading);
+    $echoResponse["envoyProduction"] = sprintf("%05.2f",round($productionReading/1000,1));
+    $echoResponse["envoyConsumption"] = sprintf("%05.2f",round($consumptionReading/1000,1));
     $echoResponse["result"] = "OK";
     $echoResponse["message"] = $responseArray["5"];
 }
