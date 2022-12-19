@@ -112,6 +112,7 @@
           document.getElementById("idLabelDelta550Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 550).format('00.00');
           document.getElementById("idLabelDelta600Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 600).format('00.00');
           document.getElementById("idLabelDelta650Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 650).format('00.00');
+          
           //$("#idLabelAvgExp").text(numeral(exportYTD / numEntries).format('00.00'));
           document.getElementById("idLabelAvgExpTable").innerHTML = (numeral(exportYTD / numEntries).format('00.00'));
 
@@ -136,6 +137,8 @@
           //$("#idLabelExportBillDate").text(numeral(dataResult.readingExport - dataResult.prevBillDateExport).format('00.00'));
           document.getElementById("idLabelExportBillDateTable").innerHTML = (numeral(dataResult.readingExport - dataResult.prevBillDateExport).format('00.00'));
 
+          document.getElementById("idLabelNetBillDateTable").innerHTML = numeral((dataResult.readingImport - dataResult.prevBillDateImport)-(dataResult.readingExport - dataResult.prevBillDateExport)).format('00.00');
+          
           new Chart("myChart",
           {
             type: "line",
@@ -392,6 +395,11 @@
         <td style="text-align:left"><label>:</label></td>
         <td style="text-align:right"><label id="idLabelExportBillDateTable"></label><label> (kWh)</label></td>
       </tr> 
+      <tr>
+        <td style="text-align:left"><label>Approx. Net Units from Last Bill Date</label></td>
+        <td style="text-align:left"><label>:</label></td>
+        <td style="text-align:right"><label id="idLabelNetBillDateTable"></label><label> (kWh)</label></td>
+      </tr>       
       <tr>
         <td style="text-align:center" colspan="3"><label><u>Δ Details Post Latest Bill</u></label></td>
       </tr>    
