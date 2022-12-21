@@ -54,6 +54,8 @@
           var dataPointsNet = [];
           var dataPointsEnvoyProd = [];
           var dataPointsEnvoyCons = [];
+          var dataPointsNetEnvoy = [];
+          var dataPointsDelta = [];
           var i = 0;
           var numEntries = -1;
           var importYTD = 0;
@@ -69,7 +71,8 @@
             dataPointsNet[i] = numeral(importData[key].value - exportData[key].value).format('00.00');
             dataPointsEnvoyProd[i] = numeral(envoyProd[key].value).format('00.00');
             dataPointsEnvoyCons[i] = numeral(envoyCons[key].value).format('00.00');
-            
+            dataPointsNetEnvoy[i] = numeral(envoyCons[key].value - envoyProd[key].value).format('00.00');
+            dataPointsDelta[i] = numeral(dataPointsNet[i] - dataPointsNetEnvoy[i]).format('00.00');
             if (numeral(importData[key].value).format('00.00') > 0 )
             {
               numEntries = numEntries + 1;
@@ -103,6 +106,7 @@
           document.getElementById("idLabelGeneratedUnitsTable").innerHTML = dataResult.prevGenerated;
           document.getElementById("idLabelConsumedUnitsTable").innerHTML = dataResult.prevConsumed;
           document.getElementById("idLabelImpExpUnitsTable").innerHTML = numeral(dataResult.prevConsumed - dataResult.prevGenerated).format('00.00');
+          document.getElementById("idLabelDeltaNetUnitsTable").innerHTML = numeral( (dataResult.prevNet ) - (dataResult.prevConsumed - dataResult.prevGenerated) ).format('00.00');
           document.getElementById("idLabelAvgImpTable").innerHTML = numeral(importYTD / numEntries).format('00.00');
           document.getElementById("idLabelDelta300Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 300).format('00.00');
           document.getElementById("idLabelDelta350Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 350).format('00.00');
@@ -173,7 +177,14 @@
                 data: dataPointsEnvoyCons,
                 borderColor: "purple",
                 fill: true  
-              }                              
+              },
+              {
+                label:"Delta Units (Meter & Enphase) (kWh)",
+                data: dataPointsDelta,
+                borderColor: "black",
+                fill: true  
+              }  
+                                           
             ]},
             options: { legend: {display: true},
                        plugins: { title: {  text: monthName, display: true}}
@@ -305,20 +316,25 @@
         <td style="text-align:right"><label id="idLabelNetUnitsTable"></label><label> (kWh)</label></td>
       </tr>  
       <tr>
-        <td style="text-align:left"><label>Generated Units (Enphase)</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelGeneratedUnitsTable"></label><label> (kWh)</label></td>
-      </tr> 
-      <tr>
         <td style="text-align:left"><label>Consumed Units (Enphase)</label></td>
         <td style="text-align:left"><label>:</label></td>
         <td style="text-align:right"><label id="idLabelConsumedUnitsTable"></label><label> (kWh)</label></td>
       </tr> 
       <tr>
+        <td style="text-align:left"><label>Generated Units (Enphase)</label></td>
+        <td style="text-align:left"><label>:</label></td>
+        <td style="text-align:right"><label id="idLabelGeneratedUnitsTable"></label><label> (kWh)</label></td>
+      </tr> 
+      <tr>
         <td style="text-align:left"><label>Net Units (Enphase)</label></td>
         <td style="text-align:left"><label>:</label></td>
         <td style="text-align:right"><label id="idLabelImpExpUnitsTable"></label><label> (kWh)</label></td>
-      </tr>                                   
+      </tr> 
+      <tr>
+        <td style="text-align:left"><label>Delta Net Units (Net Meter & Enphase)</label></td>
+        <td style="text-align:left"><label>:</label></td>
+        <td style="text-align:right"><label id="idLabelDeltaNetUnitsTable"></label><label> (kWh)</label></td>
+      </tr>                                         
       <tr>
         <td style="text-align:center" colspan="3"><label><u>Current Month Average Details</u></label></td>
       </tr>             
@@ -338,12 +354,12 @@
         <td style="text-align:right"><label id="idLabelAvgNetTable"></label><label> (kWh)</label></td>
       </tr>   
       <tr>
-        <td style="text-align:left"><label>Average Daily Solar Generation</label></td>
+        <td style="text-align:left"><label>Average Daily Solar Generation (Enphase)</label></td>
         <td style="text-align:left"><label>:</label></td>
         <td style="text-align:right"><label id="idLabelAvgSolGenTable"></label><label> (kWh)</label></td>
       </tr>  
       <tr>
-        <td style="text-align:left"><label>Average Daily Consumption</label></td>
+        <td style="text-align:left"><label>Average Daily Consumption (Enphase)</label></td>
         <td style="text-align:left"><label>:</label></td>
         <td style="text-align:right"><label id="idLabelDailyConsTable"></label><label> (kWh)</label></td>
       </tr>
