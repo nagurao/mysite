@@ -18,7 +18,7 @@
       var scriptVersion = "1.0";
       var reportSrc = "HOME";
       var reportOrder = "ASC";
-		  var reportType = "ROL";
+      var reportType = "ROL";
       var date = new Date();
       var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
       var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 2);
@@ -29,22 +29,22 @@
       //alert("Load completed");
       $.ajax(
       {
-		    url: "srvreport.php",
-		    type: "GET",
-		    data: 
+        url: "srvreport.php",
+        type: "GET",
+        data: 
         {
-			    scriptVersion: scriptVersion,
+          scriptVersion: scriptVersion,
           reportSrc: reportSrc,
-			    reportType: reportType,
-				  reportOrder: reportOrder,
+          reportType: reportType,
+          reportOrder: reportOrder,
           fromDate: fromDate,
-			    toDate: toDate
-		    },
-		    cache: false,
-		    success: function(dataResult)
+          toDate: toDate
+        },
+        cache: false,
+        success: function(dataResult)
         {
-			    var dataResult = JSON.parse(dataResult);
-				  var importData = dataResult.importData;
+          var dataResult = JSON.parse(dataResult);
+          var importData = dataResult.importData;
           var exportData = dataResult.exportData;
           var envoyProd = dataResult.envoyProd;
           var envoyCons = dataResult.envoyCons;
@@ -89,7 +89,7 @@
           importYTD = parseFloat(numeral(importYTD).format('00.00'));
           exportYTD = parseFloat(numeral(exportYTD).format('00.00'));
           netYTD = parseFloat(numeral(importYTD - exportYTD).format('00.00'));
-
+          
           $("#idLabelMMMYYYY").text(monthName);
           //$("#idLabelAvgImp").text(numeral(importYTD / numEntries).format('00.00'));
           document.getElementById("idLabelLastUpdTable").innerHTML = dataResult.readingDate;
@@ -119,28 +119,28 @@
           
           //$("#idLabelAvgExp").text(numeral(exportYTD / numEntries).format('00.00'));
           document.getElementById("idLabelAvgExpTable").innerHTML = (numeral(exportYTD / numEntries).format('00.00'));
-
+          
           //$("#idLabelAvgNet").text(numeral(netYTD / numEntries).format('00.00'));
           document.getElementById("idLabelAvgNetTable").innerHTML = (numeral(netYTD / numEntries).format('00.00'));
-
+          
           //$("#idLabelAvgSolGen").text(numeral(avgGeneration / numEntries).format('00.00'));
           document.getElementById("idLabelAvgSolGenTable").innerHTML = (numeral(avgGeneration / numEntries).format('00.00'));
-
+          
           //$("#idLabelDailyCons").text(numeral(avgConsumption / numEntries).format('00.00'));
           document.getElementById("idLabelDailyConsTable").innerHTML = (numeral(avgConsumption / numEntries).format('00.00'));
-
+          
           //$("#idLabelImport").text(numeral(dataResult.readingImport - dataResult.prevBillImport).format('00.00'));
           document.getElementById("idLabelImportTable").innerHTML = (numeral(dataResult.readingImport - dataResult.prevBillImport).format('00.00'));
-
+          
           //$("#idLabelExport").text(numeral(dataResult.readingExport - dataResult.prevBillExport).format('00.00'));
           document.getElementById("idLabelExportTable").innerHTML = (numeral(dataResult.readingExport - dataResult.prevBillExport).format('00.00'));
-
+          
           //$("#idLabelImportBillDate").text(numeral(dataResult.readingImport - dataResult.prevBillDateImport).format('00.00'));
           document.getElementById("idLabelImportBillDateTable").innerHTML = (numeral(dataResult.readingImport - dataResult.prevBillDateImport).format('00.00'));
-
+          
           //$("#idLabelExportBillDate").text(numeral(dataResult.readingExport - dataResult.prevBillDateExport).format('00.00'));
           document.getElementById("idLabelExportBillDateTable").innerHTML = (numeral(dataResult.readingExport - dataResult.prevBillDateExport).format('00.00'));
-
+          
           document.getElementById("idLabelNetBillDateTable").innerHTML = numeral((dataResult.readingImport - dataResult.prevBillDateImport)-(dataResult.readingExport - dataResult.prevBillDateExport)).format('00.00');
           
           new Chart("myChart",
@@ -184,20 +184,20 @@
                 borderColor: "black",
                 fill: true  
               }  
-                                           
-            ]},
-            options: { legend: {display: true},
-                       plugins: { title: {  text: monthName, display: true}}
-                     }
-
+              
+              ]},
+              options: { legend: {display: true},
+              plugins: { title: {  text: monthName, display: true}}
+            }
+            
           });
         }
-	    });
+      });
     }
   </script>
 </head>
 <body>
-
+  
   <nav class="navbar navbar-inverse">
     <div class="container-fluid">
       <div class="navbar-header">
@@ -215,224 +215,224 @@
   </nav>
   <div class="form-group">
   </div>
-
+  
   <div class="form-group">
     <center><label for="labelMMMYYYY" id="idLabelMMMYYYY" name="nameLabelMMMYYYY"></label></center>
   </div>
-
-  <div style="margin: auto;width: 100%;"></div>
-    <canvas id="myChart" style="width:100%;max-width:1000px"></canvas>
-  </div>
   
-  <!----
+  <div style="margin: auto;width: 100%;"></div>
+  <canvas id="myChart" style="width:100%;max-width:1000px"></canvas>
+</div>
+
+<!----
   
   <div class="form-group">
     <label>Average Units Imported : </label>
     <label for="labelAvgImp" id="idLabelAvgImp" name="nameLabelAvgImp"></label>
     <label> (kW)</label>
   </div>
-
+  
   <div class="form-group">
     <label>Average Units Exported : </label>
     <label for="labelAvgExp" id="idLabelAvgExp" name="nameLabelAvgExp"></label>
     <label> (kW)</label>
   </div>
-
+  
   <div class="form-group">
     <label>Average Net Units : </label>
     <label for="labelAvgNet" id="idLabelAvgNet" name="nameLabelAvgNet"></label>
     <label> (kW)</label>
   </div>
-
+  
   <div class="form-group">
     <label>Average Daily Solar Generation : </label>
     <label for="labelAvgSolGen" id="idLabelAvgSolGen" name="nameLabelAvgSolGen"></label>
     <label> (kW)</label>
   </div>
-
+  
   <div class="form-group">
     <label>Average Daily Consumption : </label>
     <label for="labelAvgDailyCons" id="idLabelDailyCons" name="nameLabelDailyCons"></label>
     <label> (kW)</label>
   </div>
-
+  
   <div class="form-group">
     <label>Approx. Units Imported from Last Bill : </label>
     <label for="labelImport" id="idLabelImport" name="nameLabelImport"></label>
     <label> (kW)</label>
   </div>
-
+  
   <div class="form-group">
     <label>Approx. Units Exported from Last Bill : </label>
     <label for="labelExport" id="idLabelExport" name="nameLabelExport"></label>
     <label> (kW)</label>
   </div>
-
+  
   <div class="form-group">
     <label>Approx. Units Imported from Last Bill Date : </label>
     <label for="labelImportBillDate" id="idLabelImportBillDate" name="nameLabelImportBillDate"></label>
     <label> (kW)</label>
   </div>
-
+  
   <div class="form-group">
     <label>Approx. Units Exported from Last Bill Date : </label>
     <label for="labelExportBillDate" id="idLabelExportBillDate" name="nameLabelExportBillDate"></label>
     <label> (kW)</label>
   </div>
   
-  -->
-  <div class="form-group">
-    <table id="tableStats">
-      <tr>
-        <td style="text-align:center" colspan="3"><label>Net Meter Stats (Last Updated:</label><label id="idLabelLastUpdTable"></label><label>)</label></td>
-      </tr>
-      <tr><td style="text-align:center" colspan="3"><label></label></td></tr>
-      <tr>
-        <td style="text-align:center" colspan="3"><label><u>Previous Day Details</u></label></td>
-      </tr>      
-      <tr>
-        <td style="text-align:left"><label>Import Reading</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelImportReadingTable"></label><label> (kWh)</label></td>
-      </tr>  
-      <tr>
-        <td style="text-align:left"><label>Export Reading</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelExportReadingTable"></label><label> (kWh)</label></td>
-      </tr>  
-      <tr>
-        <td style="text-align:left"><label>Imported Units</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelImportedUnitsTable"></label><label> (kWh)</label></td>
-      </tr>  
-      <tr>
-        <td style="text-align:left"><label>Exported Units</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelExportedUnitsTable"></label><label> (kWh)</label></td>
-      </tr> 
-      <tr>
-        <td style="text-align:left"><label>Net Units</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelNetUnitsTable"></label><label> (kWh)</label></td>
-      </tr>  
-      <tr>
-        <td style="text-align:left"><label>Consumed Units (Enphase)</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelConsumedUnitsTable"></label><label> (kWh)</label></td>
-      </tr> 
-      <tr>
-        <td style="text-align:left"><label>Generated Units (Enphase)</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelGeneratedUnitsTable"></label><label> (kWh)</label></td>
-      </tr> 
-      <tr>
-        <td style="text-align:left"><label>Net Units (Enphase)</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelImpExpUnitsTable"></label><label> (kWh)</label></td>
-      </tr> 
-      <tr>
-        <td style="text-align:left"><label>Delta Net Units (Net Meter & Enphase)</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelDeltaNetUnitsTable"></label><label> (kWh)</label></td>
-      </tr>                                         
-      <tr>
-        <td style="text-align:center" colspan="3"><label><u>Current Month Average Details</u></label></td>
-      </tr>             
-      <tr>
-        <td style="text-align:left"><label>Average Units Imported</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelAvgImpTable"></label><label> (kWh)</label></td>
-      </tr>
-      <tr>
-        <td style="text-align:left"><label>Average Units Exported</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelAvgExpTable"></label><label> (kWh)</label></td>
-      </tr>
-      <tr>
-        <td style="text-align:left"><label>Average Net Units</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelAvgNetTable"></label><label> (kWh)</label></td>
-      </tr>   
-      <tr>
-        <td style="text-align:left"><label>Average Daily Solar Generation (Enphase)</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelAvgSolGenTable"></label><label> (kWh)</label></td>
-      </tr>  
-      <tr>
-        <td style="text-align:left"><label>Average Daily Consumption (Enphase)</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelDailyConsTable"></label><label> (kWh)</label></td>
-      </tr>
-      <tr>
-        <td style="text-align:center" colspan="3"><label><u>Details Post Latest Bill</u></label></td>
-      </tr>       
-      <tr>
-        <td style="text-align:left"><label>Last Billed Date</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelLastBilledDateTable"></label></td>
-      </tr>      
-      <tr>
-        <td style="text-align:left"><label>Prev. Billed Import Reading</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelPrevBillImportReadingTable"></label><label> (kWh)</label></td>
-      </tr>  
-      <tr>
-        <td style="text-align:left"><label>Prev. Billed Export Reading</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelPrevBillExportReadingTable"></label><label> (kWh)</label></td>
-      </tr>        
-      <tr>
-        <td style="text-align:left"><label>Approx. Units Imported from Last Bill</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelImportTable"></label><label> (kWh)</label></td>
-      </tr> 
-      <tr>
-        <td style="text-align:left"><label>Approx. Units Exported from Last Bill</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelExportTable"></label><label> (kWh)</label></td>
-      </tr> 
-      <tr>
-        <td style="text-align:left"><label>Import Reading on Billed Date</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelPrevImportBillDateReadingTable"></label><label> (kWh)</label></td>
-      </tr>  
-      <tr>
-        <td style="text-align:left"><label>Export Reading on Billed Date</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelPrevExportBillDateReadingTable"></label><label> (kWh)</label></td>
-      </tr>          
-      <tr>
-        <td style="text-align:left"><label>Approx. Units Imported from Last Bill Date</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelImportBillDateTable"></label><label> (kWh)</label></td>
-      </tr> 
-      <tr>
-        <td style="text-align:left"><label>Approx. Units Exported from Last Bill Date</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelExportBillDateTable"></label><label> (kWh)</label></td>
-      </tr> 
-      <tr>
-        <td style="text-align:left"><label>Approx. Net Units from Last Bill Date</label></td>
-        <td style="text-align:left"><label>:</label></td>
-        <td style="text-align:right"><label id="idLabelNetBillDateTable"></label><label> (kWh)</label></td>
-      </tr>       
-      <tr>
-        <td style="text-align:center" colspan="3"><label><u>Δ Details Post Latest Bill</u></label></td>
-      </tr>    
-      <tr>
-        <td style="text-align:left"><label>Δ300 :&nbsp </label><label id="idLabelDelta300Table"></label><label>&nbsp&nbsp&nbsp&nbspΔ350 :&nbsp</label><label id="idLabelDelta350Table"></label></td>
-      </tr>   
-      <tr>
-        <td style="text-align:left"><label>Δ400 :&nbsp </label><label id="idLabelDelta400Table"></label><label>&nbsp&nbsp&nbsp&nbspΔ450 :&nbsp</label><label id="idLabelDelta450Table"></label></td>
-      </tr>       
-      <tr>
-        <td style="text-align:left"><label>Δ500 :&nbsp </label><label id="idLabelDelta500Table"></label><label>&nbsp&nbsp&nbsp&nbspΔ550 :&nbsp</label><label id="idLabelDelta550Table"></label></td>
-      </tr>  
-      <tr>
-        <td style="text-align:left"><label>Δ600 :&nbsp </label><label id="idLabelDelta600Table"></label><label>&nbsp&nbsp&nbsp&nbspΔ650 :&nbsp</label><label id="idLabelDelta650Table"></label></td>
-      </tr>  
-    </table>
-  </div>
+-->
+<div class="form-group">
+  <table id="tableStats">
+    <tr>
+      <td style="text-align:center" colspan="3"><label>Net Meter Stats (Last Updated:</label><label id="idLabelLastUpdTable"></label><label>)</label></td>
+    </tr>
+    <tr><td style="text-align:center" colspan="3"><label></label></td></tr>
+    <tr>
+      <td style="text-align:center" colspan="3"><label><u>Previous Day Details</u></label></td>
+    </tr>      
+    <tr>
+      <td style="text-align:left"><label>Import Reading</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelImportReadingTable"></label><label> (kWh)</label></td>
+    </tr>  
+    <tr>
+      <td style="text-align:left"><label>Export Reading</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelExportReadingTable"></label><label> (kWh)</label></td>
+    </tr>  
+    <tr>
+      <td style="text-align:left"><label>Imported Units</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelImportedUnitsTable"></label><label> (kWh)</label></td>
+    </tr>  
+    <tr>
+      <td style="text-align:left"><label>Exported Units</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelExportedUnitsTable"></label><label> (kWh)</label></td>
+    </tr> 
+    <tr>
+      <td style="text-align:left"><label>Net Units</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelNetUnitsTable"></label><label> (kWh)</label></td>
+    </tr>  
+    <tr>
+      <td style="text-align:left"><label>Consumed Units (Enphase)</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelConsumedUnitsTable"></label><label> (kWh)</label></td>
+    </tr> 
+    <tr>
+      <td style="text-align:left"><label>Generated Units (Enphase)</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelGeneratedUnitsTable"></label><label> (kWh)</label></td>
+    </tr> 
+    <tr>
+      <td style="text-align:left"><label>Net Units (Enphase)</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelImpExpUnitsTable"></label><label> (kWh)</label></td>
+    </tr> 
+    <tr>
+      <td style="text-align:left"><label>Delta Net Units (Net Meter & Enphase)</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelDeltaNetUnitsTable"></label><label> (kWh)</label></td>
+    </tr>                                         
+    <tr>
+      <td style="text-align:center" colspan="3"><label><u>Current Month Average Details</u></label></td>
+    </tr>             
+    <tr>
+      <td style="text-align:left"><label>Average Units Imported</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelAvgImpTable"></label><label> (kWh)</label></td>
+    </tr>
+    <tr>
+      <td style="text-align:left"><label>Average Units Exported</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelAvgExpTable"></label><label> (kWh)</label></td>
+    </tr>
+    <tr>
+      <td style="text-align:left"><label>Average Net Units</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelAvgNetTable"></label><label> (kWh)</label></td>
+    </tr>   
+    <tr>
+      <td style="text-align:left"><label>Average Daily Solar Generation (Enphase)</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelAvgSolGenTable"></label><label> (kWh)</label></td>
+    </tr>  
+    <tr>
+      <td style="text-align:left"><label>Average Daily Consumption (Enphase)</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelDailyConsTable"></label><label> (kWh)</label></td>
+    </tr>
+    <tr>
+      <td style="text-align:center" colspan="3"><label><u>Details Post Latest Bill</u></label></td>
+    </tr>       
+    <tr>
+      <td style="text-align:left"><label>Last Billed Date</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelLastBilledDateTable"></label></td>
+    </tr>      
+    <tr>
+      <td style="text-align:left"><label>Prev. Billed Import Reading</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelPrevBillImportReadingTable"></label><label> (kWh)</label></td>
+    </tr>  
+    <tr>
+      <td style="text-align:left"><label>Prev. Billed Export Reading</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelPrevBillExportReadingTable"></label><label> (kWh)</label></td>
+    </tr>        
+    <tr>
+      <td style="text-align:left"><label>Approx. Units Imported from Last Bill</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelImportTable"></label><label> (kWh)</label></td>
+    </tr> 
+    <tr>
+      <td style="text-align:left"><label>Approx. Units Exported from Last Bill</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelExportTable"></label><label> (kWh)</label></td>
+    </tr> 
+    <tr>
+      <td style="text-align:left"><label>Import Reading on Billed Date</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelPrevImportBillDateReadingTable"></label><label> (kWh)</label></td>
+    </tr>  
+    <tr>
+      <td style="text-align:left"><label>Export Reading on Billed Date</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelPrevExportBillDateReadingTable"></label><label> (kWh)</label></td>
+    </tr>          
+    <tr>
+      <td style="text-align:left"><label>Approx. Units Imported from Last Bill Date</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelImportBillDateTable"></label><label> (kWh)</label></td>
+    </tr> 
+    <tr>
+      <td style="text-align:left"><label>Approx. Units Exported from Last Bill Date</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelExportBillDateTable"></label><label> (kWh)</label></td>
+    </tr> 
+    <tr>
+      <td style="text-align:left"><label>Approx. Net Units from Last Bill Date</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelNetBillDateTable"></label><label> (kWh)</label></td>
+    </tr>       
+    <tr>
+      <td style="text-align:center" colspan="3"><label><u>Δ Details Post Latest Bill</u></label></td>
+    </tr>    
+    <tr>
+      <td style="text-align:left"><label>Δ300 :&nbsp </label><label id="idLabelDelta300Table"></label><label>&nbsp&nbsp&nbsp&nbspΔ350 :&nbsp</label><label id="idLabelDelta350Table"></label></td>
+    </tr>   
+    <tr>
+      <td style="text-align:left"><label>Δ400 :&nbsp </label><label id="idLabelDelta400Table"></label><label>&nbsp&nbsp&nbsp&nbspΔ450 :&nbsp</label><label id="idLabelDelta450Table"></label></td>
+    </tr>       
+    <tr>
+      <td style="text-align:left"><label>Δ500 :&nbsp </label><label id="idLabelDelta500Table"></label><label>&nbsp&nbsp&nbsp&nbspΔ550 :&nbsp</label><label id="idLabelDelta550Table"></label></td>
+    </tr>  
+    <tr>
+      <td style="text-align:left"><label>Δ600 :&nbsp </label><label id="idLabelDelta600Table"></label><label>&nbsp&nbsp&nbsp&nbspΔ650 :&nbsp</label><label id="idLabelDelta650Table"></label></td>
+    </tr>  
+  </table>
+</div>
 </body>
 <footer>
   <label>&copy; Nagu </label>

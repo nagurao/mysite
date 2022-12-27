@@ -158,29 +158,30 @@ function prepareReport()
             $resultData = $resultData."<td>".$envoyConsumed."</td>";
             $resultData = $resultData."</tr>";
 
-            if ($reportSrc == "HOME")
-            {
-                $tempImportArray = array();
-                $tempExportArray = array();
-                $tempProdArray = array();
-                $tempConsArray = array();
+            // Data in JSON being made available for HomePage and Report Page
+            //if ($reportSrc == "HOME")
+            //{
+            $tempImportArray = array();
+            $tempExportArray = array();
+            $tempProdArray = array();
+            $tempConsArray = array();
 
-                $tempImportArray["date"] = dateinDDMMMYYY($currDate);
-                $tempImportArray["value"] = $netImportUnits;
-                array_push($importData,$tempImportArray);
+            $tempImportArray["date"] = dateinDDMMMYYY($currDate);
+            $tempImportArray["value"] = $netImportUnits;
+            array_push($importData,$tempImportArray);
 
-                $tempExportArray["date"] = dateinDDMMMYYY($currDate);
-                $tempExportArray["value"] = $netExportUnits;
-                array_push($exportData,$tempExportArray);
+            $tempExportArray["date"] = dateinDDMMMYYY($currDate);
+            $tempExportArray["value"] = $netExportUnits;
+            array_push($exportData,$tempExportArray);
                 
-                $tempProdArray["date"] = dateinDDMMMYYY($currDate);
-                $tempProdArray["value"] = $envoyGenerated;
-                array_push($envoyProd,$tempProdArray);
+            $tempProdArray["date"] = dateinDDMMMYYY($currDate);
+            $tempProdArray["value"] = $envoyGenerated;
+            array_push($envoyProd,$tempProdArray);
 
-                $tempConsArray["date"] = dateinDDMMMYYY($currDate);
-                $tempConsArray["value"]= $envoyConsumed;
-                array_push($envoyCons,$tempConsArray);
-            }
+            $tempConsArray["date"] = dateinDDMMMYYY($currDate);
+            $tempConsArray["value"]= $envoyConsumed;
+            array_push($envoyCons,$tempConsArray);
+            //}
         }
         if ($reportOrder == "DESC")
         {
