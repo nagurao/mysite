@@ -194,6 +194,7 @@
 										}
 										
 									});
+									$('#success').html(dataResult.message);
 								}
 								else if (dataResult.result == "FATAL")
 								{
