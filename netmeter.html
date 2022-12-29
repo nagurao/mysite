@@ -106,7 +106,7 @@
           document.getElementById("idLabelGeneratedUnitsTable").innerHTML = dataResult.prevGenerated;
           document.getElementById("idLabelConsumedUnitsTable").innerHTML = dataResult.prevConsumed;
           document.getElementById("idLabelImpExpUnitsTable").innerHTML = numeral(dataResult.prevConsumed - dataResult.prevGenerated).format('00.00');
-          document.getElementById("idLabelDeltaNetUnitsTable").innerHTML = numeral( (dataResult.prevNet ) - (dataResult.prevConsumed - dataResult.prevGenerated) ).format('00.00');
+          document.getElementById("idLabelDeltaNetUnitsTable").innerHTML = numeral(dataResult.prevNet - dataResult.prevConsumed + dataResult.prevGenerated).format('00.00');
           document.getElementById("idLabelAvgImpTable").innerHTML = numeral(importYTD / numEntries).format('00.00');
           document.getElementById("idLabelDelta300Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 300).format('00.00');
           document.getElementById("idLabelDelta350Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 350).format('00.00');
