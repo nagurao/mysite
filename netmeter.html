@@ -8,8 +8,6 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
-  <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
   <script type="text/javascript">
@@ -95,6 +93,8 @@
           document.getElementById("idLabelLastUpdTable").innerHTML = dataResult.readingDate;
           document.getElementById("idLabelImportReadingTable").innerHTML = numeral(dataResult.readingImport).format('00.00');
           document.getElementById("idLabelExportReadingTable").innerHTML = numeral(dataResult.readingExport).format('00.00');
+          document.getElementById("idLabelPrevBilledImportUnitsReadingTable").innerHTML = numeral(dataResult.prevBilledImportUnits).format('00.00');
+          document.getElementById("idLabelPrevBilledExportUnitsReadingTable").innerHTML = numeral(dataResult.prevBilledExportUnits).format('00.00');
           document.getElementById("idLabelLastBilledDateTable").innerHTML = dataResult.lastBilledDate;
           document.getElementById("idLabelPrevBillImportReadingTable").innerHTML = dataResult.prevBillImport;
           document.getElementById("idLabelPrevBillExportReadingTable").innerHTML = dataResult.prevBillExport;
@@ -184,10 +184,14 @@
                 borderColor: "black",
                 fill: true  
               }  
-              
-              ]},
-              options: { legend: {display: true},
-              plugins: { title: {  text: monthName, display: true}}
+            ]
+            },
+            options:
+            { 
+              responsive: true,
+              interaction: { intersect: true,mode: 'index',axis: 'y'},
+              legend: {display: true},
+              tooltips: { mode: 'index', intersect : true},
             }
             
           });
@@ -364,8 +368,8 @@
       <td style="text-align:right"><label id="idLabelDailyConsTable"></label><label> (kWh)</label></td>
     </tr>
     <tr>
-      <td style="text-align:center" colspan="3"><label><u>Details Post Latest Bill</u></label></td>
-    </tr>       
+      <td style="text-align:center" colspan="3"><label><u>Last Bill Details</u></label></td>
+    </tr>     
     <tr>
       <td style="text-align:left"><label>Last Billed Date</label></td>
       <td style="text-align:left"><label>:</label></td>
@@ -380,7 +384,20 @@
       <td style="text-align:left"><label>Prev. Billed Export Reading</label></td>
       <td style="text-align:left"><label>:</label></td>
       <td style="text-align:right"><label id="idLabelPrevBillExportReadingTable"></label><label> (kWh)</label></td>
-    </tr>        
+    </tr>
+    <tr>
+      <td style="text-align:left"><label>Prev. Billed Import Units</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelPrevBilledImportUnitsReadingTable"></label><label> (kWh)</label></td>
+    </tr>
+    <tr>
+      <td style="text-align:left"><label>Prev. Billed Export Units</label></td>
+      <td style="text-align:left"><label>:</label></td>
+      <td style="text-align:right"><label id="idLabelPrevBilledExportUnitsReadingTable"></label><label> (kWh)</label></td>
+    </tr> 
+    <tr>
+      <td style="text-align:center" colspan="3"><label><u>Details Post Latest Bill</u></label></td>
+    </tr>       
     <tr>
       <td style="text-align:left"><label>Approx. Units Imported from Last Bill</label></td>
       <td style="text-align:left"><label>:</label></td>

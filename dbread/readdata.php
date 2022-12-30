@@ -56,8 +56,10 @@ function getNetMeterReadings($readingDate)
         $billExportYTDUnits = $row["BillExportReading"];
         $echoResponse["PrevBillImport"] = sprintf("%06.1f",$billImportYTDUnits);//$row["BillImportReading"];
         $echoResponse["PrevBillExport"] = sprintf("%06.1f",$billExportYTDUnits);
-        $echoResponse["PrevBillDateImport"]= sprintf("%06.1f",$row["MeterImportReading"]);;
+        $echoResponse["PrevBillDateImport"]= sprintf("%06.1f",$row["MeterImportReading"]);
         $echoResponse["PrevBillDateExport"]= sprintf("%06.1f",$row["MeterExportReading"]);
+        $echoResponse["PrevBillImportUnits"] = sprintf("%06.1f",$row["BillImportedUnits"]);
+        $echoResponse["PrevBillExportUnits"] =sprintf("%06.1f",$row["BillExportedUnits"]);
     }
     if($lastEnvoySelStmt->bind_param("s",$readingDate))
     {

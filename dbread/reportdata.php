@@ -208,6 +208,8 @@ function prepareReport()
         $echoResponse["prevBillExport"] = $row["BillExportReading"];
         $echoResponse["prevBillDateImport"]= $row["MeterImportReading"];
         $echoResponse["prevBillDateExport"]= $row["MeterExportReading"];
+        $echoResponse["prevBilledImportUnits"] = $row["BillImportedUnits"];
+        $echoResponse["prevBilledExportUnits"] = $row["BillExportedUnits"];        
     }
 
     $lastYTDSelStmt->execute();

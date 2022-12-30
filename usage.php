@@ -66,7 +66,7 @@ else
     $checkQuery = "SELECT ReadingDate, ReadingImport, ReadingExport FROM DailyReadings WHERE ReadingDate=?";
     $checkStmtByDate = $conn->prepare($checkQuery);
 
-    $prevBillSelQuery = "SELECT BillImportReading, BillExportReading, MeterImportReading, MeterExportReading FROM NetMeterBillData ORDER BY BillDate DESC LIMIT 0,1";
+    $prevBillSelQuery = "SELECT BillImportReading, BillExportReading, MeterImportReading, MeterExportReading, BillImportedUnits, BillExportedUnits FROM NetMeterBillData ORDER BY BillDate DESC LIMIT 0,1";
     $prevBillSelStmt = $conn->prepare($prevBillSelQuery);
 
     if (readingExists($readingDate))
