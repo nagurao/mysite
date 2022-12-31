@@ -105,17 +105,17 @@
           document.getElementById("idLabelNetUnitsTable").innerHTML = dataResult.prevNet;
           document.getElementById("idLabelGeneratedUnitsTable").innerHTML = dataResult.prevGenerated;
           document.getElementById("idLabelConsumedUnitsTable").innerHTML = dataResult.prevConsumed;
-          document.getElementById("idLabelImpExpUnitsTable").innerHTML = numeral(dataResult.prevConsumed - dataResult.prevGenerated).format('00.00');
-          document.getElementById("idLabelDeltaNetUnitsTable").innerHTML = numeral(dataResult.prevNet - dataResult.prevConsumed + dataResult.prevGenerated).format('00.00');
+          document.getElementById("idLabelImpExpUnitsTable").innerHTML = numeral(parseFloat(dataResult.prevConsumed) - parseFloat(dataResult.prevGenerated)).format('00.00');
+          document.getElementById("idLabelDeltaNetUnitsTable").innerHTML = numeral(parseFloat(dataResult.prevNet) - parseFloat(dataResult.prevConsumed) + parseFloat(dataResult.prevGenerated)).format('00.00');
           document.getElementById("idLabelAvgImpTable").innerHTML = numeral(importYTD / numEntries).format('00.00');
-          document.getElementById("idLabelDelta300Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 300).format('00.00');
-          document.getElementById("idLabelDelta350Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 350).format('00.00');
-          document.getElementById("idLabelDelta400Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 400).format('00.00');
-          document.getElementById("idLabelDelta450Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 450).format('00.00');
-          document.getElementById("idLabelDelta500Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 500).format('00.00');
-          document.getElementById("idLabelDelta550Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 550).format('00.00');
-          document.getElementById("idLabelDelta600Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 600).format('00.00');
-          document.getElementById("idLabelDelta650Table").innerHTML = numeral(dataResult.prevBillExport * 1 + 650).format('00.00');
+          document.getElementById("idLabelDelta300Table").innerHTML = numeral(parseFloat(dataResult.prevBillExport) + 300).format('00.00');
+          document.getElementById("idLabelDelta350Table").innerHTML = numeral(parseFloat(dataResult.prevBillExport) + 350).format('00.00');
+          document.getElementById("idLabelDelta400Table").innerHTML = numeral(parseFloat(dataResult.prevBillExport) + 400).format('00.00');
+          document.getElementById("idLabelDelta450Table").innerHTML = numeral(parseFloat(dataResult.prevBillExport) + 450).format('00.00');
+          document.getElementById("idLabelDelta500Table").innerHTML = numeral(parseFloat(dataResult.prevBillExport) + 500).format('00.00');
+          document.getElementById("idLabelDelta550Table").innerHTML = numeral(parseFloat(dataResult.prevBillExport) + 550).format('00.00');
+          document.getElementById("idLabelDelta600Table").innerHTML = numeral(parseFloat(dataResult.prevBillExport) + 600).format('00.00');
+          document.getElementById("idLabelDelta650Table").innerHTML = numeral(parseFloat(dataResult.prevBillExport) + 650).format('00.00');
           
           //$("#idLabelAvgExp").text(numeral(exportYTD / numEntries).format('00.00'));
           document.getElementById("idLabelAvgExpTable").innerHTML = (numeral(exportYTD / numEntries).format('00.00'));

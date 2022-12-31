@@ -15,7 +15,7 @@
 		<script type="text/javascript">
 			window.onload = function()
 			{
-				pullData();
+				//pullData();
 			}
 		</script>
 		<script>function setTwoNumberDecimal(el) {el.value = parseFloat(el.value).toFixed(2);};</script>
@@ -57,18 +57,8 @@
 				$("#success").innerHTML = "";
 				$("#success").hide();
 				$("#idLabelReportPeriod").hide();
-				var reportOrder = "DESC";
+				var reportOrder = "ASC";
 				var reportType = "FIX";
-				if(document.getElementById('idRollReport').checked)
-					reportType = "ROL";
-				if(document.getElementById('idAscOrder').checked)
-					reportOrder = "ASC";
-				
-				if(reportType == "ROL")
-				{
-					reportOrder = "ASC";
-					document.getElementById('idAscOrder').checked = true;
-				}
 				var scriptVersion = "1.0";
 				var fromDate = $('#idFromDate').val();
 				var toDate = $('#idToDate').val();
@@ -97,33 +87,33 @@
 							success: function(dataResult)
 							{	
 								var reportHeader = "Net Import Export from  " + getDateString(new Date(fromDate),"d-M-y") + " to " + getDateString(new Date(toDate),"d-M-y");
+								var dataResult = JSON.parse(dataResult);
+								var importData = dataResult.importData;
+								var exportData = dataResult.exportData;
+								var envoyProd = dataResult.envoyProd;
+								var envoyCons = dataResult.envoyCons;
+								var dataPointsData = [];
+								var dataPointsImport = [];
+								var dataPointsExport = [];
+								var dataPointsNet = [];
+								var dataPointsEnvoyProd = [];
+								var dataPointsEnvoyCons = [];
+								var dataPointsNetEnvoy = [];
+								var i = 0;
+								var numEntries = -1;
+								var avgImport = 0;
+								var avgExport = 0;
+								var avgNet = 0;
+								var avgGeneration = 0;
+								var avgConsumption = 0;
 								$("#idLabelReportPeriod").text(reportHeader);
 								$("#success").innerHTML = "";
 								if (dataResult.result == "OK")
 								{	
 									$("#idLabelReportPeriod").show();
-									var dataResult = JSON.parse(dataResult);
-									var importData = dataResult.importData;
-									var exportData = dataResult.exportData;
-									var envoyProd = dataResult.envoyProd;
-									var envoyCons = dataResult.envoyCons;
-									var dataPointsData = [];
-									var dataPointsImport = [];
-									var dataPointsExport = [];
-									var dataPointsNet = [];
-									var dataPointsEnvoyProd = [];
-									var dataPointsEnvoyCons = [];
-									var dataPointsNetEnvoy = [];
-
-									var i = 0;
-									var numEntries = -1;
-									var avgImport = 0;
-									var avgExport = 0;
-									var avgNet = 0;
-									var avgGeneration = 0;
-									var avgConsumption = 0;
 									for (var key in importData)
 									{
+										alert(importData[key].date);
 										dataPointsData[i] = importData[key].date;
 										dataPointsImport[i] = numeral(importData[key].value).format('00.00');
 										dataPointsExport[i] = numeral(exportData[key].value).format('00.00');
@@ -135,13 +125,10 @@
 										if (numeral(importData[key].value).format('00.00') > 0 )
 										{
 											numEntries = numEntries + 1;
-											if(i != 0)
-											{
-												avgImport = avgImport + parseFloat(numeral(importData[key].value).format('00.00'));
-												avgExport = avgExport + parseFloat(numeral(exportData[key].value).format('00.00'));
-												avgGeneration = avgGeneration + parseFloat(numeral(envoyProd[key].value).format('00.00'));
-												avgConsumption = avgConsumption + parseFloat(numeral(envoyCons[key].value).format('00.00'));
-											}
+											avgImport = avgImport + parseFloat(numeral(importData[key].value).format('00.00'));
+											avgExport = avgExport + parseFloat(numeral(exportData[key].value).format('00.00'));
+											avgGeneration = avgGeneration + parseFloat(numeral(envoyProd[key].value).format('00.00'));
+											avgConsumption = avgConsumption + parseFloat(numeral(envoyCons[key].value).format('00.00'));	
 										}
 										i++; 
 									}
@@ -243,18 +230,6 @@
 					<input type="date" class="form-control" id="idToDate" name="nameToDate" onChange="pullData()">
 					<script>$('#idToDate').val(new Date().toJSON().slice(0,10));</script>
 				</div>        	
-				<div class="form-group">
-					<label for="fixedRep">Fixed Report:</label>
-					<input type="radio" id="idFixedReport" name="nameReport" value="FIX" checked="checked">
-					<label for="rollRep">Rolling Report:</label>
-					<input type="radio" id="idRollReport" name="nameReport" value="ROL">
-				</div>
-				<div class="form-group">
-					<label for="ascOrder">Ascending Date:</label>
-					<input type="radio" id="idAscOrder" name="nameReportOrder" value="ASC">
-					<label for="descOrder">Descending Date:</label>
-					<input type="radio" id="idDescOrder" name="nameReportOrder" value="DESC" checked="checked">
-				</div>		
 				<br></br>
 			</form>
 		</div>
