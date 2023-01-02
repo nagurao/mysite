@@ -8,14 +8,12 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-		<script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
-		<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
 		<script type="text/javascript">
 			window.onload = function()
 			{
-				//pullData();
+
 			}
 		</script>
 		<script>function setTwoNumberDecimal(el) {el.value = parseFloat(el.value).toFixed(2);};</script>
@@ -54,9 +52,13 @@
 		<script type="text/javascript">
 			function pullData()
 			{
+				if (new Date($('#idFromDate').val()).getFullYear() < 2020 || new Date($('#idToDate').val()).getFullYear() < 2020 )
+					return;
 				$("#success").innerHTML = "";
 				$("#success").hide();
 				$("#idLabelReportPeriod").hide();
+				$("#tableStats").hide();
+				$("#myChart").hide();
 				var reportOrder = "ASC";
 				var reportType = "FIX";
 				var scriptVersion = "1.0";
@@ -99,21 +101,22 @@
 								var dataPointsEnvoyProd = [];
 								var dataPointsEnvoyCons = [];
 								var dataPointsNetEnvoy = [];
+								var dataPointsDelta = [];
 								var i = 0;
-								var numEntries = -1;
-								var avgImport = 0;
-								var avgExport = 0;
-								var avgNet = 0;
-								var avgGeneration = 0;
-								var avgConsumption = 0;
+								var numEntries = 0;
+								var importedUnits = 0;
+								var exportedUnits = 0;
+								var consumedUnits = 0;
+								var generatedUnits = 0;
 								$("#idLabelReportPeriod").text(reportHeader);
 								$("#success").innerHTML = "";
 								if (dataResult.result == "OK")
 								{	
 									$("#idLabelReportPeriod").show();
+									$("#tableStats").show();
+									$("#myChart").show();
 									for (var key in importData)
 									{
-										alert(importData[key].date);
 										dataPointsData[i] = importData[key].date;
 										dataPointsImport[i] = numeral(importData[key].value).format('00.00');
 										dataPointsExport[i] = numeral(exportData[key].value).format('00.00');
@@ -121,18 +124,16 @@
 										dataPointsEnvoyProd[i] = numeral(envoyProd[key].value).format('00.00');
 										dataPointsEnvoyCons[i] = numeral(envoyCons[key].value).format('00.00');
 										dataPointsNetEnvoy[i] = numeral(envoyCons[key].value - envoyProd[key].value).format('00.00');
-
-										if (numeral(importData[key].value).format('00.00') > 0 )
-										{
-											numEntries = numEntries + 1;
-											avgImport = avgImport + parseFloat(numeral(importData[key].value).format('00.00'));
-											avgExport = avgExport + parseFloat(numeral(exportData[key].value).format('00.00'));
-											avgGeneration = avgGeneration + parseFloat(numeral(envoyProd[key].value).format('00.00'));
-											avgConsumption = avgConsumption + parseFloat(numeral(envoyCons[key].value).format('00.00'));	
-										}
+										dataPointsDelta[i] = numeral(dataPointsNet[i] - dataPointsNetEnvoy[i]).format("00.00");
+										numEntries = numEntries + 1;
+										importedUnits = importedUnits + parseFloat(numeral(importData[key].value).format('00.00'));
+										exportedUnits = exportedUnits + parseFloat(numeral(exportData[key].value).format('00.00'));
+										consumedUnits = consumedUnits + parseFloat(numeral(envoyCons[key].value).format('00.00'));
+										generatedUnits = generatedUnits + parseFloat(numeral(envoyProd[key].value).format('00.00'));	
 										i++; 
 									}
-								
+									document.getElementById("idLabelImportedUnitsTable").innerHTML = numeral(importedUnits).format('00.00');
+									document.getElementById("idLabelExportedUnitsTable").innerHTML = numeral(exportedUnits).format('00.00');
 									new Chart("myChart",
 									{
 										type: "line",
@@ -173,11 +174,17 @@
 												data: dataPointsNetEnvoy,
 												borderColor: "black",
 												fill: true  
+											},
+											{
+												label:"Delta Units (Meter & Enphase) (kWh)",
+												data: dataPointsDelta,
+												borderColor: "gray",
+												fill: true  
 											}  
 											
 											]},
 											options: { legend: {display: true},
-											plugins: { title: {  text: monthName, display: true}}
+											plugins: { title: {  text: reportHeader, display: true}}
 										}
 										
 									});
@@ -229,13 +236,22 @@
 					<label for="to-date">To Date:</label>
 					<input type="date" class="form-control" id="idToDate" name="nameToDate" onChange="pullData()">
 					<script>$('#idToDate').val(new Date().toJSON().slice(0,10));</script>
-				</div>        	
-				<br></br>
+				</div> 
+				<!--
+				<div class="form-group">
+				<center><input type="button" name="btnReport" class="btn btn-primary" value="Generate Report" id="btnReport" /> </center>
+                </div>
+                !-->      	
+				<br>
 			</form>
 		</div>
 		
 		<div class="form-group">
 			<center><label for="labelReportPeriod" id="idLabelReportPeriod" name="nameLabelReportPeriod"></label></center>
+		</div>
+
+		<div style="margin: auto;width: 100%;">
+			<canvas id="myChart" style="width:100%;max-width:1000px"></canvas>
 		</div>
 
 		<div class="form-group">
@@ -311,15 +327,8 @@
 	<script>
 	$(document).ready(function()
 	{
-		$('input[type=radio][name=nameReport]').change(function()
-		{
-			pullData();
-		});
-		
-		$('input[type=radio][name=nameReportOrder]').change(function()
-		{
-			pullData();
-		});
+		$("#tableStats").hide();
+		$("#myChart").hide();
 		$('input[type=date][name=nameFromDate]').change(function()
 		{
 			pullData();
@@ -333,13 +342,7 @@
 	});
 	</script>
 	
-	<div class="form-group">
-	<center><label for="labelMMMYYYY" id="idLabelMMMYYYY" name="nameLabelMMMYYYY"></label></center>
-	</div>
-	
-	<div style="margin: auto;width: 100%;"></div>
-	<canvas id="myChart" style="width:100%;max-width:1000px"></canvas>
-	</div>
+
 	
 	</body>
 	<footer>

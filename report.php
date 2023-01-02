@@ -89,6 +89,8 @@
 <script>
 	function pullData()
 	{
+		if (new Date($('#idFromDate').val()).getFullYear() < 2020 || new Date($('#idToDate').val()).getFullYear() < 2020 )
+			return;
 		$("#idResultTable").innerHTML = "";
 		$("#idResultTable").hide();
 		var reportOrder = "DESC";
@@ -106,7 +108,7 @@
 		var scriptVersion = "1.0";
 		var fromDate = $('#idFromDate').val();
     	var toDate = $('#idToDate').val();
-		if (fromDate > toDate)
+		if (fromDate > toDate )
 		{
 			alert("From-Date should be prior to To-Date");
 		}
@@ -165,11 +167,13 @@ $(document).ready(function()
     });
 	$('input[type=date][name=nameFromDate]').change(function()
     {
-		pullData();
+		if (new Date($('#idFromDate').val()).getFullYear() > 1970)
+			pullData();
     });
 
 	$('input[type=radio][name=nameToDate]').change(function()
     {	
+		if (new Date($('#idToDate').val()).getFullYear() > 1970)
 		pullData();
     });
 
