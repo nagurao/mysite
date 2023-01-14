@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    </head>
+    <body>
+        <table>
+            <tr>
+                <td>Production</td>
+                <td></td>
+                <td>kW</td>
+            </tr>
+        </table>
+    </body>
+    <footer>
+        <label>&copy; Nagu </label>
+    </footer>    
+</html>
