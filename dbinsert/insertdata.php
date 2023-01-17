@@ -292,4 +292,48 @@ function insertBillDetails($billDate,$billImport, $billExport,$billImpUnits, $bi
        commitNow(__FUNCTION__);
     }
 }
+
+
+function insertLocalEnvoyData()
+{
+    global $insertEnvoyLocalStmt;
+    global $envoyLocalDateTime;
+    global $envoyLocalProduction;
+    global $envoyLocalConsumption;
+    global $envoyLocalNet;
+    global $envoyLocalProductionDay;
+    global $envoyLocalConsumptionDay;
+
+    global $traceMessage;
+    $traceMessage = $traceMessage."->".__FUNCTION__;
+
+    $envoyURL = "http://envoy.local/production.json";
+    $envoyData = json_decode(file_get_contents($envoyURL));
+    $envoyLocalDateTime = $envoyData->consumption[0]->readingTime;
+    $envoyLocalProductionRaw = $envoyData->production[1]->wNow;
+    $envoyLocalProduction = round($envoyData->production[1]->wNow,2);
+    $envoyLocalConsumptionRaw = $envoyData->consumption[0]->wNow;
+    $envoyLocalConsumption = round($envoyData->consumption[0]->wNow,2);
+    $envoyLocalNetRaw = $envoyData->consumption[1]->wNow;
+    $envoyLocalNet = round($envoyData->consumption[1]->wNow,2);
+    $envoyLocalProductionDayRaw = $envoyData->production[1]->whToday;
+    $envoyLocalProductionDay = round($envoyData->production[1]->whToday/1000,2);
+    $envoyLocalConsumptionDayRaw = $envoyData->consumption[0]->whToday;
+    $envoyLocalConsumptionDay = round($envoyData->consumption[0]->whToday/1000,2);
+
+    if($insertEnvoyLocalStmt->bind_param("sssssssssss",$envoyLocalDateTime,$envoyLocalConsumptionRaw , $envoyLocalConsumption, $envoyLocalProductionRaw,$envoyLocalProduction, $envoyLocalNetRaw,$envoyLocalNet, $envoyLocalProductionDayRaw, $envoyLocalProductionDay, $envoyLocalConsumptionDayRaw, $envoyLocalConsumptionDay ));
+    {
+        $insertEnvoyLocalStmt->execute();
+        $result = $insertEnvoyLocalStmt->get_result();
+        commitNow(__FUNCTION__);
+    }
+
+    /*
+    echo ("Current Consumption is ".round($envoyData->consumption[0]->wNow,2)."W");
+echo ("Net Consumption is ".round($envoyData->consumption[1]->wNow,2)."W");
+echo ("Current Production is ".(round($envoyData->production[1]->wNow/1000,2))."kWh");
+echo ("Consumed ".(round($envoyData->consumption[0]->whToday/1000,2))."kWh");
+echo ("Produced ".(round($envoyData->production[1]->whToday/1000,2))."kWh");
+    */
+}
 ?>

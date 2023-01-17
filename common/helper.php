@@ -137,6 +137,8 @@ function fillResponseArray()
     $responseArray["3"] = "Net Meter Data Reterived successfully.";
     $responseArray["4"] = "No Net Meter Data available.";
     $responseArray["5"] = "Envoy Reading Data Inserted successfully.";
+    $responseArray["6"] = "Envoy (Local) Reading Data Inserted successfully.";
+    $responseArray["7"] = "Envoy (Local) Reading Data Reterived successfully.";
     $responseArray["-1"] = "Error inserting Net Meter details.";
     $responseArray["-2"] = "Error updating Net Meter details.";
     $responseArray["-97"] = "Database Auto Commit Issue.".

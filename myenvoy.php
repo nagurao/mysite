@@ -9,4 +9,11 @@ echo ("Current Production is ".(round($envoyData->production[1]->wNow/1000,2))."
 echo ("Consumed ".(round($envoyData->consumption[0]->whToday/1000,2))."kWh");
 echo ("Produced ".(round($envoyData->production[1]->whToday/1000,2))."kWh");
 
+$epoch = 1673957392;
+$dt = new DateTime(date('r', $epoch));
+echo $dt->format("dMY H:i");
+
+//1673974101
+
+
 ?>

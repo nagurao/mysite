@@ -253,4 +253,25 @@ function prepareReport()
     $echoResponse["trace"] = "";
     $resultData = "";
 }
+
+function fetchEnvoyLocalData()
+{
+    global $lastEnvoyLocalSelStmt;
+    global $responseArray;
+    global $echoResponse;
+    $lastEnvoyLocalSelStmt->execute();
+    $result = $lastEnvoyLocalSelStmt->get_result();
+    while ($row = $result->fetch_assoc())
+    {
+        $envoyLocalDateTimeFormatted = new DateTime(date('r', $row["EnvoyLocalReadingTime"]));
+        $envoyLocalDateTime = $envoyLocalDateTimeFormatted->format("dMY H:i");
+        $echoResponse["envoyLocalReadingDateTime"] = $envoyLocalDateTime;
+        $echoResponse["envoyLocalProduction"] = sprintf("%07.2f",$row["EnvoyLocalProd"]);
+        $echoResponse["envoyLocalConsumption"] = sprintf("%07.2f",$row["EnvoyLocalCons"]);
+        $echoResponse["envoyLocalNet"] = sprintf("%07.2f",$row["EnvoyLocalNet"]);
+        $echoResponse["envoyLocalProductionDay"] = sprintf("%07.2f",$row["EnvoyLocalProdDay"]);
+        $echoResponse["envoyLocalConsumptionDay"] = sprintf("%07.2f",$row["EnvoyLocalConsDay"]); 
+        $echoResponse["message"] = $responseArray["7"]; 
+    }
+}
 ?>
