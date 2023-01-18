@@ -264,7 +264,7 @@ function fetchEnvoyLocalData()
     while ($row = $result->fetch_assoc())
     {
         $envoyLocalDateTimeFormatted = new DateTime(date('r', $row["EnvoyLocalReadingTime"]));
-        $envoyLocalDateTime = $envoyLocalDateTimeFormatted->format("dMY H:i");
+        $envoyLocalDateTime = strtoupper($envoyLocalDateTimeFormatted->format("dMY H:i"));
         $echoResponse["envoyLocalReadingDateTime"] = $envoyLocalDateTime;
         $echoResponse["envoyLocalProduction"] = sprintf("%07.2f",$row["EnvoyLocalProd"]);
         $echoResponse["envoyLocalConsumption"] = sprintf("%07.2f",$row["EnvoyLocalCons"]);
