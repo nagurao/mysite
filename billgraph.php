@@ -123,8 +123,10 @@
                                 ],
                             },
                             options: {
+                                responsive: true,
+                                interaction: { intersect: true, mode: "index", axis: "y" },
                                 legend: { display: true },
-                                //plugins: { title: {  text: monthName, display: true}}
+                                tooltips: { mode: "index", intersect: true },
                             },
                         });
                     },

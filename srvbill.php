@@ -49,6 +49,8 @@ else
     $prevBillDataStmt = $conn->prepare($prevBillDataQuery);
 
     $reportBillDataQuery = "SELECT BillDate, BillYYYYMM, BillImportReading, BillExportReading, BillImportedUnits, BillExportedUnits, BillCarryForward, MeterImportReading, MeterExportReading, MeterImportedUnits, MeterExportedUnits, MeterCarryForwardUnits FROM NetMeterBillData ORDER BY BillYYYYMM DESC";
+    $reportBillDataQueryAsc = "SELECT BillDate, BillYYYYMM, BillImportReading, BillExportReading, BillImportedUnits, BillExportedUnits, BillCarryForward, MeterImportReading, MeterExportReading, MeterImportedUnits, MeterExportedUnits, MeterCarryForwardUnits FROM NetMeterBillData ORDER BY BillYYYYMM";
+    
     $reportBillDataStmt = $conn->prepare($reportBillDataQuery);
 
     initialBillReadings();
@@ -92,6 +94,8 @@ else if($action == "GRAPH")
 {
     if (isset($_GET['maxReadings']))
         $maxReadings = testinput($_GET['maxReadings']);
+    
+    $reportBillDataStmt = $conn->prepare($reportBillDataQueryAsc);
     populateBillGraph();
 }
 else
