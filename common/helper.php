@@ -173,6 +173,7 @@ function populateBillTable()
     $resultData = $resultData."<th>Imp Units</th>";
     $resultData = $resultData."<th>Exp Units</th>";
     $resultData = $resultData."<th>Bill CF Units</th>";
+    $resultData = $resultData."<th>Bill Units Credited</th>";
     $resultData = $resultData."<th>Actual Imp</th>";
     $resultData = $resultData."<th>Actual Exp</th>";
     $resultData = $resultData."<th>Actual Imp Units</th>";
@@ -193,6 +194,7 @@ function populateBillTable()
         $resultData = $resultData."<td>".$row["BillImportedUnits"]."</td>";
         $resultData = $resultData."<td>".$row["BillExportedUnits"]."</td>";
         $resultData = $resultData."<td>".$row["BillCarryForward"]."</td>";
+        $resultData = $resultData."<td>".$row["BillUnitsCredited"]."</td>";
         $resultData = $resultData."<td>".$row["MeterImportReading"]."</td>";
         $resultData = $resultData."<td>".$row["MeterExportReading"]."</td>";
         $resultData = $resultData."<td>".$row["MeterImportedUnits"]."</td>";

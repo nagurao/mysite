@@ -193,7 +193,7 @@ function initialBillReadings()
     $billDateYYYYMM = "202208";
     $billImportReading = $billImpUnits = $meterImpReading = $meterImpUnits = 826.00;
     $billExportReading = $billExpUnits = $meterExpReading = $meterExpUnits = 136.00;
-    $billCFUnits = $meterCFUnits = 0.00;
+    $billCFUnits = $meterCFUnits = $billUnitsCredited = 0.00;
     if ($checkStmtByDate->bind_param("s", $billDateYYYYMM))
     {
         $checkStmtByDate->execute();
@@ -203,7 +203,8 @@ function initialBillReadings()
             $i=$i+1;   
         if ($i==0) 
         {
-            insertBillDetails($billDate,$billImportReading, $billExportReading,$billImpUnits, $billExpUnits,$billCFUnits,$meterImpReading, $meterExpReading, $meterImpUnits, $meterExpUnits, $meterCFUnits);
+            insertBillDetails($billDate,$billImportReading, $billExportReading,$billImpUnits, $billExpUnits,$billCFUnits,$billUnitsCredited,$meterImpReading, $meterExpReading, $meterImpUnits, $meterExpUnits, $meterCFUnits);
+            commitNow(__FUNCTION__);
         }
     }
 }
@@ -223,7 +224,7 @@ function insertBillData($billDate,$billImport,$billExport,$meterImport,$meterExp
     $currMeterImpReadings = $currMeterExpReadings = 0;
     $currBillImport = $currBillExport = $currBillCFUnits = 0;
     $currMeterImport = $currMeterExport = $currMeterCFUnits = 0;
-
+    $currBillUnitsCredited = 0;
 
     $currMM = date("m",strtotime($billDate));
     $currYYYYMM = date("Ym",strtotime($billDate));
@@ -260,6 +261,13 @@ function insertBillData($billDate,$billImport,$billExport,$meterImport,$meterExp
         }
     }
 
+    if ($currMM == 01 or $currMM == 07 )
+    {
+        $currBillUnitsCredited = $prevBillCFUnits;
+        $prevMeterCFUnits = $prevMeterCFUnits - $currBillUnitsCredited;
+        $prevBillCFUnits = 0;
+    }
+
     $currBillImpReadings = $billImport;
     $currBillExpReadings = $billExport;
     $currBillImport = $currBillImpReadings - $prevBillImpReadings;
@@ -272,20 +280,29 @@ function insertBillData($billDate,$billImport,$billExport,$meterImport,$meterExp
     $currMeterExport = $currMeterExpReadings - $prevMeterExpReadings;
     $currMeterCFUnits = $prevMeterCFUnits + $currMeterExport - $currMeterImport;
 
-    if($insertBillDataStmt->bind_param("ssssssssssss",$billDate, $currYYYYMM, $currBillImpReadings, $currBillExpReadings, $currBillImport, $currBillExport, $currBillCFUnits, $currMeterImpReadings, $currMeterExpReadings, $currMeterImport, $currMeterExport, $currMeterCFUnits ))
+    if($currYYYYMM == "202208")
+    {
+        $billDate = "2022-08-10";
+        $currYYYYMM = "202208";
+        $currBillImpReadings = $currBillImport = $currMeterImpReadings = $currMeterImport = 826.00;
+        $currBillExpReadings = $currBillExport = $currMeterExpReadings = $currMeterExport = 136.00;
+        $currBillCFUnits = $currMeterCFUnits = $currBillUnitsCredited = 0.00;
+    }
+
+    if($insertBillDataStmt->bind_param("sssssssssssss",$billDate, $currYYYYMM, $currBillImpReadings, $currBillExpReadings, $currBillImport, $currBillExport, $currBillCFUnits, $currBillUnitsCredited, $currMeterImpReadings, $currMeterExpReadings, $currMeterImport, $currMeterExport, $currMeterCFUnits ))
     {
         $insertBillDataStmt->execute();
         $result = $insertBillDataStmt->get_result();
         commitNow(__FUNCTION__);
     }
 }
-function insertBillDetails($billDate,$billImport, $billExport,$billImpUnits, $billExpUnits,$billCFUnits,$meterImport, $meterExport, $meterImpUnits, $meterExpUnits, $meterCFUnits)
+function insertBillDetails($billDate,$billImport, $billExport,$billImpUnits, $billExpUnits,$billCFUnits,$billUnitsCredited,$meterImport, $meterExport, $meterImpUnits, $meterExpUnits, $meterCFUnits)
 {
     global $traceMessage;
     $traceMessage = $traceMessage."->".__FUNCTION__;
     global $insertBillDataStmt;
     $billDateYYYYMM = date("Ym",strtotime($billDate));
-    if ($insertBillDataStmt->bind_param("ssssssssssss",$billDate,$billDateYYYYMM,$billImport, $billExport,$billImpUnits, $billExpUnits,$billCFUnits,$meterImport, $meterExport, $meterImpUnits, $meterExpUnits, $meterCFUnits))
+    if ($insertBillDataStmt->bind_param("sssssssssssss",$billDate,$billDateYYYYMM,$billImport, $billExport,$billImpUnits, $billExpUnits,$billCFUnits,$$billUnitsCredited,$meterImport, $meterExport, $meterImpUnits, $meterExpUnits, $meterCFUnits))
     {
        $insertBillDataStmt->execute();
        $result = $insertBillDataStmt->get_result();

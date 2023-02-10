@@ -39,23 +39,23 @@ else
 {
     $conn->autocommit(TRUE);
 
-    $insertBillDataQuery="INSERT INTO NetMeterBillData (BillDate, BillYYYYMM, BillImportReading, BillExportReading, BillImportedUnits, BillExportedUnits, BillCarryForward, MeterImportReading, MeterExportReading, MeterImportedUnits, MeterExportedUnits, MeterCarryForwardUnits) VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $insertBillDataQuery="INSERT INTO NetMeterBillData (BillDate, BillYYYYMM, BillImportReading, BillExportReading, BillImportedUnits, BillExportedUnits, BillCarryForward, BillUnitsCredited,MeterImportReading, MeterExportReading, MeterImportedUnits, MeterExportedUnits, MeterCarryForwardUnits) VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $insertBillDataStmt = $conn->prepare($insertBillDataQuery);
 
     $checkQuery = "SELECT BillYYYYMM FROM NetMeterBillData WHERE BillYYYYMM=?";
     $checkStmtByDate = $conn->prepare($checkQuery);
 
-    $prevBillDataQuery = "SELECT BillDate, BillYYYYMM, BillImportReading, BillExportReading, BillImportedUnits, BillExportedUnits, BillCarryForward, MeterImportReading, MeterExportReading, MeterImportedUnits, MeterExportedUnits, MeterCarryForwardUnits FROM NetMeterBillData WHERE BillYYYYMM <= ? ORDER BY BillYYYYMM DESC LIMIT 0,1";
+    $prevBillDataQuery = "SELECT BillDate, BillYYYYMM, BillImportReading, BillExportReading, BillImportedUnits, BillExportedUnits, BillCarryForward, BillUnitsCredited,MeterImportReading, MeterExportReading, MeterImportedUnits, MeterExportedUnits, MeterCarryForwardUnits FROM NetMeterBillData WHERE BillYYYYMM <= ? ORDER BY BillYYYYMM DESC LIMIT 0,1";
     $prevBillDataStmt = $conn->prepare($prevBillDataQuery);
 
-    $reportBillDataQuery = "SELECT BillDate, BillYYYYMM, BillImportReading, BillExportReading, BillImportedUnits, BillExportedUnits, BillCarryForward, MeterImportReading, MeterExportReading, MeterImportedUnits, MeterExportedUnits, MeterCarryForwardUnits FROM NetMeterBillData ORDER BY BillYYYYMM DESC";
-    $reportBillDataQueryAsc = "SELECT BillDate, BillYYYYMM, BillImportReading, BillExportReading, BillImportedUnits, BillExportedUnits, BillCarryForward, MeterImportReading, MeterExportReading, MeterImportedUnits, MeterExportedUnits, MeterCarryForwardUnits FROM NetMeterBillData ORDER BY BillYYYYMM";
+    $reportBillDataQuery = "SELECT BillDate, BillYYYYMM, BillImportReading, BillExportReading, BillImportedUnits, BillExportedUnits, BillCarryForward, BillUnitsCredited, MeterImportReading, MeterExportReading, MeterImportedUnits, MeterExportedUnits, MeterCarryForwardUnits FROM NetMeterBillData ORDER BY BillYYYYMM DESC";
+    $reportBillDataQueryAsc = "SELECT BillDate, BillYYYYMM, BillImportReading, BillExportReading, BillImportedUnits, BillExportedUnits, BillCarryForward, BillUnitsCredited, MeterImportReading, MeterExportReading, MeterImportedUnits, MeterExportedUnits, MeterCarryForwardUnits FROM NetMeterBillData ORDER BY BillYYYYMM";
     
     $reportBillDataStmt = $conn->prepare($reportBillDataQuery);
 
-    initialBillReadings();
     $echoResponse["trace"] = "";
     $echoResponse["resultData"] = "";
+    //initialBillReadings();
 }
 
 if (isset($_POST['action']))
