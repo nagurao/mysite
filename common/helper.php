@@ -56,6 +56,7 @@ function populateResponseTable($readingDate)
     $traceMessage = $traceMessage."->".__FUNCTION__.$readingDate;
     global $conn;
     global $resultData;
+    global $whatsappMessage;
     $netReadingSelectQuery ="SELECT NetReadingDate, NetImportUnits, NetExportUnits, NetUnitsPerDay, NetImportYTDUnits ,NetExportYTDUnits ,NetYTDUnits FROM NetReadings WHERE NetReadingDate>=?";
     $netReadingSelectStmt = $conn->prepare($netReadingSelectQuery);
 
@@ -86,6 +87,18 @@ function populateResponseTable($readingDate)
             $resultData = $resultData."<td>".$row["NetYTDUnits"]."</td>";
             $resultData = $resultData."</tr>";
         }
+        array_push($whatsappMessage,"Reading Date : ");
+        array_push($whatsappMessage,dateinDDMMMYYY($row["NetReadingDate"]));
+        array_push($whatsappMessage,"\n");
+        array_push($whatsappMessage,"Imported Units : ");
+        array_push($whatsappMessage,$row["NetImportUnits"]);
+        array_push($whatsappMessage," kWh\n");
+        array_push($whatsappMessage,"Exported Units : ");
+        array_push($whatsappMessage,$row["NetExportUnits"]);
+        array_push($whatsappMessage," kWh\n"); 
+        array_push($whatsappMessage,"Net Units : ");
+        array_push($whatsappMessage,$row["NetUnitsPerDay"]);
+        array_push($whatsappMessage," kWh");               
     }
 
     $resultData = $resultData."</table>";
@@ -291,4 +304,21 @@ function getDataFromEnphase($envoyReadingDate,$url,$key)
         $returnValue = $response[$key][0];
     return $returnValue;
 }
+
+function sendWhatsAppMessage($message)
+{
+    global $traceMessage;
+    $traceMessage = $traceMessage."->".__FUNCTION__;
+    global $callmebotPhone;
+    global $callmebotAPI;
+    global $callmebotURL;
+    $finalMessage = "";
+    foreach($message as $word)
+        $finalMessage = $finalMessage.$word;
+
+    $postMessage = $callmebotURL.urlencode($finalMessage);
+    echo $postMessage;
+    //$url='https://api.callmebot.com/whatsapp.php?source=php&phone='.$phone.'&text='.urlencode($message).'&apikey='.$apikey;
+    $html=file_get_contents($postMessage);
+}    
 ?>

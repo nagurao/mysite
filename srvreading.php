@@ -14,6 +14,7 @@ $responseArray = array();
 fillResponseArray();
 $debugMessage = "";
 $fatalFlag = false;
+$whatsappMessage = "";
 
 $scriptVersion = testinput($_POST['scriptVersion']);
 //$scriptVersion = "2.0";
@@ -157,11 +158,10 @@ else
 }
 
 populateResponseTable($readingDate);
-
 closeConnection();
 $echoResponse["trace"] = $traceMessage;
 $echoResponse["resultData"] = $resultData;
 $echoResponse["debugMessage"] = $debugMessage;
 echo json_encode($echoResponse);
-
+sendWhatsAppMessage($whatsappMessage);
 ?>
