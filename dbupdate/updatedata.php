@@ -61,12 +61,16 @@ function updateImpactedReadingData($readingDate,$importReading,$exportReading)
                 }
             }
             
-            if (($currImportValue > $prevImportValue) && ($currExportValue > $prevExportValue))
+            if (($currImportValue >= $prevImportValue) && ($currExportValue >= $prevExportValue))
                 break;
             else
                 updateReadingData ($nextDate,$importReading,$exportReading);
             $nextDate = date("Y-m-d",(strtotime($nextDate) + 86400));
+            //if (strtotime($nextDate) >= strtotime(date("Y-m-d")))
+            //  break;
         }
+        else
+            break;
     }
 }
 

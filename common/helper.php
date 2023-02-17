@@ -56,8 +56,6 @@ function populateResponseTable($readingDate)
     $traceMessage = $traceMessage."->".__FUNCTION__.$readingDate;
     global $conn;
     global $resultData;
-    global $whatsappMessage;
-    global $telegramMessage;
     $netReadingSelectQuery ="SELECT NetReadingDate, NetImportUnits, NetExportUnits, NetUnitsPerDay, NetImportYTDUnits ,NetExportYTDUnits ,NetYTDUnits FROM NetReadings WHERE NetReadingDate>=?";
     $netReadingSelectStmt = $conn->prepare($netReadingSelectQuery);
 
@@ -88,6 +86,7 @@ function populateResponseTable($readingDate)
             $resultData = $resultData."<td>".$row["NetYTDUnits"]."</td>";
             $resultData = $resultData."</tr>";
         }
+        /*
         array_push($whatsappMessage,"Reading Date : ");
         array_push($whatsappMessage,dateinDDMMMYYY($row["NetReadingDate"]));
         array_push($whatsappMessage,"\n");
@@ -100,13 +99,13 @@ function populateResponseTable($readingDate)
         array_push($whatsappMessage,"Net Units : ");
         array_push($whatsappMessage,$row["NetUnitsPerDay"]);
         array_push($whatsappMessage," kWh"); 
-        
+        */
         $telegramMessage = "Reading Date : ".dateinDDMMMYYY($row["NetReadingDate"]).PHP_EOL.
         "Imported Units : ".$row["NetImportUnits"]." kWh".PHP_EOL.
         "Exported Units : ".$row["NetExportUnits"]." kWh".PHP_EOL.
         "Net Units : ".$row["NetUnitsPerDay"]." kWh".PHP_EOL;
+        
     }
-
     $resultData = $resultData."</table>";
 }
 
@@ -325,7 +324,7 @@ function sendWhatsAppMessage($message)
     $postMessage = $callmebotURL.urlencode($finalMessage);
     //$url='https://api.callmebot.com/whatsapp.php?source=php&phone='.$phone.'&text='.urlencode($message).'&apikey='.$apikey;
     //$html=file_get_contents($postMessage);
-    $echoResponse["messageWhatsApp"] = file_get_contents($postMessage);
+    $response = file_get_contents($postMessage);
 }
 
 function sendTelegramMessage($message)
@@ -336,7 +335,6 @@ function sendTelegramMessage($message)
     $telegram = array();
     $telegram["chat_id"] = $telegramChatId;
     $telegram["text"] = $message;
-    $echoResponse["messageTelegram"] = file_get_contents("https://api.telegram.org/bot$apiToken/sendMessage?" .
-                               http_build_query($telegram) );   
+    $response = file_get_contents($telegramURL.http_build_query($telegram) );   
 }
 ?>
