@@ -14,8 +14,8 @@ $responseArray = array();
 fillResponseArray();
 $debugMessage = "";
 $fatalFlag = false;
-$whatsappMessage = "";
-
+$whatsappMessage = array();
+$telegramMessage = "";
 $scriptVersion = testinput($_POST['scriptVersion']);
 //$scriptVersion = "2.0";
 $echoResponse["version"] = $scriptVersion;
@@ -162,6 +162,7 @@ closeConnection();
 $echoResponse["trace"] = $traceMessage;
 $echoResponse["resultData"] = $resultData;
 $echoResponse["debugMessage"] = $debugMessage;
-echo json_encode($echoResponse);
 sendWhatsAppMessage($whatsappMessage);
+sendTelegramMessage($telegramMessage);
+echo json_encode($echoResponse);
 ?>

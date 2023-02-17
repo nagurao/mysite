@@ -104,7 +104,11 @@ if($source != "SCRIPT")
     $echoResponse["resultData"] = $resultData;
     $echoResponse["debugMessage"] = $debugMessage;
 }
-
+global $telegramMessage;
+$telegramMessage = "Envoy Reading Date : ".$echoResponse["envoyReadingDate"].PHP_EOL.
+"Envoy Produced Units : ".$echoResponse["envoyProduction"]." kWh".PHP_EOL.
+"Envoy Consumed Units : ".$echoResponse["envoyConsumption"]." kWh".PHP_EOL;
+sendTelegramMessage($telegramMessage);
 echo json_encode($echoResponse);
 closeConnection();
 ?>

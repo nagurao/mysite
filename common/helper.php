@@ -57,6 +57,7 @@ function populateResponseTable($readingDate)
     global $conn;
     global $resultData;
     global $whatsappMessage;
+    global $telegramMessage;
     $netReadingSelectQuery ="SELECT NetReadingDate, NetImportUnits, NetExportUnits, NetUnitsPerDay, NetImportYTDUnits ,NetExportYTDUnits ,NetYTDUnits FROM NetReadings WHERE NetReadingDate>=?";
     $netReadingSelectStmt = $conn->prepare($netReadingSelectQuery);
 
@@ -98,7 +99,12 @@ function populateResponseTable($readingDate)
         array_push($whatsappMessage," kWh\n"); 
         array_push($whatsappMessage,"Net Units : ");
         array_push($whatsappMessage,$row["NetUnitsPerDay"]);
-        array_push($whatsappMessage," kWh");               
+        array_push($whatsappMessage," kWh"); 
+        
+        $telegramMessage = "Reading Date : ".dateinDDMMMYYY($row["NetReadingDate"]).PHP_EOL.
+        "Imported Units : ".$row["NetImportUnits"]." kWh".PHP_EOL.
+        "Exported Units : ".$row["NetExportUnits"]." kWh".PHP_EOL.
+        "Net Units : ".$row["NetUnitsPerDay"]." kWh".PHP_EOL;
     }
 
     $resultData = $resultData."</table>";
@@ -317,8 +323,20 @@ function sendWhatsAppMessage($message)
         $finalMessage = $finalMessage.$word;
 
     $postMessage = $callmebotURL.urlencode($finalMessage);
-    echo $postMessage;
     //$url='https://api.callmebot.com/whatsapp.php?source=php&phone='.$phone.'&text='.urlencode($message).'&apikey='.$apikey;
-    $html=file_get_contents($postMessage);
-}    
+    //$html=file_get_contents($postMessage);
+    $echoResponse["messageWhatsApp"] = file_get_contents($postMessage);
+}
+
+function sendTelegramMessage($message)
+{
+    global $traceMessage;
+    $traceMessage = $traceMessage."->".__FUNCTION__;
+    global $telegramChatId;
+    $telegram = array();
+    $telegram["chat_id"] = $telegramChatId;
+    $telegram["text"] = $message;
+    $echoResponse["messageTelegram"] = file_get_contents("https://api.telegram.org/bot$apiToken/sendMessage?" .
+                               http_build_query($telegram) );   
+}
 ?>
