@@ -56,6 +56,8 @@ function populateResponseTable($readingDate)
     $traceMessage = $traceMessage."->".__FUNCTION__.$readingDate;
     global $conn;
     global $resultData;
+    global $telegramMessage;
+    global $whatsappMessage;
     $netReadingSelectQuery ="SELECT NetReadingDate, NetImportUnits, NetExportUnits, NetUnitsPerDay, NetImportYTDUnits ,NetExportYTDUnits ,NetYTDUnits FROM NetReadings WHERE NetReadingDate>=?";
     $netReadingSelectStmt = $conn->prepare($netReadingSelectQuery);
 
@@ -85,6 +87,11 @@ function populateResponseTable($readingDate)
             $resultData = $resultData."<td>".$row["NetExportYTDUnits"]."</td>";
             $resultData = $resultData."<td>".$row["NetYTDUnits"]."</td>";
             $resultData = $resultData."</tr>";
+            $telegramMessage = "";
+            $telegramMessage = "Reading Date : ".dateinDDMMMYYY($row["NetReadingDate"]).PHP_EOL.
+                               "Imported Units : ".$row["NetImportUnits"]." kWh".PHP_EOL.
+                               "Exported Units : ".$row["NetExportUnits"]." kWh".PHP_EOL.
+                               "Net Units : ".$row["NetUnitsPerDay"]." kWh".PHP_EOL;
         }
         /*
         array_push($whatsappMessage,"Reading Date : ");
@@ -100,10 +107,6 @@ function populateResponseTable($readingDate)
         array_push($whatsappMessage,$row["NetUnitsPerDay"]);
         array_push($whatsappMessage," kWh"); 
         */
-        $telegramMessage = "Reading Date : ".dateinDDMMMYYY($row["NetReadingDate"]).PHP_EOL.
-        "Imported Units : ".$row["NetImportUnits"]." kWh".PHP_EOL.
-        "Exported Units : ".$row["NetExportUnits"]." kWh".PHP_EOL.
-        "Net Units : ".$row["NetUnitsPerDay"]." kWh".PHP_EOL;
         
     }
     $resultData = $resultData."</table>";
@@ -331,6 +334,7 @@ function sendTelegramMessage($message)
 {
     global $traceMessage;
     $traceMessage = $traceMessage."->".__FUNCTION__;
+    global $telegramURL;
     global $telegramChatId;
     $telegram = array();
     $telegram["chat_id"] = $telegramChatId;

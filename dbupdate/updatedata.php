@@ -61,7 +61,7 @@ function updateImpactedReadingData($readingDate,$importReading,$exportReading)
                 }
             }
             
-            if (($currImportValue >= $prevImportValue) && ($currExportValue >= $prevExportValue))
+            if (($currImportValue > $prevImportValue) && ($currExportValue > $prevExportValue))
                 break;
             else
                 updateReadingData ($nextDate,$importReading,$exportReading);

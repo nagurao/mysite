@@ -162,7 +162,7 @@ closeConnection();
 $echoResponse["trace"] = $traceMessage;
 $echoResponse["resultData"] = $resultData;
 $echoResponse["debugMessage"] = $debugMessage;
-echo json_encode($echoResponse);
 //sendWhatsAppMessage($whatsappMessage);
 sendTelegramMessage($telegramMessage);
+echo json_encode($echoResponse);
 ?>
