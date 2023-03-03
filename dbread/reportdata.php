@@ -256,6 +256,8 @@ function prepareReport()
 
 function fetchEnvoyLocalData()
 {
+    global $traceMessage;
+    $traceMessage = $traceMessage."->".__FUNCTION__;
     global $lastEnvoyLocalSelStmt;
     global $responseArray;
     global $echoResponse;
@@ -274,4 +276,56 @@ function fetchEnvoyLocalData()
         $echoResponse["message"] = $responseArray["7"]; 
     }
 }
+
+function fetchEnvoyHourlyData()
+{
+    global $traceMessage;
+    $traceMessage = $traceMessage."->".__FUNCTION__;
+    global $lastEnvoyHourlySelStmt;
+    global $responseArray;
+    global $echoResponse;
+
+    global $envoyDateEpoch;
+    global $envoyProductionPrevHour;
+    global $envoyConsumptionPrevHour;
+    global $envoyProductionCurrHour;
+    global $envoyConsumptionCurrHour;
+    global $envoyProductionDay;
+    global $envoyConsumptionDay;
+
+    $envoyDateEpoch = 0;
+    $envoyProductionPrevHour = 0;
+    $envoyConsumptionPrevHour = 0;
+    $envoyProductionCurrHour = 0;
+    $envoyConsumptionCurrHour = 0;
+    $envoyProductionDay = 0;
+    $envoyConsumptionDay = 0;
+
+    $lastEnvoyHourlySelStmt->execute();
+    $result = $lastEnvoyHourlySelStmt->get_result();
+    if (mysqli_num_rows($result) == 0)
+        return;
+    
+    while ($row = $result->fetch_assoc())
+    {
+        if ($action == "INS" && hhFromEpoch($row["EnvoyReadingTimeEpoch"]) == "00")
+        {
+            $envoyProductionPrevHour = 0;
+            $envoyConsumptionPrevHour = 0;
+            return;
+        }
+        $envoyDateEpoch = $row["EnvoyReadingTimeEpoch"];
+        $envoyProductionPrevHour = $row["EnvoyProdHour"];
+        $envoyConsumptionPrevHour = $row["EnvoyConsHour"];
+        $envoyProductionDay = $row["EnvoyLocalProdDay"];
+        $envoyConsumptionDay = $row["EnvoyLocalConsDay"];
+        /*$echoResponse["envoyprevHourProd"] = sprintf("%05.2f",$row["EnvoyProdHour"]);
+        $echoResponse["envoyprevHourCons"] = sprintf("%05.2f",$row["EnvoyConsHour"]);
+        $echoResponse["envoyLocalProductionDay"] = sprintf("%07.2f",$row["EnvoyLocalProdDay"]);
+        $echoResponse["envoyLocalConsumptionDay"] = sprintf("%07.2f",$row["EnvoyLocalConsDay"]); 
+        $echoResponse["message"] = $responseArray["9"];
+        $echoResponse["result"] = "OK";  */
+    }
+}
+
 ?>

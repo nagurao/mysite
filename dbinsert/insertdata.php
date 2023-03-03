@@ -353,4 +353,38 @@ echo ("Consumed ".(round($envoyData->consumption[0]->whToday/1000,2))."kWh");
 echo ("Produced ".(round($envoyData->production[1]->whToday/1000,2))."kWh");
     */
 }
+
+function insertLocalEnvoyHourlyData($envoyProductionPrevHour,$envoyConsumptionPrevHour)
+{
+    global $insertEnvoyHourlyStmt;
+    global $currEnvoyHourlySelStmt;
+    global $prevEnvoyHourlySelStmt;
+
+    global $envoyDateEpoch;
+    global $envoyProductionPrevHour;
+    global $envoyConsumptionPrevHour;
+    global $envoyProductionCurrHour;
+    global $envoyConsumptionCurrHour;
+    global $envoyProductionDay;
+    global $envoyConsumptionDay;
+    
+    $envoyURL = "http://envoy.local/production.json";
+    $envoyData = json_decode(file_get_contents($envoyURL));
+    $envoyDateEpoch = $envoyData->consumption[0]->readingTime;
+    $envoyLocalProductionDay = round($envoyData->production[1]->whToday/1000,2);
+    $envoyLocalConsumptionDay = round($envoyData->consumption[0]->whToday/1000,2);
+
+    $envoyProductionCurrHour = $envoyLocalProductionDay;
+    $envoyConsumptionCurrHour = $envoyLocalConsumptionDay;
+
+    $envoyProductionPrevHour = $envoyProductionCurrHour - $envoyProductionPrevHour;
+    $envoyConsumptionPrevHour = $envoyConsumptionCurrHour - $envoyConsumptionPrevHour;
+
+    if($insertEnvoyHourlyStmt->bind_param("ssssss",$envoyDateEpoch,datetimeFromEpoch($envoyDateEpoch) , $envoyProductionPrevHour, $envoyConsumptionPrevHour,$envoyLocalProductionDay, $envoyLocalConsumptionDay ));
+    {
+        $insertEnvoyHourlyStmt->execute();
+        $result = $insertEnvoyHourlyStmt->get_result();
+        commitNow(__FUNCTION__);
+    }
+}
 ?>

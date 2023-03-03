@@ -17,12 +17,13 @@ $action = "INS";
 $src = "SCRIPT";
 $scriptVersion = "1.0";
 
-$envoyLocalDateTime = "";
-$envoyLocalProduction = 0;
-$envoyLocalConsumption = 0;
-$envoyLocalNet = 0;
-$envoyLocalProductionDay = 0;
-$envoyLocalConsumptionDay = 0;
+$envoyDateEpoch = 0;
+$envoyProductionPrevHour = 0;
+$envoyConsumptionPrevHour = 0;
+$envoyProductionCurrHour = 0;
+$envoyConsumptionCurrHour = 0;
+$envoyProductionDay = 0;
+$envoyConsumptionDay = 0;
 
 $echoResponse["version"] = $scriptVersion;
 if (isset($_GET['action']))
@@ -44,41 +45,44 @@ if ($conn->connect_error)
 else
 {
     $conn->autocommit(TRUE);
-    $insertEnvoyLocalQuery = "INSERT INTO EnvoyLocalReadings (EnvoyLocalReadingTime, EnvoyLocalConsRaw, EnvoyLocalCons, EnvoyLocalProdRaw, EnvoyLocalProd,EnvoyLocalNetRaw,EnvoyLocalNet,EnvoyLocalProdDayRaw,EnvoyLocalProdDay,EnvoyLocalConsDayRaw,EnvoyLocalConsDay) VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    $insertEnvoyLocalStmt = $conn->prepare($insertEnvoyLocalQuery);
-    $lastEnvoyLocalSelQuery = "SELECT EnvoyLocalReadingTime, EnvoyLocalCons, EnvoyLocalProd, EnvoyLocalNet, EnvoyLocalProdDay, EnvoyLocalConsDay  FROM EnvoyLocalReadings ORDER BY EnvoyLocalReadingTime DESC LIMIT 0,1";
-    $lastEnvoyLocalSelStmt = $conn->prepare($lastEnvoyLocalSelQuery);
+    $insertEnvoyHourlyQuery = "INSERT INTO EnvoyHourlyReadings (EnvoyReadingTimeEpoch, EnvoyReadingTime, EnvoyProdHour, EnvoyConsHour, EnvoyProdDay,EnvoyConsDay) VALUE (?, ?, ?, ?, ?, ?)";
+    $insertEnvoyHourlyStmt = $conn->prepare($insertEnvoyHourlyQuery);
+    $lastEnvoyHourlySelQuery = "SELECT EnvoyReadingTimeEpoch, EnvoyReadingTime, EnvoyProdHour, EnvoyConsHour, EnvoyProdDay,EnvoyConsDay,EnvoyReadingTimestamp  FROM EnvoyHourlyReadings ORDER BY EnvoyReadingTimeEpoch DESC LIMIT 0,1";
+    $lastEnvoyHourlySelStmt = $conn->prepare($lastEnvoyHourlySelQuery);
+    $prevEnvoyHourlySelQuery = "SELECT EnvoyReadingTimeEpoch, EnvoyReadingTime, EnvoyProdHour, EnvoyConsHour, EnvoyProdDay,EnvoyConsDay,EnvoyReadingTimestamp  FROM EnvoyHourlyReadings ORDER BY EnvoyReadingTimeEpoch DESC LIMIT 1,1";
+    $prevEnvoyHourlySelStmt = $conn->prepare($prevEnvoyHourlySelQuery);
     $echoResponse["trace"] = "";
     $echoResponse["resultData"] = "";
 }
 
-if($action == "INS")
-{
-
-    insertLocalEnvoyData();
-    $envoyLocalDateTimeFormatted = new DateTime(date('r', $envoyLocalDateTime));
-    $envoyLocalDateTime = $envoyLocalDateTimeFormatted->format("dMY H:i");
-    $echoResponse["envoyLocalReadingDateTime"] = $envoyLocalDateTime;
-    $echoResponse["envoyLocalProduction"] = sprintf("%07.2f",$envoyLocalProduction);
-    $echoResponse["envoyLocalConsumption"] = sprintf("%07.2f",$envoyLocalConsumption);
-    $echoResponse["envoyLocalNet"] = sprintf("%07.2f",$envoyLocalNet);
-    $echoResponse["envoyLocalProductionDay"] = sprintf("%07.2f",$envoyLocalProductionDay);
-    $echoResponse["envoyLocalConsumptionDay"] = sprintf("%07.2f",$envoyLocalConsumptionDay);
-    $echoResponse["result"] = "OK";
-    $echoResponse["message"] = $responseArray["6"];
-}
-elseif ($action == "REP")
-{
-    fetchEnvoyLocalData();
-    $echoResponse["result"] = "OK";  
-    $echoResponse["message"] = $responseArray["7"];  
-}
-else
+if($action != "INS" && $action != "REP")
 {
     $echoResponse["result"] = "FATAL";
     $echoResponse["message"] = $responseArray["-98"];
     echo json_encode($echoResponse);
     exit();
+}
+
+fetchEnvoyHourlyData();
+if ($envoyDateEpoch == 0 && $action == "REP")
+{
+    $echoResponse["result"] = "NoData";
+    $echoResponse["message"] = $responseArray["10"];
+}
+else
+{
+    if($action == "INS" && $src == "SCRIPT")
+        insertLocalEnvoyHourlyData($envoyProductionPrevHour,$envoyConsumptionPrevHour);
+    $echoResponse["envoyHourlyReadingDateTime"] = dMYHiFromEpoch($envoyDateEpoch);
+    $echoResponse["envoyProductionPrevHour"] = sprintf("%05.2f",$envoyProductionPrevHour);
+    $echoResponse["envoyConsumptionPrevHour"] = sprintf("%05.2f",$envoyConsumptionPrevHour);
+    $echoResponse["envoyProductionDay"] = sprintf("%07.2f",$envoyProductionDay);
+    $echoResponse["envoyConsumptionDay"] = sprintf("%07.2f",$envoyConsumptionDay);
+    $echoResponse["result"] = "OK";
+    if($action == "INS")
+        $echoResponse["message"] = $responseArray["8"];
+    else
+        $echoResponse["message"] = $responseArray["9"];
 }
 echo json_encode($echoResponse);
 closeConnection();

@@ -10,6 +10,21 @@ function dateinDDMMMYYY($dateToConvert)
     return date("d-M-Y",strtotime($dateToConvert));
 }
 
+function datetimeFromEpoch($epochTime)
+{
+    return date("Y-m-d H:i:s",@$epochTime);
+}
+
+function hhFromEpoch($epochTime)
+{
+    return date("H",@$epochTime);
+}
+
+function dMYHiFromEpoch($epochTime)
+{
+    return strtoupper(date("dMY H:i",@$epochTime));
+}
+
 function operationToPeform($readingDate)
 {
     global $traceMessage;
@@ -160,6 +175,9 @@ function fillResponseArray()
     $responseArray["5"] = "Envoy Reading Data Inserted successfully.";
     $responseArray["6"] = "Envoy (Local) Reading Data Inserted successfully.";
     $responseArray["7"] = "Envoy (Local) Reading Data Reterived successfully.";
+    $responseArray["8"] = "Envoy (Hourly) Reading Data Inserted successfully.";
+    $responseArray["9"] = "Envoy (Hourly) Reading Data Reterived successfully.";  
+    $responseArray["10"] = "No Envoy (Hourly) Reading Data available.";   
     $responseArray["-1"] = "Error inserting Net Meter details.";
     $responseArray["-2"] = "Error updating Net Meter details.";
     $responseArray["-97"] = "Database Auto Commit Issue.".
