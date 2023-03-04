@@ -20,10 +20,10 @@ $scriptVersion = "1.0";
 $envoyDateEpoch = 0;
 $envoyProductionPrevHour = 0;
 $envoyConsumptionPrevHour = 0;
-$envoyProductionCurrHour = 0;
-$envoyConsumptionCurrHour = 0;
 $envoyProductionDay = 0;
 $envoyConsumptionDay = 0;
+$envoyProductionDayPrevHour = 0;
+$envoyConsumptionDayPrevHour = 0;
 
 $echoResponse["version"] = $scriptVersion;
 if (isset($_GET['action']))
@@ -72,18 +72,28 @@ if ($envoyDateEpoch == 0 && $action == "REP")
 else
 {
     if($action == "INS" && $src == "SCRIPT")
-        insertLocalEnvoyHourlyData($envoyProductionPrevHour,$envoyConsumptionPrevHour);
+        insertLocalEnvoyHourlyData();
     $echoResponse["envoyHourlyReadingDateTime"] = dMYHiFromEpoch($envoyDateEpoch);
     $echoResponse["envoyProductionPrevHour"] = sprintf("%05.2f",$envoyProductionPrevHour);
     $echoResponse["envoyConsumptionPrevHour"] = sprintf("%05.2f",$envoyConsumptionPrevHour);
-    $echoResponse["envoyProductionDay"] = sprintf("%07.2f",$envoyProductionDay);
-    $echoResponse["envoyConsumptionDay"] = sprintf("%07.2f",$envoyConsumptionDay);
+    $echoResponse["envoyProductionDay"] = sprintf("%05.2f",$envoyProductionDayPrevHour);
+    $echoResponse["envoyConsumptionDay"] = sprintf("%05.2f",$envoyConsumptionDayPrevHour);
     $echoResponse["result"] = "OK";
     if($action == "INS")
         $echoResponse["message"] = $responseArray["8"];
     else
         $echoResponse["message"] = $responseArray["9"];
 }
+global $telegramHourlyBotAPIToken;
+$telegramMessage = "";
+$telegramMessage =  "Envoy Last Hour Stats".PHP_EOL.
+                    "Reading Date Time: ".dMYHiFromEpoch($envoyDateEpoch).PHP_EOL.
+                    "Prev. Hour Production : ".sprintf("%05.2f",$envoyProductionPrevHour)." kWh".PHP_EOL.
+                    "Prev. Hour Consumption : ".sprintf("%05.2f",$envoyConsumptionPrevHour)." kWh".PHP_EOL.
+                    "Today's Production : ".sprintf("%05.2f",$envoyProductionDayPrevHour)." kWh".PHP_EOL.
+                    "Today's Consumption : ".sprintf("%05.2f",$envoyConsumptionDayPrevHour)." kWh";
+sendTelegramMessageToBot($telegramHourlyBotAPIToken, $telegramMessage);
+$echoResponse["trace"] = $traceMessage;
 echo json_encode($echoResponse);
 closeConnection();
 ?>

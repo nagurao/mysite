@@ -284,22 +284,18 @@ function fetchEnvoyHourlyData()
     global $lastEnvoyHourlySelStmt;
     global $responseArray;
     global $echoResponse;
-
+    global $action;
     global $envoyDateEpoch;
     global $envoyProductionPrevHour;
     global $envoyConsumptionPrevHour;
-    global $envoyProductionCurrHour;
-    global $envoyConsumptionCurrHour;
-    global $envoyProductionDay;
-    global $envoyConsumptionDay;
+    global $envoyProductionDayPrevHour;
+    global $envoyConsumptionDayPrevHour;
 
     $envoyDateEpoch = 0;
     $envoyProductionPrevHour = 0;
     $envoyConsumptionPrevHour = 0;
-    $envoyProductionCurrHour = 0;
-    $envoyConsumptionCurrHour = 0;
-    $envoyProductionDay = 0;
-    $envoyConsumptionDay = 0;
+    $envoyProductionDayPrevHour = 0;
+    $envoyConsumptionDayPrevHour = 0;
 
     $lastEnvoyHourlySelStmt->execute();
     $result = $lastEnvoyHourlySelStmt->get_result();
@@ -310,15 +306,15 @@ function fetchEnvoyHourlyData()
     {
         if ($action == "INS" && hhFromEpoch($row["EnvoyReadingTimeEpoch"]) == "00")
         {
-            $envoyProductionPrevHour = 0;
-            $envoyConsumptionPrevHour = 0;
+            $envoyProductionDayPrevHour = 0;
+            $envoyConsumptionDayPrevHour = 0;
             return;
         }
         $envoyDateEpoch = $row["EnvoyReadingTimeEpoch"];
         $envoyProductionPrevHour = $row["EnvoyProdHour"];
         $envoyConsumptionPrevHour = $row["EnvoyConsHour"];
-        $envoyProductionDay = $row["EnvoyLocalProdDay"];
-        $envoyConsumptionDay = $row["EnvoyLocalConsDay"];
+        $envoyProductionDayPrevHour = $row["EnvoyProdDay"];
+        $envoyConsumptionDayPrevHour = $row["EnvoyConsDay"];
         /*$echoResponse["envoyprevHourProd"] = sprintf("%05.2f",$row["EnvoyProdHour"]);
         $echoResponse["envoyprevHourCons"] = sprintf("%05.2f",$row["EnvoyConsHour"]);
         $echoResponse["envoyLocalProductionDay"] = sprintf("%07.2f",$row["EnvoyLocalProdDay"]);

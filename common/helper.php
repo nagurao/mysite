@@ -359,4 +359,16 @@ function sendTelegramMessage($message)
     $telegram["text"] = $message;
     $response = file_get_contents($telegramURL.http_build_query($telegram) );   
 }
+
+function sendTelegramMessageToBot($apiToken,$message)
+{
+    global $traceMessage;
+    $traceMessage = $traceMessage."->".__FUNCTION__;
+    global $telegramChatId;
+    $telegramURL = "https://api.telegram.org/bot$apiToken/sendMessage?";
+    $telegram = array();
+    $telegram["chat_id"] = $telegramChatId;
+    $telegram["text"] = $message;
+    $response = file_get_contents($telegramURL.http_build_query($telegram) );   
+}
 ?>
