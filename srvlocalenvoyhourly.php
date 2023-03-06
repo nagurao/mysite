@@ -73,6 +73,8 @@ else
 {
     if($action == "INS" && $src == "SCRIPT")
         insertLocalEnvoyHourlyData();
+    
+    fetchEnvoyHourlyData();
     $echoResponse["envoyHourlyReadingDateTime"] = dMYHiFromEpoch($envoyDateEpoch);
     $echoResponse["envoyProductionPrevHour"] = sprintf("%05.2f",$envoyProductionPrevHour);
     $echoResponse["envoyConsumptionPrevHour"] = sprintf("%05.2f",$envoyConsumptionPrevHour);
@@ -86,8 +88,8 @@ else
 }
 global $telegramHourlyBotAPIToken;
 $telegramMessage = "";
-$telegramMessage =  "Envoy Last Hour Stats".PHP_EOL.
-                    "Reading Date Time: ".dMYHiFromEpoch($envoyDateEpoch).PHP_EOL.
+$telegramMessage =  "Envoy Last Hour Statistics".PHP_EOL.
+                    "Reading Date Time : ".dMYHiFromEpoch($envoyDateEpoch).PHP_EOL.
                     "Prev. Hour Production : ".sprintf("%05.2f",$envoyProductionPrevHour)." kWh".PHP_EOL.
                     "Prev. Hour Consumption : ".sprintf("%05.2f",$envoyConsumptionPrevHour)." kWh".PHP_EOL.
                     "Today's Production : ".sprintf("%05.2f",$envoyProductionDayPrevHour)." kWh".PHP_EOL.
