@@ -5,14 +5,39 @@ function globalPreparedStmts()
     $checkQuery = "SELECT ReadingDate, ReadingImport, ReadingExport FROM DailyReadings WHERE ReadingDate=?";
     //$checkStmtByDate = $conn->prepare($checkQuery);
 }
+
 function dateinDDMMMYYY($dateToConvert)
 {
     return date("d-M-Y",strtotime($dateToConvert));
+}
+function dateinDMY($dateToConvert)
+{
+    return strtoupper(date("dMY",strtotime($dateToConvert)));
+}
+
+function timeinHHMM($dateToConvert)
+{
+    return date("H:i",strtotime($dateToConvert));
+}
+
+function dateinDDMMMYYYFromEpoch($epochTime)
+{
+    return strtoupper(date("d-M-Y",@$epochTime));
+}
+
+function timeinHHMMSSFromEpoch($epochTime)
+{
+    return strtoupper(date("H:i:s",@$epochTime));
 }
 
 function datetimeFromEpoch($epochTime)
 {
     return date("Y-m-d H:i:s",@$epochTime);
+}
+
+function YYYYMMDDFromEpoch($epochTime)
+{
+    return date("Y-m-d",@$epochTime);
 }
 
 function hhFromEpoch($epochTime)
@@ -177,7 +202,15 @@ function fillResponseArray()
     $responseArray["7"] = "Envoy (Local) Reading Data Reterived successfully.";
     $responseArray["8"] = "Envoy (Hourly) Reading Data Inserted successfully.";
     $responseArray["9"] = "Envoy (Hourly) Reading Data Reterived successfully.";  
-    $responseArray["10"] = "No Envoy (Hourly) Reading Data available.";   
+    $responseArray["10"] = "No Envoy (Hourly) Reading Data available.";  
+    $responseArray["11"] = "Envoy Max Production Reading Data Inserted successfully.";
+    $responseArray["12"] = "Envoy Max Production Reading Data Reterived successfully.";  
+    $responseArray["13"] = "No Envoy Max Production Reading Data available."; 
+    $responseArray["14"] = "Current Production less than available Envoy Max Production.";   
+    $responseArray["15"] = "Envoy Max Consumption Reading Data Inserted successfully.";
+    $responseArray["16"] = "Envoy Max Consumption Reading Data Reterived successfully.";  
+    $responseArray["17"] = "No Envoy Max Consumption Reading Data available."; 
+    $responseArray["18"] = "Current Consumption less than available Envoy Max Consumption.";           
     $responseArray["-1"] = "Error inserting Net Meter details.";
     $responseArray["-2"] = "Error updating Net Meter details.";
     $responseArray["-97"] = "Database Auto Commit Issue.".
