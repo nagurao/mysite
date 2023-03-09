@@ -59,7 +59,7 @@ else
 $envoyDateEpoch = 0;
 $envoyDateYYYYMMDD = "";
 $envoyDateTime = "";
-$maxProd = 0;
+$maxProd = -5000;
 $maxProdTime = "";
 $envoyCurrProd = 0;
 
