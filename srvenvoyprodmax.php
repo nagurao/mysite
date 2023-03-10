@@ -72,6 +72,8 @@ if($action == "INS")
     $envoyDateYYYYMMDD = YYYYMMDDFromEpoch($envoyDateEpoch);
     $envoyCurrProd = round($envoyData->production[1]->wNow,2);
     $dateYYYYMMDD = $envoyDateYYYYMMDD;
+    if ($envoyDateEpoch == 0)
+        return;
 }
 
 if($maxProdTodayStmt->bind_param("s",$dateYYYYMMDD))
@@ -103,7 +105,7 @@ if ($action == "INS")
         $telegramMessage = "Max Solar Production Reported".PHP_EOL.
                            "Report Date & Time : ".dMYHiFromEpoch($envoyDateEpoch).PHP_EOL.
                            "Max Value : ".sprintf("%07.2f",$envoyCurrProd)." W";
-        sendTelegramMessageToBot($telegramMaxProdConsBotAPIToken, $telegramMessage);                           
+        //sendTelegramMessageToBot($telegramMaxProdConsBotAPIToken, $telegramMessage);                           
         $echoResponse["maxProdDate"] = dateinDDMMMYYYFromEpoch($envoyDateEpoch);
         $echoResponse["maxProdTime"] = timeinHHMMSSFromEpoch($envoyDateEpoch);
         $echoResponse["maxProdValue"] = sprintf("%07.2f",$envoyCurrProd)." W";

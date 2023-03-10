@@ -72,6 +72,8 @@ if($action == "INS")
     $envoyDateYYYYMMDD = YYYYMMDDFromEpoch($envoyDateEpoch);
     $envoyCurrCons = round($envoyData->consumption[0]->wNow,2);
     $dateYYYYMMDD = $envoyDateYYYYMMDD;
+    if ($envoyDateEpoch == 0)
+        return;    
 }
 
 if($maxConsTodayStmt->bind_param("s",$dateYYYYMMDD))
@@ -100,10 +102,10 @@ if ($action == "INS")
             commitNow(__FUNCTION__);
         }
         $telegramMessage = "";
-        $telegramMessage = "Max Solar Consumption Reported".PHP_EOL.
+        $telegramMessage = "Max Consumption Reported".PHP_EOL.
                            "Report Date & Time : ".dMYHiFromEpoch($envoyDateEpoch).PHP_EOL.
                            "Max Value : ".sprintf("%07.2f",$envoyCurrCons)." W";
-        sendTelegramMessageToBot($telegramMaxProdConsBotAPIToken, $telegramMessage);                           
+        //sendTelegramMessageToBot($telegramMaxProdConsBotAPIToken, $telegramMessage);                           
         $echoResponse["maxConsDate"] = dateinDDMMMYYYFromEpoch($envoyDateEpoch);
         $echoResponse["maxConsTime"] = timeinHHMMSSFromEpoch($envoyDateEpoch);
         $echoResponse["maxConsValue"] = sprintf("%07.2f",$envoyCurrCons)." W";
