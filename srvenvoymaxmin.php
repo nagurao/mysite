@@ -33,9 +33,6 @@ if (isset($_GET['date']))
 else
     $dateYYYYMMDD = "";
 
-if($action == "REP")
-    $src = "";
-
 $conn = new mysqli($servername, $username, $password, $dbname);
 // Check connection
 if ($conn->connect_error)
@@ -49,23 +46,8 @@ if ($conn->connect_error)
 else
 {
     $conn->autocommit(TRUE);
-    $maxProdQuery = "REPLACE INTO EnvoyDailyMaxMin (EnvoyMaxMinDate, ProductionMax, ProductionMaxTime) VALUES (?, ?, ?)";
-    $maxProdStmt = $conn->prepare($maxProdQuery);
-    $minProdQuery = "REPLACE INTO EnvoyDailyMaxMin (EnvoyMaxMinDate, ProductionMin, ProductionMinTime) VALUES (?, ?, ?)";
-    $minProdStmt = $conn->prepare($minProdQuery);
 
-    $maxminProdTodayQuery = "SELECT EnvoyMaxMinDate, ProductionMax, ProductionMaxTime, ProductionMin, ProductionMinTime FROM EnvoyDailyMaxMin WHERE EnvoyMaxMinDate = ?";
-    $maxminProdTodayStmt =  $conn->prepare($maxminProdTodayQuery);
-
-    $maxConsQuery = "REPLACE INTO EnvoyDailyMaxMin (EnvoyMaxMinDate, ConsumptionMax, ConsumptionMaxTime) VALUES (?, ?, ?)";
-    $maxConsStmt = $conn->prepare($maxConsQuery);
-    $minConsQuery = "REPLACE INTO EnvoyDailyMaxMin (EnvoyMaxMinDate, ConsumptionMin, ConsumptionMinTime) VALUES (?, ?, ?)";
-    $minConsStmt = $conn->prepare($maxConsQuery); 
-
-    $maxminConsTodayQuery = "SELECT EnvoyMaxMinDate, ConsumptionMax, ConsumptionMaxTime, ConsumptionMin, ConsumptionMinTime FROM EnvoyDailyMaxMin WHERE EnvoyMaxMinDate = ?";
-    $maxminConsTodayStmt =  $conn->prepare($maxminConsTodayQuery);
-
-    $maxminQuery = "SELECT EnvoyMaxMinDate, ProductionMax, ProductionMaxTime, ProductionMin, ProductionMinTime, ConsumptionMax, ConsumptionMaxTime, ConsumptionMin, ConsumptionMinTime FROM EnvoyDailyMaxMin WHERE EnvoyMaxMinDate = ?";
+    $maxminQuery = "SELECT EnvoyMaxMinDate, ProductionMax, ProductionMaxTime, ProductionMin, ProductionMinTime, ConsumptionMax, ConsumptionMaxTime, ConsumptionMin, ConsumptionMinTime, EnvoyMaxMinUpdateTimestamp FROM EnvoyDailyMaxMin WHERE EnvoyMaxMinDate = ?";
     $maxminStmt = $conn->prepare($maxminQuery);
 
     $maxminInsUpdQuery = "REPLACE INTO EnvoyDailyMaxMin (EnvoyMaxMinDate, ProductionMax, ProductionMaxTime, ProductionMin, ProductionMinTime, ConsumptionMax, ConsumptionMaxTime, ConsumptionMin, ConsumptionMinTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -79,32 +61,20 @@ $envoyDateEpoch = 0;
 $envoyDateYYYYMMDD = "";
 $envoyDateTime = "";
 
-$maxProd = 0;
-$maxProdTime = "";
-$minProd = 0;
-$minProdTime = "";
 $envoyCurrProd = 0;
-
-$maxCons = 0;
-$maxConsTime = "";
-$minCons = 0;
-$minConsTime = "";
 $envoyCurrCons = 0;
 
-
-//
-$currMaxProd = $currMinProd = $maxProd = $minProd = 0;
-$currMaxCons = $currMinCons = $maxCons = $minCons = 0;
+$currMaxProd = $currMinProd = 0;
+$currMaxCons = $currMinCons = 0;
 $currMaxProdTime = $currMinProdTime = "";
 $currMaxConsTime = $currMinConsTime = "";
+$lastUpdated = "";
 
 $updateMaxProdRecord = FALSE;
 $updateMinProdRecord = FALSE;
 $updateMaxConsRecord = FALSE;
 $updateMinConsRecord = FALSE;
-//
-$maxProdUpdated = $minProdUpdated = FALSE;
-$maxConsUpdated = $minConsUpdated = FALSE;
+
 if($action == "INS")
 {
     $envoyURL = "http://envoy.local/production.json";
@@ -119,6 +89,11 @@ if($action == "INS")
     if ($envoyDateEpoch == 0)
         return;
 }
+if ($action == "REP" && $dateYYYYMMDD == "")
+    $dateYYYYMMDD = YYYYMMDDFromEpoch(time());
+    
+if ($envoyDateYYYYMMDD == "")
+    $envoyDateYYYYMMDD = $dateYYYYMMDD;
 
 if($maxminStmt->bind_param("s",$dateYYYYMMDD))
 {
@@ -136,7 +111,8 @@ if($maxminStmt->bind_param("s",$dateYYYYMMDD))
             $currMaxCons = $row["ConsumptionMax"];
             $currMaxConsTime = $row["ConsumptionMaxTime"];
             $currMinCons = $row["ConsumptionMin"];
-            $currMinConsTime = $row["ConsumptionMinTime"];            
+            $currMinConsTime = $row["ConsumptionMinTime"];  
+            $lastUpdated = $row["EnvoyMaxMinUpdateTimestamp"];
         }
     }
     else
@@ -146,9 +122,23 @@ if($maxminStmt->bind_param("s",$dateYYYYMMDD))
         $currMaxCons = 0;
         $currMinCons = 9999.99;
         $currMaxProdTime = $currMinProdTime = $currMaxConsTime = $currMinConsTime = $envoyDateTime;
-
+        $rowCount = 0;
     }
 }
+if ($action != "INS" && $action != "REP")
+{
+    $echoResponse["result"] = "FATAL";
+    $echoResponse["message"] = $responseArray["-98"];  
+    $echoResponse["trace"] = $traceMessage;
+    echo json_encode($echoResponse);
+    closeConnection();  
+}
+
+$echoResponse["MaxProdMessage"] = "";
+$echoResponse["MinProdMessage"] = "";
+$echoResponse["MaxConsMessage"] = "";
+$echoResponse["MinConsMessage"] = "";
+
 if ($action == "INS")
 {
     if($envoyCurrProd >= $currMaxProd)
@@ -184,184 +174,71 @@ if ($action == "INS")
             $maxminInsUpdStmt->execute();
             $result = $maxProdStmt->get_result();
             commitNow(__FUNCTION__);
+            $echoResponse["message"] = $responseArray["27"];
         }
         
         if ($updateMaxProdRecord)
         {
-            $telegramMessage = $telegramMessage."Max Solar Production Reported At : ".YYYYMMDDFromEpoch($envoyDateEpoch).PHP_EOL."Max Value : ".sprintf("%07.2f",$currMaxProd)." W".PHP_EOL;
+            $telegramMessage = $telegramMessage."Max Solar Production Reported At : ".messageDateTimeFromEpoch($envoyDateEpoch).PHP_EOL."Max Value : ".sprintf("%07.2f",$currMaxProd)." W".PHP_EOL;
+            $echoResponse["MaxProdMessage"] = "Max Solar Production Reported At : ".messageDateTimeFromEpoch($envoyDateEpoch)." Max Value : ".sprintf("%07.2f",$currMaxProd)." W";
         }
         
         if ($updateMinProdRecord)
         {
-            $telegramMessage = $telegramMessage."Min Solar Production Reported At : ".YYYYMMDDFromEpoch($envoyDateEpoch).PHP_EOL."Max Value : ".sprintf("%07.2f",$currMinProd)." W".PHP_EOL;
+            $telegramMessage = $telegramMessage."Min Solar Production Reported At : ".messageDateTimeFromEpoch($envoyDateEpoch).PHP_EOL."Min Value : ".sprintf("%07.2f",$currMinProd)." W".PHP_EOL;
+            $echoResponse["MinProdMessage"] = "Min Solar Production Reported At : ".messageDateTimeFromEpoch($envoyDateEpoch)." Min Value : ".sprintf("%07.2f",$currMinProd)." W";
         }
-        
+
         if ($updateMaxConsRecord)
         {
-            $telegramMessage = $telegramMessage."Max Consumption Reported At : ".YYYYMMDDFromEpoch($envoyDateEpoch).PHP_EOL."Max Value : ".sprintf("%07.2f",$currMaxCons)." W".PHP_EOL;
+            $telegramMessage = $telegramMessage."Max Consumption Reported At : ".messageDateTimeFromEpoch($envoyDateEpoch).PHP_EOL."Max Value : ".sprintf("%07.2f",$currMaxCons)." W".PHP_EOL;
+            $echoResponse["MaxConsMessage"] = "Max Consumption Reported At : ".messageDateTimeFromEpoch($envoyDateEpoch)." Max Value : ".sprintf("%07.2f",$currMaxCons)." W";
         }
+
         if ($updateMinConsRecord)
         {
-            $telegramMessage = $telegramMessage."Min Consumption Reported At : ".YYYYMMDDFromEpoch($envoyDateEpoch).PHP_EOL."Min Value : ".sprintf("%07.2f",$currMinCons)." W".PHP_EOL;
+            $telegramMessage = $telegramMessage."Min Consumption Reported At : ".messageDateTimeFromEpoch($envoyDateEpoch).PHP_EOL."Min Value : ".sprintf("%07.2f",$currMinCons)." W".PHP_EOL;
+            $echoResponse["MinConsMessage"] = "Min Consumption Reported At : ".messageDateTimeFromEpoch($envoyDateEpoch)." Min Value : ".sprintf("%07.2f",$currMinCons)." W";
         }        
-        
+  
+        $echoResponse["TelegramMessage"] = str_ireplace(PHP_EOL," ",$telegramMessage);
         sendTelegramMessageToBot($telegramMaxProdConsBotAPIToken, $telegramMessage);
     }
 
-}
-/*
-if($maxminConsTodayStmt->bind_param("s",$dateYYYYMMDD))
+    if(!$updateMaxProdRecord)
+        $echoResponse["MaxProdMessage"] = $responseArray["14"]." Current Production : ".sprintf("%07.2f",$envoyCurrProd)." W";
+
+    if (!$updateMinProdRecord)
+        $echoResponse["MinProdMessage"] = $responseArray["18"]." Current Production : ".sprintf("%07.2f",$envoyCurrProd)." W";
+    
+    if (!$updateMinProdRecord)
+        $echoResponse["MaxConsMessage"] = $responseArray["22"]." Current Consumption : ".sprintf("%07.2f",$envoyCurrCons)." W";
+
+    if (!$updateMinConsRecord)
+        $echoResponse["MinConsMessage"] =  $responseArray["26"]." Current Consumption : ".sprintf("%07.2f",$envoyCurrCons)." W";
+
+}   
+
+if($action == "REP" && $rowCount == 0)
 {
-    $maxminConsTodayStmt->execute();
-    $result = $maxminConsTodayStmt->get_result();
-    $rowConsCount = mysqli_num_rows($result);
-    if($rowConsCount > 0)
-    {
-        while ($row = $result->fetch_assoc())
-        {
-            $maxCons = $row["ConsumptionMax"];
-            $maxConsTime = $row["ConsumptionMaxTime"];
-            $minCons = $row["ConsumptionMin"];
-            $minConsTime = $row["ConsumptionMinTime"];
-        }
-    }
-}
-*/
-/*if ($action == "INS")
-{
-    if($envoyCurrProd >= $maxProd)
-    {
-        if($maxProdStmt->bind_param("sss",$envoyDateYYYYMMDD, $envoyCurrProd, $envoyDateTime ))
-        {
-            $maxProdStmt->execute();
-            echo "Max Prod Insert Error : ".mysqli_error($conn);
-            $result = $maxProdStmt->get_result();
-            commitNow(__FUNCTION__);
-        }
-        $telegramMessage = "";
-        $telegramMessage = "Max Solar Production Reported".PHP_EOL.
-                           "Report Date & Time : ".YYYYMMDDFromEpoch($envoyDateEpoch).PHP_EOL.
-                           "Max Value : ".sprintf("%07.2f",$envoyCurrProd)." W";
-        sendTelegramMessageToBot($telegramMaxProdConsBotAPIToken, $telegramMessage);                           
-        $echoResponse["maxProdDate"] = dateinDDMMMYYYFromEpoch($envoyDateEpoch);
-        $echoResponse["maxProdTime"] = timeinHHMMSSFromEpoch($envoyDateEpoch);
-        $echoResponse["maxProdValue"] = sprintf("%07.2f",$envoyCurrProd)." W";
-        $echoResponse["result"] = "OK";
-        $echoResponse["maxProdMessage"] = "New Max";
-        $maxProdUpdated = TRUE;
-    }
-    
-    if($envoyCurrProd < $minProd)
-    {
-        if($minProdStmt->bind_param("sss",$envoyDateYYYYMMDD, $envoyCurrProd,$envoyDateTime ))
-        {
-            $minProdStmt->execute();
-            echo "Min Prod Insert Error : ".mysqli_error($conn);
-            $result = $minProdStmt->get_result();
-            commitNow(__FUNCTION__);
-        }
-        $telegramMessage = "";
-        $telegramMessage = "Min Solar Production Reported".PHP_EOL.
-                           "Report Date & Time : ".YYYYMMDDFromEpoch($envoyDateEpoch).PHP_EOL.
-                           "Min Value : ".sprintf("%07.2f",$envoyCurrProd)." W";
-        sendTelegramMessageToBot($telegramMaxProdConsBotAPIToken, $telegramMessage);                           
-        $echoResponse["minProdDate"] = dateinDDMMMYYYFromEpoch($envoyDateEpoch);
-        $echoResponse["minProdTime"] = timeinHHMMSSFromEpoch($envoyDateEpoch);
-        $echoResponse["minProdValue"] = sprintf("%07.2f",$envoyCurrProd)." W";
-        $echoResponse["result"] = "OK";
-        $echoResponse["minProdMessage"] = "New Min";
-        $minProdUpdated = TRUE;      
-    }
-    
-    if (!$maxProdUpdated)
-    {
-        $echoResponse["result"] = "OK";
-        $echoResponse["prodMaxMessage"] = "Reported at :".dateinDDMMMYYYFromEpoch($envoyDateEpoch)." ".timeinHHMMSSFromEpoch($envoyDateEpoch)." Max Production Value :". sprintf("%07.2f",$maxProd)." W, Current Production : ".sprintf("%07.2f",$envoyCurrProd)." W";
-        $echoResponse["message"] = $responseArray["14"];
-    }
-    if (!$minProdUpdated)
-    {
-        $echoResponse["result"] = "OK";
-        $echoResponse["prodMinMessage"] = "Reported at :".dateinDDMMMYYYFromEpoch($envoyDateEpoch)." ".timeinHHMMSSFromEpoch($envoyDateEpoch)." Min Production Value :". sprintf("%07.2f",$minProd)." W, Current Production : ".sprintf("%07.2f",$envoyCurrProd)." W";
-        $echoResponse["message"] = $responseArray["14"];
-    }   
-    
-    if($envoyCurrCons >= $maxCons)
-    {
-        if($maxConsStmt->bind_param("sss",$envoyDateYYYYMMDD, $envoyCurrCons,$envoyDateTime ))
-        {
-            $maxConsStmt->execute();
-            echo "Max Cons Insert Error : ".mysqli_error($conn);
-            $result = $maxConsStmt->get_result();
-            commitNow(__FUNCTION__);
-        }
-        $telegramMessage = "";
-        $telegramMessage = "Max Consumption Reported".PHP_EOL.
-                           "Report Date & Time : ".YYYYMMDDFromEpoch($envoyDateEpoch).PHP_EOL.
-                           "Max Value : ".sprintf("%07.2f",$envoyCurrCons)." W";
-        sendTelegramMessageToBot($telegramMaxProdConsBotAPIToken, $telegramMessage);                           
-        $echoResponse["maxConsDate"] = dateinDDMMMYYYFromEpoch($envoyDateEpoch);
-        $echoResponse["maxConsTime"] = timeinHHMMSSFromEpoch($envoyDateEpoch);
-        $echoResponse["maxConsValue"] = sprintf("%07.2f",$envoyCurrCons)." W";
-        $echoResponse["result"] = "OK";
-        $echoResponse["message"] = $responseArray["11"];
-        $maxConsUpdated = TRUE;
-    }
-    if($envoyCurrCons < $minCons)
-    {
-        if($minConsStmt->bind_param("sss",$envoyDateYYYYMMDD, $envoyCurrCons,$envoyDateTime ))
-        {
-            $minConsStmt->execute();
-            echo "Min Cons Insert Error : ".mysqli_error($conn);
-            $result = $minConsStmt->get_result();
-            commitNow(__FUNCTION__);
-        }
-        $telegramMessage = "";
-        $telegramMessage = "Min Consumption Reported".PHP_EOL.
-                           "Report Date & Time : ".YYYYMMDDFromEpoch($envoyDateEpoch).PHP_EOL.
-                           "Min Value : ".sprintf("%07.2f",$envoyCurrCons)." W";
-        sendTelegramMessageToBot($telegramMaxProdConsBotAPIToken, $telegramMessage);                           
-        $echoResponse["minConsDate"] = dateinDDMMMYYYFromEpoch($envoyDateEpoch);
-        $echoResponse["minConsTime"] = timeinHHMMSSFromEpoch($envoyDateEpoch);
-        $echoResponse["minConsValue"] = sprintf("%07.2f",$envoyCurrCons)." W";
-        $echoResponse["result"] = "OK";
-        $echoResponse["message"] = $responseArray["11"];  
-        $minConsUpdated = TRUE;      
-    }
-    if (!$maxConsUpdated)
-    {
-        $echoResponse["result"] = "OK";
-        $echoResponse["consMaxMessage"] = "Reported at :".dateinDDMMMYYYFromEpoch($envoyDateEpoch)." ".timeinHHMMSSFromEpoch($envoyDateEpoch)." Max Consumption Value :". sprintf("%07.2f",$maxCons)." W, Current Consumption : ".sprintf("%07.2f",$envoyCurrCons)." W";
-        $echoResponse["message"] = $responseArray["14"];
-    }
-    if (!$minConsUpdated)
-    {
-        $echoResponse["result"] = "OK";
-        $echoResponse["consMinMessage"] = "Reported at :".dateinDDMMMYYYFromEpoch($envoyDateEpoch)." ".timeinHHMMSSFromEpoch($envoyDateEpoch)." Min Consumption Value :". sprintf("%07.2f",$minProd)." W, Current Consumption : ".sprintf("%07.2f",$envoyCurrCons)." W";
-        $echoResponse["message"] = $responseArray["14"];
-    }
-    
-}*/
-else if ($action == "REP")
-{
-    if (($rowProdCount + $rowConsCount) == 0)
-    {
-        $echoResponse["result"] = "NoData";
-        $echoResponse["message"] = $responseArray["13"];
-    }
-    else
-    {
-        $echoResponse["maxProdDate"] = dateinDDMMMYYY($maxProdTime);
-        $echoResponse["maxProdTime"] = timeinHHMMSS($maxProdTime);
-        $echoResponse["maxProdValue"] = sprintf("%07.2f",$maxProd)." W";
-        $echoResponse["result"] = "OK";
-        $echoResponse["message"] = $responseArray["12"];
-    }
+    $echoResponse["result"] = "NoData";
 }
 else
 {
-    $echoResponse["result"] = "FATAL";
-    $echoResponse["message"] = $responseArray["-98"];
+    $echoResponse["result"] = "OK";
+    if($action == "REP")
+        $echoResponse["message"] = $responseArray["13"];
+
+    $echoResponse["EnvoyDate"] = dateinDMY($envoyDateYYYYMMDD);
+    $echoResponse["MaxProd"] = sprintf("%07.2f",$currMaxProd);
+    $echoResponse["MaxProdTime"] = timeinHHMM($currMaxProdTime);
+    $echoResponse["MinProd"] = sprintf("%07.2f",$currMinProd);
+    $echoResponse["MinProdTime"] = timeinHHMM($currMinProdTime);
+    $echoResponse["MaxCons"] = sprintf("%07.2f",$currMaxCons);
+    $echoResponse["MaxConsTime"] = timeinHHMM($currMaxConsTime);
+    $echoResponse["MinCons"] = sprintf("%07.2f",$currMinCons);
+    $echoResponse["MinConsTime"] = timeinHHMM($currMinConsTime);
+    $echoResponse["LastUpdated"] = dMYHi($lastUpdated);
 }
 $echoResponse["trace"] = $traceMessage;
 echo json_encode($echoResponse);

@@ -20,6 +20,11 @@ function timeinHHMM($dateToConvert)
     return date("H:i",strtotime($dateToConvert));
 }
 
+function dMYHi($datetimeToConvert)
+{
+    return strtoupper(date("dMY H:i",strtotime($datetimeToConvert)));
+}
+
 function dateinDDMMMYYYFromEpoch($epochTime)
 {
     return strtoupper(date("d-M-Y",@$epochTime));
@@ -28,6 +33,11 @@ function dateinDDMMMYYYFromEpoch($epochTime)
 function timeinHHMMSSFromEpoch($epochTime)
 {
     return strtoupper(date("H:i:s",@$epochTime));
+}
+
+function messageDateTimeFromEpoch($epochTime)
+{
+    return strtoupper(date("d-M-Y H:i",@$epochTime));
 }
 
 function datetimeFromEpoch($epochTime)
@@ -48,6 +58,16 @@ function hhFromEpoch($epochTime)
 function dMYHiFromEpoch($epochTime)
 {
     return strtoupper(date("dMY H:i",@$epochTime));
+}
+
+function dMYFromEpoch($epochTime)
+{
+    return strtoupper(date("dMY",@$epochTime));
+}
+
+function HHMMFromEpoch($epochTime)
+{
+    return strtoupper(date("H:i",@$epochTime));
 }
 
 function operationToPeform($readingDate)
@@ -207,10 +227,19 @@ function fillResponseArray()
     $responseArray["12"] = "Envoy Max Production Reading Data Reterived successfully.";  
     $responseArray["13"] = "No Envoy Max Production Reading Data available."; 
     $responseArray["14"] = "Current Production less than available Envoy Max Production.";   
-    $responseArray["15"] = "Envoy Max Consumption Reading Data Inserted successfully.";
-    $responseArray["16"] = "Envoy Max Consumption Reading Data Reterived successfully.";  
-    $responseArray["17"] = "No Envoy Max Consumption Reading Data available."; 
-    $responseArray["18"] = "Current Consumption less than available Envoy Max Consumption.";           
+    $responseArray["15"] = "Envoy Min Production Reading Data Inserted successfully.";
+    $responseArray["16"] = "Envoy Min Production Reading Data Reterived successfully.";  
+    $responseArray["17"] = "No Envoy Min Production Reading Data available."; 
+    $responseArray["18"] = "Current Production greater than available Envoy Min Production.";  
+    $responseArray["19"] = "Envoy Max Consumption Reading Data Inserted successfully.";
+    $responseArray["20"] = "Envoy Max Consumption Reading Data Reterived successfully.";  
+    $responseArray["21"] = "No Envoy Max Consumption Reading Data available."; 
+    $responseArray["22"] = "Current Consumption less than available Envoy Max Consumption.";   
+    $responseArray["23"] = "Envoy Min Consumption Reading Data Inserted successfully.";
+    $responseArray["24"] = "Envoy Min Consumption Reading Data Reterived successfully.";  
+    $responseArray["25"] = "No Envoy Min Consumption Reading Data available."; 
+    $responseArray["26"] = "Current Consumption greater than available Envoy Min Consumption.";  
+    $responseArray["27"] = "Max/Min Solar Production or Consumption Data Inserted";              
     $responseArray["-1"] = "Error inserting Net Meter details.";
     $responseArray["-2"] = "Error updating Net Meter details.";
     $responseArray["-97"] = "Database Auto Commit Issue.".

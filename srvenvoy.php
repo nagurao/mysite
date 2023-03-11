@@ -104,10 +104,15 @@ if($source != "SCRIPT")
     $echoResponse["resultData"] = $resultData;
     $echoResponse["debugMessage"] = $debugMessage;
 }
+$maxminResponse = json_decode(file_get_contents("http://lamp.local/srvenvoymaxmin.php?action=REP&date=".date("Y-m-d",strtotime("-1 days"))),true);
 global $telegramMessage;
 $telegramMessage = "Envoy Reading Date : ".$echoResponse["envoyReadingDate"].PHP_EOL.
 "Envoy Produced Units : ".$echoResponse["envoyProduction"]." kWh".PHP_EOL.
-"Envoy Consumed Units : ".$echoResponse["envoyConsumption"]." kWh".PHP_EOL;
+"Envoy Consumed Units : ".$echoResponse["envoyConsumption"]." kWh".PHP_EOL.
+"Max Production : ".$maxminResponse["MaxProd"]." W at ".$maxminResponse["MaxProdTime"].PHP_EOL.
+"Min Production : ".$maxminResponse["MinProd"]." W at ".$maxminResponse["MinProdTime"].PHP_EOL.
+"Max Consumption : ".$maxminResponse["MaxCons"]." W at ".$maxminResponse["MaxConsTime"].PHP_EOL.
+"Min Consumption : ".$maxminResponse["MinCons"]." W at ".$maxminResponse["MinConsTime"].PHP_EOL;
 sendTelegramMessage($telegramMessage);
 echo json_encode($echoResponse);
 closeConnection();
