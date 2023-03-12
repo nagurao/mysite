@@ -208,8 +208,10 @@ function prepareReport()
         $echoResponse["prevBillExport"] = $row["BillExportReading"];
         $echoResponse["prevBillDateImport"]= $row["MeterImportReading"];
         $echoResponse["prevBillDateExport"]= $row["MeterExportReading"];
+        $echoResponse["prevBillDateCFUnits"] = $row["MeterCarryForwardUnits"];
         $echoResponse["prevBilledImportUnits"] = $row["BillImportedUnits"];
-        $echoResponse["prevBilledExportUnits"] = $row["BillExportedUnits"];        
+        $echoResponse["prevBilledExportUnits"] = $row["BillExportedUnits"]; 
+        $echoResponse["prevBilledCFUnits"] = $row["BillCarryForward"];       
     }
 
     $lastYTDSelStmt->execute();
@@ -286,12 +288,14 @@ function fetchEnvoyHourlyData()
     global $echoResponse;
     global $action;
     global $envoyDateEpoch;
+    global $envoyDate;
     global $envoyProductionPrevHour;
     global $envoyConsumptionPrevHour;
     global $envoyProductionDayPrevHour;
     global $envoyConsumptionDayPrevHour;
 
     $envoyDateEpoch = 0;
+    $envoyDate = "";
     $envoyProductionPrevHour = 0;
     $envoyConsumptionPrevHour = 0;
     $envoyProductionDayPrevHour = 0;
@@ -311,6 +315,7 @@ function fetchEnvoyHourlyData()
             return;
         }
         $envoyDateEpoch = $row["EnvoyReadingTimeEpoch"];
+        $envoyDate = $row["EnvoyReadingDate"];
         $envoyProductionPrevHour = $row["EnvoyProdHour"];
         $envoyConsumptionPrevHour = $row["EnvoyConsHour"];
         $envoyProductionDayPrevHour = $row["EnvoyProdDay"];

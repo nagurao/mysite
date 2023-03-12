@@ -66,7 +66,7 @@
             </form>
         </div>
         <div style="margin: auto; width: 100%;">
-            <canvas id="myChart" style="width: 100%; max-width: 1000px;"></canvas>
+            <canvas id="myChart" style="width: 100%; max-width: 1200px;"></canvas>
         </div>
         <script>
             var maxReadings = 24;

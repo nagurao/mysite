@@ -47,7 +47,7 @@ else
     $currYTDSelQuery = "SELECT NetImportUnits, NetExportUnits,NetUnitsPerDay,NetImportYTDUnits,NetExportYTDUnits,NetYTDUnits FROM NetReadings WHERE NetReadingDate=?";
     $currYTDSelStmt = $conn->prepare($currYTDSelQuery);
     
-    $prevBillSelQuery = "SELECT BillDate, BillImportReading, BillExportReading, MeterImportReading, MeterExportReading, BillImportedUnits, BillExportedUnits FROM NetMeterBillData ORDER BY BillDate DESC LIMIT 0,1";
+    $prevBillSelQuery = "SELECT BillDate, BillImportReading, BillExportReading, MeterImportReading, MeterExportReading, BillImportedUnits, BillExportedUnits, BillCarryForward, MeterCarryForwardUnits FROM NetMeterBillData ORDER BY BillDate DESC LIMIT 0,1";
     $prevBillSelStmt = $conn->prepare($prevBillSelQuery);
 
     $lastYTDSelQuery = "SELECT NetImportUnits, NetExportUnits,NetUnitsPerDay FROM NetReadings ORDER BY NetReadingDate DESC LIMIT 0,1";

@@ -88,11 +88,14 @@
                         document.getElementById("idLabelExportReadingTable").innerHTML = numeral(dataResult.readingExport).format("00.00");
                         document.getElementById("idLabelPrevBilledImportUnitsReadingTable").innerHTML = numeral(dataResult.prevBilledImportUnits).format("00.00");
                         document.getElementById("idLabelPrevBilledExportUnitsReadingTable").innerHTML = numeral(dataResult.prevBilledExportUnits).format("00.00");
+                        document.getElementById("idLabelPrevBilledCarryForwardUnitsReadingTable").innerHTML = numeral(dataResult.prevBilledCFUnits).format("00.00");
                         document.getElementById("idLabelLastBilledDateTable").innerHTML = dataResult.lastBilledDate;
                         document.getElementById("idLabelPrevBillImportReadingTable").innerHTML = dataResult.prevBillImport;
                         document.getElementById("idLabelPrevBillExportReadingTable").innerHTML = dataResult.prevBillExport;
-                        document.getElementById("idLabelPrevImportBillDateReadingTable").innerHTML = dataResult.prevBillDateImport;
-                        document.getElementById("idLabelPrevExportBillDateReadingTable").innerHTML = dataResult.prevBillDateExport;
+                        
+                        document.getElementById("idLabelPrevImportBillDateReadingTable").innerHTML = numeral(dataResult.prevBillDateImport).format("00.00");
+                        document.getElementById("idLabelPrevExportBillDateReadingTable").innerHTML = numeral(dataResult.prevBillDateExport).format("00.00");
+                        document.getElementById("idLabelPrevCarryForwardUnitsBillDateReadingTable").innerHTML = numeral(dataResult.prevBillDateCFUnits).format("00.00");
                         document.getElementById("idLabelImportedUnitsTable").innerHTML = dataResult.prevImport;
                         document.getElementById("idLabelExportedUnitsTable").innerHTML = dataResult.prevExport;
                         document.getElementById("idLabelNetUnitsTable").innerHTML = dataResult.prevNet;
@@ -109,7 +112,14 @@
                         document.getElementById("idLabelDelta550Table").innerHTML = numeral(parseFloat(dataResult.prevBillExport) + 550).format("00.00");
                         document.getElementById("idLabelDelta600Table").innerHTML = numeral(parseFloat(dataResult.prevBillExport) + 600).format("00.00");
                         document.getElementById("idLabelDelta650Table").innerHTML = numeral(parseFloat(dataResult.prevBillExport) + 650).format("00.00");
-
+                        document.getElementById("idLabelDelta700Table").innerHTML = numeral(parseFloat(dataResult.prevBillExport) + 700).format("00.00");
+                        document.getElementById("idLabelDelta750Table").innerHTML = numeral(parseFloat(dataResult.prevBillExport) + 750).format("00.00");
+                        document.getElementById("idLabelDelta800Table").innerHTML = numeral(parseFloat(dataResult.prevBillExport) + 800).format("00.00");
+                        document.getElementById("idLabelDelta850Table").innerHTML = numeral(parseFloat(dataResult.prevBillExport) + 850).format("00.00");
+                        document.getElementById("idLabelDelta900Table").innerHTML = numeral(parseFloat(dataResult.prevBillExport) + 900).format("00.00");
+                        document.getElementById("idLabelDelta950Table").innerHTML = numeral(parseFloat(dataResult.prevBillExport) + 950).format("00.00");
+                        document.getElementById("idLabelDelta1000Table").innerHTML = numeral(parseFloat(dataResult.prevBillExport) + 1000).format("00.00");
+                        document.getElementById("idLabelDelta1050Table").innerHTML = numeral(parseFloat(dataResult.prevBillExport) + 1050).format("00.00");
                         //$("#idLabelAvgExp").text(numeral(exportYTD / numEntries).format('00.00'));
                         document.getElementById("idLabelAvgExpTable").innerHTML = numeral(exportYTD / numEntries).format("00.00");
 
@@ -393,6 +403,11 @@
                     <td style="text-align: right;"><label id="idLabelPrevBilledExportUnitsReadingTable"></label><label> (kWh)</label></td>
                 </tr>
                 <tr>
+                    <td style="text-align: left;"><label>Prev. Billed Carry Forward Units</label></td>
+                    <td style="text-align: left;"><label>:</label></td>
+                    <td style="text-align: right;"><label id="idLabelPrevBilledCarryForwardUnitsReadingTable"></label><label> (kWh)</label></td>
+                </tr>
+                <tr>
                     <td style="text-align: center;" colspan="3">
                         <label><u>Details Post Latest Bill</u></label>
                     </td>
@@ -407,6 +422,11 @@
                     <td style="text-align: left;"><label>:</label></td>
                     <td style="text-align: right;"><label id="idLabelExportTable"></label><label> (kWh)</label></td>
                 </tr>
+                <tr>
+                    <td style="text-align: left;"><label>Approx. Units Carry Forward from Last Bill</label></td>
+                    <td style="text-align: left;"><label>:</label></td>
+                    <td style="text-align: right;"><label id="idLabelPrevCarryForwardUnitsBillDateReadingTable"></label><label> (kWh)</label></td>
+                </tr>                
                 <tr>
                     <td style="text-align: left;"><label>Import Reading on Billed Date</label></td>
                     <td style="text-align: left;"><label>:</label></td>
@@ -448,6 +468,18 @@
                 </tr>
                 <tr>
                     <td style="text-align: left;"><label>Δ600 :&nbsp </label><label id="idLabelDelta600Table"></label><label>&nbsp&nbsp&nbsp&nbspΔ650 :&nbsp</label><label id="idLabelDelta650Table"></label></td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;"><label>Δ700 :&nbsp </label><label id="idLabelDelta700Table"></label><label>&nbsp&nbsp&nbsp&nbspΔ750 :&nbsp</label><label id="idLabelDelta750Table"></label></td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;"><label>Δ800 :&nbsp </label><label id="idLabelDelta800Table"></label><label>&nbsp&nbsp&nbsp&nbspΔ850 :&nbsp</label><label id="idLabelDelta850Table"></label></td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;"><label>Δ900 :&nbsp </label><label id="idLabelDelta900Table"></label><label>&nbsp&nbsp&nbsp&nbspΔ950 :&nbsp</label><label id="idLabelDelta950Table"></label></td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;"><label>Δ1000 :&nbsp </label><label id="idLabelDelta1000Table"></label><label>&nbsp&nbsp&nbsp&nbspΔ1050 :&nbsp</label><label id="idLabelDelta1050Table"></label></td>
                 </tr>
             </table>
         </div>

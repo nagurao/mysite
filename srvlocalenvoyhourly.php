@@ -18,6 +18,7 @@ $src = "SCRIPT";
 $scriptVersion = "1.0";
 
 $envoyDateEpoch = 0;
+$envoyDate = "";
 $envoyProductionPrevHour = 0;
 $envoyConsumptionPrevHour = 0;
 $envoyProductionDay = 0;
@@ -45,11 +46,11 @@ if ($conn->connect_error)
 else
 {
     $conn->autocommit(TRUE);
-    $insertEnvoyHourlyQuery = "INSERT INTO EnvoyHourlyReadings (EnvoyReadingTimeEpoch, EnvoyReadingTime, EnvoyProdHour, EnvoyConsHour, EnvoyProdDay,EnvoyConsDay) VALUE (?, ?, ?, ?, ?, ?)";
+    $insertEnvoyHourlyQuery = "INSERT INTO EnvoyHourlyReadings (EnvoyReadingDate,EnvoyReadingTimeEpoch, EnvoyReadingTime, EnvoyProdHour, EnvoyConsHour, EnvoyProdDay,EnvoyConsDay) VALUE (?, ?, ?, ?, ?, ?, ?)";
     $insertEnvoyHourlyStmt = $conn->prepare($insertEnvoyHourlyQuery);
-    $lastEnvoyHourlySelQuery = "SELECT EnvoyReadingTimeEpoch, EnvoyReadingTime, EnvoyProdHour, EnvoyConsHour, EnvoyProdDay,EnvoyConsDay,EnvoyReadingTimestamp  FROM EnvoyHourlyReadings ORDER BY EnvoyReadingTimeEpoch DESC LIMIT 0,1";
+    $lastEnvoyHourlySelQuery = "SELECT EnvoyReadingDate, EnvoyReadingTimeEpoch, EnvoyReadingTime, EnvoyProdHour, EnvoyConsHour, EnvoyProdDay,EnvoyConsDay,EnvoyReadingTimestamp  FROM EnvoyHourlyReadings ORDER BY EnvoyReadingTimeEpoch DESC LIMIT 0,1";
     $lastEnvoyHourlySelStmt = $conn->prepare($lastEnvoyHourlySelQuery);
-    $prevEnvoyHourlySelQuery = "SELECT EnvoyReadingTimeEpoch, EnvoyReadingTime, EnvoyProdHour, EnvoyConsHour, EnvoyProdDay,EnvoyConsDay,EnvoyReadingTimestamp  FROM EnvoyHourlyReadings ORDER BY EnvoyReadingTimeEpoch DESC LIMIT 1,1";
+    $prevEnvoyHourlySelQuery = "SELECT EnvoyReadingDate, EnvoyReadingTimeEpoch, EnvoyReadingTime, EnvoyProdHour, EnvoyConsHour, EnvoyProdDay,EnvoyConsDay,EnvoyReadingTimestamp  FROM EnvoyHourlyReadings ORDER BY EnvoyReadingTimeEpoch DESC LIMIT 1,1";
     $prevEnvoyHourlySelStmt = $conn->prepare($prevEnvoyHourlySelQuery);
     $echoResponse["trace"] = "";
     $echoResponse["resultData"] = "";
@@ -75,6 +76,7 @@ else
         insertLocalEnvoyHourlyData();
     
     fetchEnvoyHourlyData();
+    $echoResponse["envoyHourlyReadingDate"] = $envoyDate;
     $echoResponse["envoyHourlyReadingDateTime"] = dMYHiFromEpoch($envoyDateEpoch);
     $echoResponse["envoyProductionPrevHour"] = sprintf("%05.2f",$envoyProductionPrevHour);
     $echoResponse["envoyConsumptionPrevHour"] = sprintf("%05.2f",$envoyConsumptionPrevHour);

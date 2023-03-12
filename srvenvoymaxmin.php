@@ -172,7 +172,7 @@ if ($action == "INS")
         if($maxminInsUpdStmt ->bind_param("sssssssss",$envoyDateYYYYMMDD, $currMaxProd, $currMaxProdTime, $currMinProd, $currMinProdTime, $currMaxCons, $currMaxConsTime, $currMinCons, $currMinConsTime ))
         {
             $maxminInsUpdStmt->execute();
-            $result = $maxProdStmt->get_result();
+            $result = $maxminInsUpdStmt->get_result();
             commitNow(__FUNCTION__);
             $echoResponse["message"] = $responseArray["27"];
         }

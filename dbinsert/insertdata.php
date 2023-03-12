@@ -373,6 +373,7 @@ function insertLocalEnvoyHourlyData()
     $envoyURL = "http://envoy.local/production.json";
     $envoyData = json_decode(file_get_contents($envoyURL));
     $envoyDateEpoch = $envoyData->consumption[0]->readingTime;
+    $envoyDate = YYYYMMDDFromEpoch($envoyDateEpoch);
     $envoyDateTime = datetimeFromEpoch($envoyDateEpoch);
     $envoyProductionDay = round($envoyData->production[1]->whToday/1000,2);
     $envoyConsumptionDay = round($envoyData->consumption[0]->whToday/1000,2);
@@ -380,7 +381,7 @@ function insertLocalEnvoyHourlyData()
     $envoyProductionPrevHour = $envoyProductionDay - $envoyProductionDayPrevHour;
     $envoyConsumptionPrevHour = $envoyConsumptionDay - $envoyConsumptionDayPrevHour;
 
-    if($insertEnvoyHourlyStmt->bind_param("ssssss",$envoyDateEpoch, $envoyDateTime , $envoyProductionPrevHour, $envoyConsumptionPrevHour,$envoyProductionDay, $envoyConsumptionDay ));
+    if($insertEnvoyHourlyStmt->bind_param("sssssss",$envoyDate, $envoyDateEpoch,  $envoyDateTime , $envoyProductionPrevHour, $envoyConsumptionPrevHour,$envoyProductionDay, $envoyConsumptionDay ));
     {
         $insertEnvoyHourlyStmt->execute();
         $result = $insertEnvoyHourlyStmt->get_result();
