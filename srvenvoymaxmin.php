@@ -117,9 +117,9 @@ if($maxminStmt->bind_param("s",$dateYYYYMMDD))
     }
     else
     {
-        $currMaxProd = 0.00;
+        $currMaxProd = -9999.00;
         $currMinProd = 9999.99;
-        $currMaxCons = 0;
+        $currMaxCons = -9999.00;
         $currMinCons = 9999.99;
         $currMaxProdTime = $currMinProdTime = $currMaxConsTime = $currMinConsTime = $envoyDateTime;
         $rowCount = 0;
