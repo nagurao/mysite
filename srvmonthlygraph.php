@@ -44,9 +44,9 @@ if ($conn->connect_error)
 else
 {
     $conn->autocommit(TRUE);
-    $insertEnvoyLocalQuery = "INSERT INTO EnvoyLocalReadings (EnvoyLocalReadingDate,EnvoyLocalReadingTime, EnvoyLocalConsRaw, EnvoyLocalCons, EnvoyLocalProdRaw, EnvoyLocalProd,EnvoyLocalNetRaw,EnvoyLocalNet,EnvoyLocalProdDayRaw,EnvoyLocalProdDay,EnvoyLocalConsDayRaw,EnvoyLocalConsDay) VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $insertEnvoyLocalQuery = "INSERT INTO EnvoyLocalReadings (EnvoyLocalReadingTime, EnvoyLocalConsRaw, EnvoyLocalCons, EnvoyLocalProdRaw, EnvoyLocalProd,EnvoyLocalNetRaw,EnvoyLocalNet,EnvoyLocalProdDayRaw,EnvoyLocalProdDay,EnvoyLocalConsDayRaw,EnvoyLocalConsDay) VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $insertEnvoyLocalStmt = $conn->prepare($insertEnvoyLocalQuery);
-    $lastEnvoyLocalSelQuery = "SELECT EnvoyLocalReadingDate,EnvoyLocalReadingTime, EnvoyLocalCons, EnvoyLocalProd, EnvoyLocalNet, EnvoyLocalProdDay, EnvoyLocalConsDay  FROM EnvoyLocalReadings ORDER BY EnvoyLocalReadingTime DESC LIMIT 0,1";
+    $lastEnvoyLocalSelQuery = "SELECT EnvoyLocalReadingTime, EnvoyLocalCons, EnvoyLocalProd, EnvoyLocalNet, EnvoyLocalProdDay, EnvoyLocalConsDay  FROM EnvoyLocalReadings ORDER BY EnvoyLocalReadingTime DESC LIMIT 0,1";
     $lastEnvoyLocalSelStmt = $conn->prepare($lastEnvoyLocalSelQuery);
     $echoResponse["trace"] = "";
     $echoResponse["resultData"] = "";

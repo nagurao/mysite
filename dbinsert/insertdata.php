@@ -327,6 +327,7 @@ function insertLocalEnvoyData()
     $envoyURL = "http://envoy.local/production.json";
     $envoyData = json_decode(file_get_contents($envoyURL));
     $envoyLocalDateTime = $envoyData->consumption[0]->readingTime;
+    $envoyLocalDate = YYYYMMDDFromEpoch($envoyLocalDateTime);
     $envoyLocalProductionRaw = $envoyData->production[1]->wNow;
     $envoyLocalProduction = round($envoyData->production[1]->wNow,2);
     $envoyLocalConsumptionRaw = $envoyData->consumption[0]->wNow;
@@ -338,7 +339,7 @@ function insertLocalEnvoyData()
     $envoyLocalConsumptionDayRaw = $envoyData->consumption[0]->whToday;
     $envoyLocalConsumptionDay = round($envoyData->consumption[0]->whToday/1000,2);
 
-    if($insertEnvoyLocalStmt->bind_param("sssssssssss",$envoyLocalDateTime,$envoyLocalConsumptionRaw , $envoyLocalConsumption, $envoyLocalProductionRaw,$envoyLocalProduction, $envoyLocalNetRaw,$envoyLocalNet, $envoyLocalProductionDayRaw, $envoyLocalProductionDay, $envoyLocalConsumptionDayRaw, $envoyLocalConsumptionDay ));
+    if($insertEnvoyLocalStmt->bind_param("ssssssssssss",$envoyLocalDate,$envoyLocalDateTime,$envoyLocalConsumptionRaw , $envoyLocalConsumption, $envoyLocalProductionRaw,$envoyLocalProduction, $envoyLocalNetRaw,$envoyLocalNet, $envoyLocalProductionDayRaw, $envoyLocalProductionDay, $envoyLocalConsumptionDayRaw, $envoyLocalConsumptionDay ));
     {
         $insertEnvoyLocalStmt->execute();
         $result = $insertEnvoyLocalStmt->get_result();
