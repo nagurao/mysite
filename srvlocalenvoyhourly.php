@@ -75,7 +75,14 @@ else
     if($action == "INS" && $src == "SCRIPT")
         insertLocalEnvoyHourlyData();
     
-    fetchEnvoyHourlyData();
+    $retryCount = 0;
+    while(true)
+    {
+        fetchEnvoyHourlyData();
+        if ($envoyDateEpoch != 0 || $retryCount > 5)
+            break;
+        $retryCount++;
+    }    
     $echoResponse["envoyHourlyReadingDate"] = $envoyDate;
     $echoResponse["envoyHourlyReadingDateTime"] = dMYHiFromEpoch($envoyDateEpoch);
     $echoResponse["envoyProductionPrevHour"] = sprintf("%05.2f",$envoyProductionPrevHour);
