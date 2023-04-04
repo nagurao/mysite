@@ -25,6 +25,11 @@ function dMYHi($datetimeToConvert)
     return strtoupper(date("dMY H:i",strtotime($datetimeToConvert)));
 }
 
+function messageDateTimeFromTimestamp($timestamp)
+{
+    return strtoupper(date("d-M-Y H:i",strtotime($timestamp)));
+}
+
 function dateinDDMMMYYYFromEpoch($epochTime)
 {
     return strtoupper(date("d-M-Y",@$epochTime));

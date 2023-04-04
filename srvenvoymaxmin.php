@@ -92,7 +92,7 @@ if($action == "INS")
 if ($action == "REP" && $dateYYYYMMDD == "")
     $dateYYYYMMDD = YYYYMMDDFromEpoch(time());
     
-if ($envoyDateYYYYMMDD == "")
+if ($envoyDateYYYYMMDD == "" )
     $envoyDateYYYYMMDD = $dateYYYYMMDD;
 
 if($maxminStmt->bind_param("s",$dateYYYYMMDD))
