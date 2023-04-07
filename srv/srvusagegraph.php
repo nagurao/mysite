@@ -1,11 +1,11 @@
 <?php
+$startTime = hrtime(true);
 ini_set('display_errors', 1); 
 error_reporting(E_ALL);
-require 'common/database.php';
-require 'common/helper.php';
-require 'dbinsert/insertdata.php';
-require 'dbread/reportdata.php';
-
+require '../common/database.php';
+require '../common/helper.php';
+require '../dbinsert/insertdata.php';
+require '../dbread/reportdata.php';
 $echoResponse=array();
 $traceMessage = "";
 $resultData = "";
@@ -20,6 +20,8 @@ $dateYYYYMMDD = "";
 $prodData = array();
 $consData = array();
 $netData = array();
+$currDayProd = 0.00;
+$currDayCons = 0.00;
 $rowCount = 0;
 $echoResponse["version"] = $scriptVersion;
 
@@ -44,7 +46,7 @@ if ($conn->connect_error)
 else
 {
     $conn->autocommit(TRUE);
-    $dailyUsageSelQuery = "SELECT EnvoyLocalReadingDate, EnvoyLocalReadingTime, EnvoyLocalCons, EnvoyLocalProd, EnvoyLocalNet FROM EnvoyLocalReadings WHERE EnvoyLocalReadingDate >= ?";
+    $dailyUsageSelQuery = "SELECT EnvoyLocalReadingDate, EnvoyLocalReadingTime, EnvoyLocalCons, EnvoyLocalProd, EnvoyLocalNet, EnvoyLocalProdDay, EnvoyLocalConsDay FROM EnvoyLocalReadings WHERE EnvoyLocalReadingDate >= ?";
     $dailyUsageSelStmt = $conn->prepare($dailyUsageSelQuery);
     $echoResponse["trace"] = "";
     $echoResponse["resultData"] = "";
@@ -73,6 +75,8 @@ if ($action == "REP")
                 $tempProdArray["value"] = $row["EnvoyLocalProd"];
                 $tempConsArray["value"] = $row["EnvoyLocalCons"];
                 $tempNetArray["value"] = $row["EnvoyLocalNet"];
+                $currDayProd = $row["EnvoyLocalProdDay"];
+                $currDayCons = $row["EnvoyLocalConsDay"];
                 array_push($prodData,$tempProdArray);
                 array_push($consData,$tempConsArray);
                 array_push($netData,$tempNetArray);
@@ -81,6 +85,8 @@ if ($action == "REP")
             $echoResponse["ProdData"] = $prodData;
             $echoResponse["ConsData"] = $consData;
             $echoResponse["NetData"] = $netData;
+            $echoResponse["Production"] = $currDayProd;
+            $echoResponse["Consumption"] = $currDayCons;
         }
         else
         {
@@ -96,6 +102,7 @@ else
     echo json_encode($echoResponse);
     exit();
 }
+$echoResponse["processTime"] = round((hrtime(true) - $startTime)/1e+6,2)."ms";//$_SERVER["REQUEST_TIME_FLOAT"];
 echo json_encode($echoResponse);
 closeConnection();
 ?>

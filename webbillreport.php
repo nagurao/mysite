@@ -44,10 +44,12 @@
                 <ul class="nav navbar-nav">
                     <li><a href="netmeter.html">Home</a></li>
                     <li><a href="reading.php">Net Meter Daily Readings</a></li>
-                    <li><a href="report.php">Net Meter Units Report</a></li>
-                    <li class="active"><a href="billreport.php">Net Meter Billing Report</a></li>
-                    <li><a href="billgraph.php">Net Meter Billing Graph</a></li>
-                    <li><a href="bill.php">Net Meter Monthly Bill</a></li>
+                    <li><a href="webreport.php">Net Meter Units Report</a></li>
+                    <li class="active"><a href="webbillreport.php">Net Meter Billing Report</a></li>
+                    <li><a href="webbillgraph.php">Net Meter Billing Graph</a></li>
+                    <li><a href="webbill.php">Net Meter Monthly Bill</a></li>
+                    <li><a href="webrephourly.php">Hourly Usage</a></li>
+                    <li><a href="webrepusage.php">Current Day Usage</a></li>
                 </ul>
             </div>
         </nav>
@@ -64,7 +66,7 @@
             $(document).ready(function () {
                 //$("#idResultTable").hide();
                 $.ajax({
-                    url: "srvbill.php",
+                    url: "srv/srvbill.php",
                     type: "GET",
                     data: {
                         action: "REP",
@@ -80,6 +82,8 @@
                         }
                         $("#success").html(dataResult.message);
                         $("idtraceLabel").html(dataResult.trace);
+                        document.getElementById("idLabelProcessTimeText").innerHTML = "Process Time: ";
+                        document.getElementById("idLabelProcessTime").innerHTML = dataResult.processTime;
                     },
                 });
             });
@@ -87,5 +91,6 @@
     </body>
     <footer>
         <label>&copy; Nagu </label>
+        <br><small style="font-size:xx-small" ><label id="idLabelProcessTimeText"></label> <label id="idLabelProcessTime"></label> </small>
     </footer>
 </html>

@@ -1,10 +1,11 @@
 <?php
+$startTime = hrtime(true);
 ini_set('display_errors', 1); 
 error_reporting(E_ALL);
-require 'common/database.php';
-require 'common/helper.php';
-require 'dbinsert/insertdata.php';
-require 'dbread/reportdata.php';
+require 'var/www/mysite/common/database.php';
+require 'var/www/mysite/common/helper.php';
+require 'var/www/mysite/dbinsert/insertdata.php';
+require 'var/www/mysite/dbread/reportdata.php';
 
 $echoResponse=array();
 $traceMessage = "";
@@ -40,6 +41,7 @@ if ($conn->connect_error)
   	die("Connection failed: " . $conn->connect_error);
     $echoResponse["result"] = "FATAL";
     $echoResponse["message"] = $responseArray["0"];
+    $echoResponse["processTime"] = round((hrtime(true) - $startTime)/1e+6,2)."ms";
     echo json_encode($echoResponse);
     exit();
 }
@@ -240,7 +242,8 @@ else
     $echoResponse["MinConsTime"] = timeinHHMM($currMinConsTime);
     $echoResponse["LastUpdated"] = dMYHi($lastUpdated);
 }
-$echoResponse["trace"] = $traceMessage;
-echo json_encode($echoResponse);
 closeConnection();
+$echoResponse["trace"] = $traceMessage;
+$echoResponse["processTime"] = round((hrtime(true) - $startTime)/1e+6,2)."ms";
+echo json_encode($echoResponse);
 ?>

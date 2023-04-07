@@ -75,7 +75,7 @@
 				{
 					$.ajax(
 						{
-							url: "srvreport.php",
+							url: "srv/srvreport.php",
 							type: "GET",
 							data: 
 							{

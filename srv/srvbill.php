@@ -1,9 +1,10 @@
 <?php
+$startTime = hrtime(true);
 ini_set('display_errors', 1); 
 error_reporting(E_ALL);
-require 'common/database.php';
-require 'common/helper.php';
-require 'dbinsert/insertdata.php';
+require '../common/database.php';
+require '../common/helper.php';
+require '../dbinsert/insertdata.php';
 
 $startMMYYYY="202209";
 $echoResponse=array();
@@ -110,6 +111,6 @@ closeConnection();
 $echoResponse["trace"] = $traceMessage;
 $echoResponse["resultData"] = $resultData;
 $echoResponse["debugMessage"] = $debugMessage;
+$echoResponse["processTime"] = round((hrtime(true) - $startTime)/1e+6,2)."ms";
 echo json_encode($echoResponse);
-
 ?>

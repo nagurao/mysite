@@ -25,7 +25,7 @@
                 var monthName = "Net Import Export for the Month of " + month[date.getMonth()] + " " + date.getFullYear();
                 //alert("Load completed");
                 $.ajax({
-                    url: "srvreport.php",
+                    url: "srv/srvreport.php",
                     type: "GET",
                     data: {
                         scriptVersion: scriptVersion,
@@ -145,7 +145,7 @@
                         document.getElementById("idLabelExportBillDateTable").innerHTML = numeral(dataResult.readingExport - dataResult.prevBillDateExport).format("00.00");
 
                         document.getElementById("idLabelNetBillDateTable").innerHTML = numeral(dataResult.readingImport - dataResult.prevBillDateImport - (dataResult.readingExport - dataResult.prevBillDateExport)).format("00.00");
-
+                        document.getElementById("idLabelProcessTime").innerHTML = dataResult.processTime;
                         new Chart("myChart", {
                             type: "line",
                             data: {
@@ -210,10 +210,12 @@
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="netmeter.html">Home</a></li>
                     <li><a href="reading.php">Net Meter Daily Readings</a></li>
-                    <li><a href="report.php">Net Meter Units Report</a></li>
-                    <li><a href="billreport.php">Net Meter Billing Report</a></li>
-                    <li><a href="billgraph.php">Net Meter Billing Graph</a></li>
-                    <li><a href="bill.php">Net Meter Monthly Bill</a></li>
+                    <li><a href="webreport.php">Net Meter Units Report</a></li>
+                    <li><a href="webbillreport.php">Net Meter Billing Report</a></li>
+                    <li><a href="webbillgraph.php">Net Meter Billing Graph</a></li>
+                    <li><a href="webbill.php">Net Meter Monthly Bill</a></li>
+                    <li><a href="webrephourly.php">Hourly Usage</a></li>
+                    <li><a href="webrepusage.php">Current Day Usage</a></li>
                 </ul>
             </div>
         </nav>
@@ -227,63 +229,6 @@
             <canvas id="myChart" style="width: 100%; max-width: 1000px;"></canvas>
         </div>
 
-        <!----
-  
-  <div class="form-group">
-    <label>Average Units Imported : </label>
-    <label for="labelAvgImp" id="idLabelAvgImp" name="nameLabelAvgImp"></label>
-    <label> (kW)</label>
-  </div>
-  
-  <div class="form-group">
-    <label>Average Units Exported : </label>
-    <label for="labelAvgExp" id="idLabelAvgExp" name="nameLabelAvgExp"></label>
-    <label> (kW)</label>
-  </div>
-  
-  <div class="form-group">
-    <label>Average Net Units : </label>
-    <label for="labelAvgNet" id="idLabelAvgNet" name="nameLabelAvgNet"></label>
-    <label> (kW)</label>
-  </div>
-  
-  <div class="form-group">
-    <label>Average Daily Solar Generation : </label>
-    <label for="labelAvgSolGen" id="idLabelAvgSolGen" name="nameLabelAvgSolGen"></label>
-    <label> (kW)</label>
-  </div>
-  
-  <div class="form-group">
-    <label>Average Daily Consumption : </label>
-    <label for="labelAvgDailyCons" id="idLabelDailyCons" name="nameLabelDailyCons"></label>
-    <label> (kW)</label>
-  </div>
-  
-  <div class="form-group">
-    <label>Approx. Units Imported from Last Bill : </label>
-    <label for="labelImport" id="idLabelImport" name="nameLabelImport"></label>
-    <label> (kW)</label>
-  </div>
-  
-  <div class="form-group">
-    <label>Approx. Units Exported from Last Bill : </label>
-    <label for="labelExport" id="idLabelExport" name="nameLabelExport"></label>
-    <label> (kW)</label>
-  </div>
-  
-  <div class="form-group">
-    <label>Approx. Units Imported from Last Bill Date : </label>
-    <label for="labelImportBillDate" id="idLabelImportBillDate" name="nameLabelImportBillDate"></label>
-    <label> (kW)</label>
-  </div>
-  
-  <div class="form-group">
-    <label>Approx. Units Exported from Last Bill Date : </label>
-    <label for="labelExportBillDate" id="idLabelExportBillDate" name="nameLabelExportBillDate"></label>
-    <label> (kW)</label>
-  </div>
-  
--->
         <div class="form-group">
             <table id="tableStats">
                 <tr>
@@ -486,5 +431,6 @@
     </body>
     <footer>
         <label>&copy; Nagu </label>
+        <br><small style="font-size:xx-small" ><label>Process Time: </label> <label id="idLabelProcessTime"></label> </small>
     </footer>
 </html>

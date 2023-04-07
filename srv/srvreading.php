@@ -1,10 +1,11 @@
 <?php
+$startTime = hrtime(true);
 ini_set('display_errors', 1); 
 error_reporting(E_ALL);
-require 'common/database.php';
-require 'common/helper.php';
-require 'dbinsert/insertdata.php';
-require 'dbupdate/updatedata.php';
+require '../common/database.php';
+require '../common/helper.php';
+require '../dbinsert/insertdata.php';
+require '../dbupdate/updatedata.php';
 
 $startDate=strtotime("2022-08-10");
 $echoResponse=array();
@@ -164,5 +165,6 @@ $echoResponse["resultData"] = $resultData;
 $echoResponse["debugMessage"] = $debugMessage;
 //sendWhatsAppMessage($whatsappMessage);
 sendTelegramMessage($telegramMessage);
+$echoResponse["processTime"] = round((hrtime(true) - $startTime)/1e+6,2)."ms";
 echo json_encode($echoResponse);
 ?>

@@ -1,10 +1,11 @@
 <?php
+$startTime = hrtime(true);
 ini_set('display_errors', 1); 
 error_reporting(E_ALL);
-require 'common/database.php';
-require 'common/helper.php';
-require 'dbinsert/insertdata.php';
-require 'dbread/reportdata.php';
+require '../common/database.php';
+require '../common/helper.php';
+require '../dbinsert/insertdata.php';
+require '../dbread/reportdata.php';
 
 $echoResponse=array();
 $traceMessage = "";
@@ -97,6 +98,7 @@ else
     echo json_encode($echoResponse);
     exit();
 }
-echo json_encode($echoResponse);
 closeConnection();
+$echoResponse["processTime"] = round((hrtime(true) - $startTime)/1e+6,2)."ms";
+echo json_encode($echoResponse);
 ?>

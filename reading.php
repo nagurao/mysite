@@ -46,10 +46,12 @@
                 <ul class="nav navbar-nav">
                     <li><a href="netmeter.html">Home</a></li>
                     <li class="active"><a href="reading.php">Net Meter Daily Readings</a></li>
-                    <li><a href="report.php">Net Meter Units Report</a></li>
-                    <li><a href="billreport.php">Net Meter Billing Report</a></li>
-                    <li><a href="billgraph.php">Net Meter Billing Graph</a></li>
-                    <li><a href="bill.php">Net Meter Monthly Bill</a></li>
+                    <li><a href="webreport.php">Net Meter Units Report</a></li>
+                    <li><a href="webbillreport.php">Net Meter Billing Report</a></li>
+                    <li><a href="webbillgraph.php">Net Meter Billing Graph</a></li>
+                    <li><a href="webbill.php">Net Meter Monthly Bill</a></li>
+                    <li><a href="webrephourly.php">Hourly Usage</a></li>
+                    <li><a href="webrepusage.php">Current Day Usage</a></li>
                 </ul>
             </div>
         </nav>
@@ -88,6 +90,8 @@
                 $("#butsave").on("click", function () {
                     $("#butsave").attr("disabled", "disabled");
                     $("#idResultTable").hide();
+                    $("#idLabelProcessTimeText").hide();
+                    $("#idLabelProcessTime").hide();
                     var readingDate = $("#idReadingDate").val();
                     var importReading = $("#idImportReading").val();
                     var exportReading = $("#idExportReading").val();
@@ -97,7 +101,7 @@
 
                     if (readingDate != "" && importReading != "" && exportReading != "" && !nanFlag) {
                         $.ajax({
-                            url: "srvreading.php",
+                            url: "srv/srvreading.php",
                             type: "POST",
                             data: {
                                 scriptVersion: scriptVersion,
@@ -122,6 +126,10 @@
                                 $("#success").show();
                                 $("#success").html(dataResult.message);
                                 $("idtraceLabel").html(dataResult.trace);
+                                $("#idLabelProcessTime").show();
+                                $("#idLabelProcessTimeText").show();
+                                document.getElementById("idLabelProcessTimeText").innerHTML = "Process Time: ";
+                                document.getElementById("idLabelProcessTime").innerHTML = dataResult.processTime;
                                 /*if (dataResult=="0")
 					{
 						alert("Error saving Net Meter Data");
@@ -147,5 +155,6 @@
     </body>
     <footer>
         <label>&copy; Nagu </label>
+        <br><small style="font-size:xx-small" ><label id="idLabelProcessTimeText"></label> <label id="idLabelProcessTime"></label> </small>
     </footer>
 </html>
