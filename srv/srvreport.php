@@ -2,9 +2,9 @@
 $startTime = hrtime(true);
 ini_set('display_errors', 1); 
 error_reporting(E_ALL);
-require '../common/database.php';
-require '../common/helper.php';
-require '../dbread/reportdata.php';
+require '/var/www/mysite/common/database.php';
+require '/var/www/mysite/common/helper.php';
+require '/var/www/mysite/dbread/reportdata.php';
 
 $echoResponse=array();
 $traceMessage = "";

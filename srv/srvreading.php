@@ -2,10 +2,10 @@
 $startTime = hrtime(true);
 ini_set('display_errors', 1); 
 error_reporting(E_ALL);
-require '../common/database.php';
-require '../common/helper.php';
-require '../dbinsert/insertdata.php';
-require '../dbupdate/updatedata.php';
+require '/var/www/mysite/common/database.php';
+require '/var/www/mysite/common/helper.php';
+require '/var/www/mysite/dbinsert/insertdata.php';
+require '/var/www/mysite/dbupdate/updatedata.php';
 
 $startDate=strtotime("2022-08-10");
 $echoResponse=array();
