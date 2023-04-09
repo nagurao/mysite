@@ -21,7 +21,7 @@ $dateYYYYMMDD = "";
 $rowProdCount = 0;
 $rowConsCount = 0;
 $telegramMessage = "";
-
+global $telegramChatId ;
 $echoResponse["version"] = $scriptVersion;
 if (isset($_GET['action']))
     $action = testinput($_GET['action']);
@@ -204,7 +204,7 @@ if ($action == "INS")
         }        
   
         $echoResponse["TelegramMessage"] = str_ireplace(PHP_EOL," ",$telegramMessage);
-        sendTelegramMessageToBot($telegramMaxProdConsBotAPIToken, $telegramMessage);
+        sendTelegramMessageToBot($telegramChatId,$telegramMaxProdConsBotAPIToken, $telegramMessage);
     }
 
     if(!$updateMaxProdRecord)

@@ -159,8 +159,10 @@ if($rowCount > 0)
     $telegramMessage = $telegramMessage."Min Consumption At : ".messageDateTimeFromTimestamp($currMinConsTime).PHP_EOL."Min Value : ".sprintf("%07.2f",$currMinCons)." W".PHP_EOL; 
     $telegramMessage = $telegramMessage."**************************".PHP_EOL; 
 }
-
-sendTelegramMessageToBot($telegramHourlyBotAPIToken, $telegramMessage);
+global $telegramChatId;
+global $telegramDadChatId;
+sendTelegramMessageToBot($telegramChatId,$telegramHourlyBotAPIToken, $telegramMessage);
+sendTelegramMessageToBot($telegramDadChatId,$telegramDadHourlyBotAPIToken, $telegramMessage);
 closeConnection();
 $echoResponse["trace"] = $traceMessage;
 $echoResponse["processTime"] = round((hrtime(true) - $startTime)/1e+6,2)."ms";

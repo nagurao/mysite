@@ -165,6 +165,8 @@ $echoResponse["resultData"] = $resultData;
 $echoResponse["debugMessage"] = $debugMessage;
 //sendWhatsAppMessage($whatsappMessage);
 sendTelegramMessage($telegramMessage);
+global $telegramDadChatId;
+sendTelegramMessageToBot($telegramDadChatId,$telegramDadHourlyBotAPIToken, $telegramMessage);
 $echoResponse["processTime"] = round((hrtime(true) - $startTime)/1e+6,2)."ms";
 echo json_encode($echoResponse);
 ?>
