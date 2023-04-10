@@ -48,7 +48,7 @@
                             //if(parseInt(consData[key].time.substring(3,5)) % 30 == 0)
                             if( (parseInt(consData[key].time.substring(3,5))>= 29 && parseInt(consData[key].time.substring(3,5))<= 31) || 
                                 (parseInt(consData[key].time.substring(3,5))>= 59 ) ||
-                                (parseInt(consData[key].time.substring(3,5))<= 01)) 
+                                (parseInt(consData[key].time.substring(3,5))<= 05)) 
                             {
                                 dataPointsData[i] = consData[key].time.substring(0,5);
                                 dataPointsCons[i] = numeral(consData[key].value).format("00.00");

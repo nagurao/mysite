@@ -321,8 +321,10 @@ function populateBillGraph()
     global $echoResponse;
     $importData = array();
     $exportData = array();
+    $cfData = array();
     $importBillData = array();
     $exportBillData = array(); 
+    $cfBillData = array();
     
     $rowCount = 0;
     $reportBillDataStmt->execute();
@@ -334,8 +336,10 @@ function populateBillGraph()
             break;
         $tempImportData = array();
         $tempExportData = array();
+        $tempCFData = array();
         $tempImportBillData = array();
         $tempExportBillData = array();
+        $tempCFBillData = array();
 
         $tempImportBillData["date"] = date("M-Y",strtotime($row["BillDate"]));
         $tempImportBillData["value"] = $row["BillImportedUnits"];
@@ -345,6 +349,10 @@ function populateBillGraph()
         $tempExportBillData["value"] = $row["BillExportedUnits"];
         array_push($exportBillData,$tempExportBillData);
 
+        $tempCFBillData["date"] = date("M-Y",strtotime($row["BillDate"]));
+        $tempCFBillData["value"] = $row["BillCarryForward"];
+        array_push($cfBillData,$tempCFBillData);
+
         $tempImportData["date"] = date("M-Y",strtotime($row["BillDate"]));
         $tempImportData["value"] = $row["MeterImportedUnits"];
         array_push($importData,$tempImportData);
@@ -352,6 +360,12 @@ function populateBillGraph()
         $tempExportData["date"] = date("M-Y",strtotime($row["BillDate"]));
         $tempExportData["value"] = $row["MeterExportedUnits"];
         array_push($exportData,$tempExportData);
+
+        $tempCFData["date"] = date("M-Y",strtotime($row["BillDate"]));
+        $tempCFData["value"] = $row["MeterCarryForwardUnits"];
+        array_push($cfData,$tempCFData);
+
+
     }
     if ($rowCount >= 1)
     {
@@ -359,8 +373,10 @@ function populateBillGraph()
         $echoResponse["message"] = $responseArray["3"];
         $echoResponse["importData"] = $importData;
         $echoResponse["exportData"] = $exportData;
+        $echoResponse["cfData"] = $cfData;
         $echoResponse["importBillData"] = $importBillData;
         $echoResponse["exportBillData"] = $exportBillData;
+        $echoResponse["cfBillData"] = $cfBillData;
     }
     else
     {
