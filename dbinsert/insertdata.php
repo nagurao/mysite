@@ -362,7 +362,8 @@ function insertLocalEnvoyHourlyData()
     global $insertEnvoyHourlyStmt;
     global $currEnvoyHourlySelStmt;
     global $prevEnvoyHourlySelStmt;
-
+    global $action;
+    global $prevAction;
     global $envoyDateEpoch;
     global $envoyProductionPrevHour;
     global $envoyConsumptionPrevHour;
@@ -388,6 +389,8 @@ function insertLocalEnvoyHourlyData()
         $result = $insertEnvoyHourlyStmt->get_result();
         commitNow(__FUNCTION__);
     }
+    $prevAction = $action;
+    $action = "REP";
     fetchEnvoyHourlyData();
 }
 ?>

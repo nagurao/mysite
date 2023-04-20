@@ -287,6 +287,7 @@ function fetchEnvoyHourlyData()
     global $responseArray;
     global $echoResponse;
     global $action;
+    global $prevAction;
     global $envoyDateEpoch;
     global $envoyDate;
     global $envoyProductionPrevHour;

@@ -15,6 +15,7 @@ fillResponseArray();
 $debugMessage = "";
 $fatalFlag = false;
 $action = "INS";
+$prevAction = "";
 $src = "SCRIPT";
 $scriptVersion = "1.0";
 
@@ -97,7 +98,7 @@ else
     $echoResponse["envoyProductionDay"] = sprintf("%05.2f",$envoyProductionDayPrevHour);
     $echoResponse["envoyConsumptionDay"] = sprintf("%05.2f",$envoyConsumptionDayPrevHour);
     $echoResponse["result"] = "OK";
-    if($action == "INS")
+    if($prevAction == "INS" && $action == "REP")
         $echoResponse["message"] = $responseArray["8"];
     else
         $echoResponse["message"] = $responseArray["9"];
