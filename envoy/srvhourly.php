@@ -107,8 +107,13 @@ else
 $rowCount = 0;
 $currMaxProd = $currMinProd = $currMaxCons = $currMinCons  = 0.00;
 $currMaxProdTime = $currMinProdTime = $currMaxConsTime = $currMinConsTime = "";
+$maxMinDate = $envoyDate;
+if(hhFromEpoch(time()) == 00 && mmFromEpoch(time() == 00))
+{
+    $maxMinDate = prevDays(1);
+}
 
-if($maxminStmt->bind_param("s",$envoyDate))
+if($maxminStmt->bind_param("s",$maxMinDate))
 {
     $maxminStmt->execute();
     $result = $maxminStmt->get_result();

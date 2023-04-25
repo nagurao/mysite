@@ -60,6 +60,16 @@ function hhFromEpoch($epochTime)
     return date("H",@$epochTime);
 }
 
+function mmFromEpoch($epochTime)
+{
+    return date("i",@$epochTime);
+}
+
+function ddFromEpoch($epochTime)
+{
+    return date("d",@$epochTime);
+}
+
 function dMYHiFromEpoch($epochTime)
 {
     return strtoupper(date("dMY H:i",@$epochTime));
@@ -73,6 +83,13 @@ function dMYFromEpoch($epochTime)
 function HHMMFromEpoch($epochTime)
 {
     return strtoupper(date("H:i",@$epochTime));
+}
+
+function prevDays($numPrevDays)
+{
+    $prevDays = -1 * $numPrevDays;
+    $prevDays =  $prevDays." days";
+    return date('Y-m-d', strtotime(@$prevDays));
 }
 
 function operationToPeform($readingDate)
