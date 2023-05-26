@@ -294,6 +294,10 @@ function fetchEnvoyHourlyData()
     global $envoyConsumptionPrevHour;
     global $envoyProductionDayPrevHour;
     global $envoyConsumptionDayPrevHour;
+    global $envoyMaxProdPeriod;
+    global $envoyMaxConsPeriod;
+    global $envoyMinProdPeriod;
+    global $envoyMinConsPeriod;
 
     $envoyDateEpoch = 0;
     $envoyDate = "";
@@ -302,6 +306,11 @@ function fetchEnvoyHourlyData()
     $envoyProductionDayPrevHour = 0;
     $envoyConsumptionDayPrevHour = 0;
 
+    $envoyMaxProdPeriod = 0;
+    $envoyMaxConsPeriod = 0;
+    $envoyMinProdPeriod = 0;
+    $envoyMinConsPeriod = 0;
+
     $lastEnvoyHourlySelStmt->execute();
     $result = $lastEnvoyHourlySelStmt->get_result();
     if (mysqli_num_rows($result) == 0)
@@ -309,7 +318,7 @@ function fetchEnvoyHourlyData()
     
     while ($row = $result->fetch_assoc())
     {
-        if ($action == "INS" && hhFromEpoch($row["EnvoyReadingTimeEpoch"]) == "00")
+        if ($action == "INS" && hhFromEpoch($row["EnvoyReadingTimeEpoch"]) == "01")
         {
             $envoyProductionDayPrevHour = 0;
             $envoyConsumptionDayPrevHour = 0;
@@ -321,12 +330,6 @@ function fetchEnvoyHourlyData()
         $envoyConsumptionPrevHour = $row["EnvoyConsHour"];
         $envoyProductionDayPrevHour = $row["EnvoyProdDay"];
         $envoyConsumptionDayPrevHour = $row["EnvoyConsDay"];
-        /*$echoResponse["envoyprevHourProd"] = sprintf("%05.2f",$row["EnvoyProdHour"]);
-        $echoResponse["envoyprevHourCons"] = sprintf("%05.2f",$row["EnvoyConsHour"]);
-        $echoResponse["envoyLocalProductionDay"] = sprintf("%07.2f",$row["EnvoyLocalProdDay"]);
-        $echoResponse["envoyLocalConsumptionDay"] = sprintf("%07.2f",$row["EnvoyLocalConsDay"]); 
-        $echoResponse["message"] = $responseArray["9"];
-        $echoResponse["result"] = "OK";  */
     }
 }
 

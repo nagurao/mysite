@@ -27,7 +27,12 @@ $envoyProductionDay = 0;
 $envoyConsumptionDay = 0;
 $envoyProductionDayPrevHour = 0;
 $envoyConsumptionDayPrevHour = 0;
-
+$envoyMaxProdPeriod = 0;
+$envoyMaxConsPeriod = 0;
+$envoyMinProdPeriod = 0;
+$envoyMinConsPeriod = 0;
+$prevMaxProdHour = $prevMaxConsHour = $prevMinProdHour = $prevMinConsHour = "";
+$currMaxProdHour = $currMaxConsHour = $currMinProdHour = $currMinConsHour = "";
 $echoResponse["version"] = $scriptVersion;
 if (isset($_GET['action']))
     $action = testinput($_GET['action']);
@@ -59,6 +64,24 @@ else
     $maxminQuery = "SELECT EnvoyMaxMinDate, ProductionMax, ProductionMaxTime, ProductionMin, ProductionMinTime, ConsumptionMax, ConsumptionMaxTime, ConsumptionMin, ConsumptionMinTime, EnvoyMaxMinUpdateTimestamp FROM EnvoyDailyMaxMin WHERE EnvoyMaxMinDate = ?";
     $maxminStmt = $conn->prepare($maxminQuery);
 
+    $maxProdPeriodQuery = "SELECT EnvoyReadingDate, EnvoyReadingTimeEpoch, EnvoyReadingTime, EnvoyProdHour, date_format(SubTime(EnvoyReadingTimestamp,\"01:00:00\" ),'%H:%i') AS PrevHour, date_format(EnvoyReadingTimestamp,'%H:%i') AS CurrHour FROM EnvoyHourlyReadings WHERE EnvoyReadingDate >= CURRENT_DATE AND EnvoyProdHour = (SELECT MAX(EnvoyProdHour) FROM EnvoyHourlyReadings WHERE EnvoyReadingDate = CURRENT_DATE)";
+    $maxProdPeriodStmt = $conn->prepare($maxProdPeriodQuery);
+    $minProdPeriodQuery = "SELECT EnvoyReadingDate, EnvoyReadingTimeEpoch, EnvoyReadingTime, EnvoyProdHour, date_format(SubTime(EnvoyReadingTimestamp,\"01:00:00\" ),'%H:%i') AS PrevHour, date_format(EnvoyReadingTimestamp,'%H:%i') AS CurrHour FROM EnvoyHourlyReadings WHERE EnvoyReadingDate >= CURRENT_DATE AND EnvoyProdHour = (SELECT MIN(EnvoyProdHour) FROM EnvoyHourlyReadings WHERE EnvoyReadingDate = CURRENT_DATE AND EnvoyProdHour > 0)";
+    $minProdPeriodStmt = $conn->prepare($minProdPeriodQuery);
+    $maxConsPeriodQuery = "SELECT EnvoyReadingDate, EnvoyReadingTimeEpoch, EnvoyReadingTime, EnvoyConsHour, date_format(SubTime(EnvoyReadingTimestamp,\"01:00:00\" ),'%H:%i') AS PrevHour, date_format(EnvoyReadingTimestamp,'%H:%i') AS CurrHour FROM EnvoyHourlyReadings WHERE EnvoyReadingDate >= CURRENT_DATE AND EnvoyConsHour = (SELECT MAX(EnvoyConsHour) FROM EnvoyHourlyReadings WHERE EnvoyReadingDate = CURRENT_DATE)";
+    $maxConsPeriodStmt = $conn->prepare($maxConsPeriodQuery);
+    $minConsPeriodQuery = "SELECT EnvoyReadingDate, EnvoyReadingTimeEpoch, EnvoyReadingTime, EnvoyConsHour, date_format(SubTime(EnvoyReadingTimestamp,\"01:00:00\" ),'%H:%i') AS PrevHour, date_format(EnvoyReadingTimestamp,'%H:%i') AS CurrHour FROM EnvoyHourlyReadings WHERE EnvoyReadingDate >= CURRENT_DATE AND EnvoyConsHour = (SELECT MIN(EnvoyConsHour) FROM EnvoyHourlyReadings WHERE EnvoyReadingDate = CURRENT_DATE)";
+    $minConsPeriodStmt = $conn->prepare($minConsPeriodQuery);
+/*
+SELECT EnvoyProdHour , 
+date_format(SubTime(EnvoyReadingTimestamp,"01:00:00"),'%H:%i') AS PrevHour,
+date_format(EnvoyReadingTimestamp,'%H:%i') AS CurrHour
+FROM EnvoyHourlyReadings
+WHERE EnvoyReadingDate >= CURRENT_DATE
+AND
+EnvoyProdHour = (SELECT MAX(EnvoyProdHour) FROM EnvoyHourlyReadings
+WHERE EnvoyReadingDate = CURRENT_DATE)
+*/
     $echoResponse["trace"] = "";
     $echoResponse["resultData"] = "";
 }
@@ -165,6 +188,89 @@ if($rowCount > 0)
     $telegramMessage = $telegramMessage."Min Consumption At : ".messageDateTimeFromTimestamp($currMinConsTime).PHP_EOL."Min Value : ".sprintf("%07.2f",$currMinCons)." W".PHP_EOL; 
     $telegramMessage = $telegramMessage."**************************".PHP_EOL; 
 }
+
+if($maxProdPeriodStmt->execute())
+{
+    $result = $maxProdPeriodStmt->get_result();
+    $rowCount = mysqli_num_rows($result);
+    if($rowCount > 0)
+    {
+        while ($row = $result->fetch_assoc())
+        {
+            $envoyMaxProdPeriod = $row["EnvoyProdHour"];
+            $prevMaxProdHour = $row["PrevHour"];
+            $currMaxProdHour = $row["CurrHour"];
+        }
+        $echoResponse["MaxProdPerHour"] = sprintf("%05.2f",$envoyMaxProdPeriod);
+        $echoResponse["MaxProdStartHour"] = $prevMaxProdHour;
+        $echoResponse["MaxProdEndHour"] = $currMaxProdHour;
+    }
+}
+
+if($minProdPeriodStmt->execute())
+{
+    $result = $minProdPeriodStmt->get_result();
+    $rowCount = mysqli_num_rows($result);
+    if($rowCount > 0)
+    {
+        while ($row = $result->fetch_assoc())
+        {
+            $envoyMinProdPeriod = $row["EnvoyProdHour"];
+            $prevMinProdHour = $row["PrevHour"];
+            $currMinProdHour = $row["CurrHour"];
+        }
+        $echoResponse["MinProdPerHour"] = sprintf("%05.2f",$envoyMinProdPeriod);
+        $echoResponse["MinProdStartHour"] = $prevMinProdHour;
+        $echoResponse["MinProdEndHour"] = $currMinProdHour;
+    }
+}
+
+if($maxConsPeriodStmt->execute())
+{
+    $result = $maxConsPeriodStmt->get_result();
+    $rowCount = mysqli_num_rows($result);
+    if($rowCount > 0)
+    {
+        while ($row = $result->fetch_assoc())
+        {
+            $envoyMaxConsPeriod = $row["EnvoyConsHour"];
+            $prevMaxConsHour = $row["PrevHour"];
+            $currMaxConsHour = $row["CurrHour"];
+        }
+        $echoResponse["MaxConsPerHour"] = sprintf("%05.2f",$envoyMaxConsPeriod);
+        $echoResponse["MaxConsStartHour"] = $prevMaxConsHour;
+        $echoResponse["MaxConsEndHour"] = $currMaxConsHour;
+    }
+}
+
+if($minConsPeriodStmt->execute())
+{
+    $result = $minConsPeriodStmt->get_result();
+    $rowCount = mysqli_num_rows($result);
+    if($rowCount > 0)
+    {
+        while ($row = $result->fetch_assoc())
+        {
+            $envoyMinConsPeriod = $row["EnvoyConsHour"];
+            $prevMinConsHour = $row["PrevHour"];
+            $currMinConsHour = $row["CurrHour"];
+        }
+        $echoResponse["MinConsPerHour"] = sprintf("%05.2f",$envoyMinConsPeriod);
+        $echoResponse["MinConsStartHour"] = $prevMinConsHour;
+        $echoResponse["MinConsEndHour"] = $currMinConsHour;
+    }
+}
+
+if ($prevMaxProdHour != "")
+    $telegramMessage = $telegramMessage."Max Hourly Production between ".$prevMaxProdHour." - ".$currMaxProdHour." : ".sprintf("%05.2f",$envoyMaxProdPeriod)." kWh".PHP_EOL;
+if ($prevMinProdHour != "")
+    $telegramMessage = $telegramMessage."Min Hourly Production between ".$prevMinProdHour." - ".$currMinProdHour." : ".sprintf("%05.2f",$envoyMinProdPeriod)." kWh".PHP_EOL;
+if ($prevMaxConsHour != "")
+    $telegramMessage = $telegramMessage."Max Hourly Consumption between ".$prevMaxConsHour." - ".$currMaxConsHour." : ".sprintf("%05.2f",$envoyMaxConsPeriod)." kWh".PHP_EOL;
+if ($prevMinConsHour != "")
+    $telegramMessage = $telegramMessage."Min Hourly Consumption between ".$prevMinConsHour." - ".$currMinConsHour." : ".sprintf("%05.2f",$envoyMinConsPeriod)." kWh".PHP_EOL;
+
+$telegramMessage = $telegramMessage."**************************".PHP_EOL; 
 global $telegramChatId;
 global $telegramDadChatId;
 sendTelegramMessageToBot($telegramChatId,$telegramHourlyBotAPIToken, $telegramMessage);
