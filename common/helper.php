@@ -60,6 +60,10 @@ function hhFromEpoch($epochTime)
     return date("H",@$epochTime);
 }
 
+function hhFromTimestamp($timestamp)
+{
+    return date("H",strtotime($timestamp));    
+}
 function mmFromEpoch($epochTime)
 {
     return date("i",@$epochTime);
