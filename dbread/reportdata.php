@@ -318,7 +318,7 @@ function fetchEnvoyHourlyData()
     
     while ($row = $result->fetch_assoc())
     {
-        if ($action == "INS" && hhFromEpoch($row["EnvoyReadingTimestamp"]) == "00")
+        if ($action == "INS" && hhFromTimestamp($row["EnvoyReadingTimestamp"]) == "00")
         {
             $envoyProductionDayPrevHour = 0;
             $envoyConsumptionDayPrevHour = 0;
