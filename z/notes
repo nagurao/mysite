@@ -1,0 +1,54 @@
+=============================
+#include <stdio.h>
+
+// Function to find the second Sunday of March
+int findSecondSundayMarch(int year) {
+    int day = 1; // Starting day in March (1-31)
+    int month = 3; // March
+    int weekday;
+
+    // Find the weekday for the given day in March
+    weekday = ((day += month < 3 ? year-- : year - 2, 23 * month / 9 + day + 4 + year / 4 - year / 100 + year / 400) % 7);
+
+    // Calculate the offset needed to reach Sunday
+    int offset = (7 - weekday) % 7;
+
+    // Add the offset to the day to get the first Sunday of March
+    int firstSunday = day + offset;
+
+    // Add 7 days to get the second Sunday of March
+    int secondSunday = firstSunday + 7;
+
+    return secondSunday;
+}
+
+// Function to find the first Sunday of November
+int findFirstSundayNovember(int year) {
+    int day = 1; // Starting day in November (1-30)
+    int month = 11; // November
+    int weekday;
+
+    // Find the weekday for the given day in November
+    weekday = ((day += month < 3 ? year-- : year - 2, 23 * month / 9 + day + 4 + year / 4 - year / 100 + year / 400) % 7);
+
+    // Calculate the offset needed to reach Sunday
+    int offset = (7 - weekday) % 7;
+
+    // Add the offset to the day to get the first Sunday of November
+    int firstSunday = day + offset;
+
+    return firstSunday;
+}
+
+int main() {
+    int year = 2023;
+    int secondSundayMarch = findSecondSundayMarch(year);
+    int firstSundayNovember = findFirstSundayNovember(year);
+
+    printf("Second Sunday of March: %d\n", secondSundayMarch);
+    printf("First Sunday of November: %d\n", firstSundayNovember);
+
+    return 0;
+}
+
+=============================
