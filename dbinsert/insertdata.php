@@ -61,7 +61,7 @@ function insertEnvoyReadingData($readingDate,$productionReading,$consumptionRead
     $traceMessage = $traceMessage.__FUNCTION__.$readingDate.$productionReading.$consumptionReading;
     global $insertStmtProdConsumptionByDate;
     $productionReadingRounded = sprintf("%05.2f",round($productionReading/1000,1));
-    $consumptionReadingRounded = sprintf("%05.2f",round($consumptionReading/1000,1));;
+    $consumptionReadingRounded = sprintf("%05.2f",round($consumptionReading/1000,1));
     if ($insertStmtProdConsumptionByDate->bind_param("sssss",$readingDate,$productionReading,$consumptionReading,$productionReadingRounded,$consumptionReadingRounded))
     {
         $insertStmtProdConsumptionByDate->execute();

@@ -55,6 +55,11 @@ function YYYYMMDDFromEpoch($epochTime)
     return date("Y-m-d",@$epochTime);
 }
 
+function YYYYMMFromEpoch($epochTime)
+{
+    return date("Ym",@$epochTime);
+}
+
 function hhFromEpoch($epochTime)
 {
     return date("H",@$epochTime);
