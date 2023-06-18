@@ -7,3 +7,8 @@
 test*.php
 myenvoy*.py
 myenvoy*.php
+*launch.json
+*arduino.json
+*c_cpp_properties.json
+arduino/build/*
+arduino/libraries/*

@@ -54,13 +54,23 @@ else
 
     $maxminInsUpdQuery = "REPLACE INTO EnvoyDailyMaxMin (EnvoyMaxMinDate, ProductionMax, ProductionMaxTime, ProductionMin, ProductionMinTime, ConsumptionMax, ConsumptionMaxTime, ConsumptionMin, ConsumptionMinTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $maxminInsUpdStmt = $conn->prepare($maxminInsUpdQuery);
+
+    $currMonthSelQuery = "SELECT NetMeterYYYYMM, LifeTimeProdRaw, LifeTimeConsRaw, LifeTimeNetRaw, CurrMonthProd, CurrMonthCons, CurrMonthNet FROM EnvoyMonthlyReadings WHERE NetMeterYYYYMM = ? ORDER BY NetMeterYYYYMM DESC LIMIT 0,1";
+    $currMonthSelStmt = $conn->prepare($currMonthSelQuery);
+
+    $prevMonthSelQuery = "SELECT NetMeterYYYYMM, LifeTimeProdRaw, LifeTimeConsRaw, LifeTimeNetRaw, CurrMonthProd, CurrMonthCons, CurrMonthNet FROM EnvoyMonthlyReadings WHERE NetMeterYYYYMM <= ? ORDER BY NetMeterYYYYMM DESC LIMIT 0,1";
+    $prevMonthSelStmt = $conn->prepare($prevMonthSelQuery);
+    
+    $currentInsUpdQuery = "REPLACE INTO EnvoyMonthlyReadings SET NetMeterYYYYMM = ?, LifeTimeProdRaw = ?,LifeTimeConsRaw = ?,LifeTimeNetRaw = ?,CurrMonthProd = ?,CurrMonthCons = ?,CurrMonthNet = ?;";
+    $currentInsUpdStmt = $conn->prepare($currentInsUpdQuery);
+
     $echoResponse["trace"] = "";
     $echoResponse["resultData"] = "";
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 }
 
 $envoyDateEpoch = 0;
-$envoyDateYYYYMMDD = "";
+$envoyDateYYYYMMDD = $envoyDateYYYYMM = "";
 $envoyDateTime = "";
 
 $envoyCurrProd = 0;
@@ -71,6 +81,10 @@ $currMaxCons = $currMinCons = 0;
 $currMaxProdTime = $currMinProdTime = "";
 $currMaxConsTime = $currMinConsTime = "";
 $lastUpdated = "";
+
+$envoyLifeTimeProdRaw = $envoyLifeTimeConsRaw = $envoyLifeTimeNetRaw = 0;
+$currLifeTimeProdRaw = $currLifeTimeConsRaw = $currLifeTimeNetRaw = 0;
+$currMonthProd = $currMonthCons = $currMonthNet = 0;
 
 $updateMaxProdRecord = FALSE;
 $updateMinProdRecord = FALSE;
@@ -88,6 +102,9 @@ if($action == "INS")
     $envoyCurrCons = round($envoyData->consumption[0]->wNow,2);
     $dateYYYYMMDD = $envoyDateYYYYMMDD;
     $envoyDateTime = datetimeFromEpoch($envoyDateEpoch);
+    $envoyLifeTimeProdRaw = $envoyData->production[1]->whLifetime;
+    $envoyLifeTimeConsRaw = $envoyData->consumption[0]->whLifetime;
+    $envoyLifeTimeNetRaw = $envoyData->consumption[1]->whLifetime;
     if ($envoyDateEpoch == 0)
         return;
 }
@@ -219,6 +236,61 @@ if ($action == "INS")
     if (!$updateMinConsRecord)
         $echoResponse["MinConsMessage"] =  $responseArray["26"]." Current Consumption : ".sprintf("%07.2f",$envoyCurrCons)." W";
 
+    $envoyDateYYYYMM = YYYYMMFromEpoch($envoyData->consumption[0]->readingTime);
+    if($currMonthSelStmt->bind_param("s",$envoyDateYYYYMM))
+    {
+        $currMonthSelStmt->execute(); 
+        $result = $currMonthSelStmt->get_result();
+        if (mysqli_num_rows($result) == 0)
+        {
+            if($prevMonthSelStmt->bind_param("s",$envoyDateYYYYMM))
+            {
+                $resultPrev = $prevMonthSelStmt->execute();
+                $resultPrev = $prevMonthSelStmt->get_result();
+                if (mysqli_num_rows($resultPrev) == 0)
+                {
+                    $currLifeTimeProdRaw = $envoyLifeTimeProdRaw;
+                    $currLifeTimeConsRaw = $envoyLifeTimeConsRaw;
+                    $currLifeTimeNetRaw = $envoyLifeTimeNetRaw;
+                    $currMonthProd = $currMonthCons = $currMonthNet = 0;  
+                }
+                else
+                {
+                    while ($prevRow = $resultPrev->fetch_assoc())
+                    {
+                        $currLifeTimeProdRaw = $prevRow["LifeTimeProdRaw"];
+                        $currLifeTimeConsRaw = $prevRow["LifeTimeConsRaw"];
+                        $currLifeTimeNetRaw = $prevRow["LifeTimeNetRaw"];
+                    }   
+                }
+            }    
+        }
+        else
+        {
+            while ($row = $result->fetch_assoc())
+            {
+                $currLifeTimeProdRaw = $row["LifeTimeProdRaw"];
+                $currLifeTimeConsRaw = $row["LifeTimeConsRaw"];
+                $currLifeTimeNetRaw = $row["LifeTimeNetRaw"];
+                $currMonthProd = $row["CurrMonthProd"];
+                $currMonthCons = $row["CurrMonthCons"];
+                $currMonthNet = $row["CurrMonthNet"];  
+            }
+        }
+        $currMonthProd = $currMonthProd + $envoyLifeTimeProdRaw - $currLifeTimeProdRaw;
+        $currMonthCons = $currMonthCons + $envoyLifeTimeConsRaw - $currLifeTimeConsRaw;
+        $currMonthNet  = $currMonthNet  + $envoyLifeTimeNetRaw  - $currLifeTimeNetRaw;
+        $currLifeTimeProdRaw = $envoyLifeTimeProdRaw;
+        $currLifeTimeConsRaw = $envoyLifeTimeConsRaw;
+        $currLifeTimeNetRaw  = $envoyLifeTimeNetRaw;
+
+        if ($currentInsUpdStmt->bind_param("sssssss",$envoyDateYYYYMM,$currLifeTimeProdRaw,$currLifeTimeConsRaw,$currLifeTimeNetRaw,$currMonthProd,$currMonthCons,$currMonthNet))
+        {
+            $currentInsUpdStmt->execute();
+            $result = $currentInsUpdStmt->get_result();
+            commitNow();
+        }
+    }
 }   
 
 if($action == "REP" && $rowCount == 0)
@@ -241,6 +313,14 @@ else
     $echoResponse["MinCons"] = sprintf("%07.2f",$currMinCons);
     $echoResponse["MinConsTime"] = timeinHHMM($currMinConsTime);
     $echoResponse["LastUpdated"] = dMYHi($lastUpdated);
+    $echoResponse["EnvoyReadingDateTime"] = messageDateTimeFromEpoch($envoyDateEpoch);
+    $echoResponse["EnvoyReadingYYYYMM"] = $envoyDateYYYYMM;
+    $echoResponse["EnvoyProductionLifeTime"] = $currLifeTimeProdRaw;
+    $echoResponse["EnvoyConsumptionLifeTime"] = $currLifeTimeConsRaw;
+    $echoResponse["EnvoyNetConsumptionLifeTime"] = $currLifeTimeNetRaw;
+    $echoResponse["CurrMonthProduction"] = sprintf("%07.2f",round($currMonthProd/1000,2));
+    $echoResponse["CurrMonthConsumption"] = sprintf("%07.2f",round($currMonthCons/1000,2));
+    $echoResponse["CurrMonthNetConsumption"] = sprintf("%07.2f",round($currMonthNet/1000,2));
 }
 closeConnection();
 $echoResponse["trace"] = $traceMessage;

@@ -270,7 +270,10 @@ function fillResponseArray()
     $responseArray["24"] = "Envoy Min Consumption Reading Data Reterived successfully.";  
     $responseArray["25"] = "No Envoy Min Consumption Reading Data available."; 
     $responseArray["26"] = "Current Consumption greater than available Envoy Min Consumption.";  
-    $responseArray["27"] = "Max/Min Solar Production or Consumption Data Inserted";              
+    $responseArray["27"] = "Max/Min Solar Production or Consumption Data Inserted";
+    $responseArray["28"] = "Envoy Lifetime Data Inserted/Updated successfully.";
+    $responseArray["29"] = "Envoy Lifetime Data Reterived successfully."; 
+    $responseArray["30"] = "No Envoy Lifetimne Data.";             
     $responseArray["-1"] = "Error inserting Net Meter details.";
     $responseArray["-2"] = "Error updating Net Meter details.";
     $responseArray["-97"] = "Database Auto Commit Issue.".
