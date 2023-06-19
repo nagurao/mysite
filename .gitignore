@@ -12,3 +12,4 @@ myenvoy*.php
 *c_cpp_properties.json
 arduino/build/*
 arduino/libraries/*
+.ssh/*
