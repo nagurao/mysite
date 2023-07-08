@@ -414,6 +414,11 @@ function populateBillGraph()
     }
 }
 
+function getDataFromEnvoy($url,$curlOptions)
+{
+
+}
+
 function getDataFromEnphase($envoyReadingDate,$url,$key)
 {
     global $traceMessage;
