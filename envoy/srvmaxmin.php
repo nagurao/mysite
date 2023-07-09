@@ -93,10 +93,12 @@ $updateMinConsRecord = FALSE;
 
 if($action == "INS")
 {
-    $envoyURL = "http://envoy.local/production.json";
-    $envoyData = json_decode(file_get_contents($envoyURL));
-    
+    //$envoyURL = "http://envoy.local/production.json";
+    //$envoyData = json_decode(file_get_contents($envoyURL));
+    $envoyData = json_decode(getDataFromEnvoy(),false);
     $envoyDateEpoch = $envoyData->production[1]->readingTime;
+    if ($envoyDateEpoch == 0)
+        return;
     $envoyDateYYYYMMDD = YYYYMMDDFromEpoch($envoyDateEpoch);
     $envoyCurrProd = round($envoyData->production[1]->wNow,2);
     $envoyCurrCons = round($envoyData->consumption[0]->wNow,2);
@@ -105,8 +107,7 @@ if($action == "INS")
     $envoyLifeTimeProdRaw = $envoyData->production[1]->whLifetime;
     $envoyLifeTimeConsRaw = $envoyData->consumption[0]->whLifetime;
     $envoyLifeTimeNetRaw = $envoyData->consumption[1]->whLifetime;
-    if ($envoyDateEpoch == 0)
-        return;
+
 }
 if ($action == "REP" && $dateYYYYMMDD == "")
     $dateYYYYMMDD = YYYYMMDDFromEpoch(time());

@@ -113,8 +113,9 @@ if($action == "REP")
 }
 if($action == "INS")
 {
-    $envoyURL = "http://envoy.local/production.json";
-    $envoyData = json_decode(file_get_contents($envoyURL));
+    //$envoyURL = "http://envoy.local/production.json";
+    //$envoyData = json_decode(file_get_contents($envoyURL));
+    $envoyData = json_decode(getDataFromEnvoy(),false);
     $envoyDateEpoch = $envoyData->consumption[0]->readingTime;
     $reportTimeEpoch = $envoyDateEpoch;
     $envoyLifeTimeProdRaw = $envoyData->production[1]->whLifetime;

@@ -414,9 +414,43 @@ function populateBillGraph()
     }
 }
 
-function getDataFromEnvoy($url,$curlOptions)
+function getDataFromEnvoy()
 {
+    global $envoyURL;
+    global $options;
+    global $conn;
+    $curl = curl_init();
+    curl_setopt_array($curl, $options);
+    $response = curl_exec($curl);
+    $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    if ($httpCode == 200)
+    {
+        $envoyInsQuery = "INSERT INTO Envoy (EnvoyData) VALUE (?)";
+        $envoyInsStmt = $conn->prepare($envoyInsQuery);
 
+        if($envoyInsStmt->bind_param("s",$response));
+        {
+            $envoyInsStmt->execute();
+            $result = $envoyInsStmt->get_result();
+            commitNow(__FUNCTION__);
+        }
+
+        return $response;
+    }
+    else
+    {
+        $zeroData = array(
+            "production" => array(
+              array(
+                "readingTime" => 0
+              ),
+              array(
+                "readingTime" => 0
+              )
+            )
+          );
+        return json_encode($zeroData);
+    }
 }
 
 function getDataFromEnphase($envoyReadingDate,$url,$key)

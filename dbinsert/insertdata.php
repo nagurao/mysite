@@ -324,8 +324,9 @@ function insertLocalEnvoyData()
     global $traceMessage;
     $traceMessage = $traceMessage."->".__FUNCTION__;
 
-    $envoyURL = "http://envoy.local/production.json";
-    $envoyData = json_decode(file_get_contents($envoyURL));
+    //$envoyURL = "http://envoy.local/production.json";
+    //$envoyData = json_decode(file_get_contents($envoyURL));
+    $envoyData = json_decode(getDataFromEnvoy(),false);
     $envoyLocalDateTime = $envoyData->consumption[0]->readingTime;
     $envoyLocalDate = YYYYMMDDFromEpoch($envoyLocalDateTime);
     $envoyLocalProductionRaw = $envoyData->production[1]->wNow;
@@ -372,8 +373,9 @@ function insertLocalEnvoyHourlyData()
     global $envoyProductionDayPrevHour;
     global $envoyConsumptionDayPrevHour;
     
-    $envoyURL = "http://envoy.local/production.json";
-    $envoyData = json_decode(file_get_contents($envoyURL));
+    //$envoyURL = "http://envoy.local/production.json";
+    //$envoyData = json_decode(file_get_contents($envoyURL));
+    $envoyData = json_decode(getDataFromEnvoy(),false);
     $envoyDateEpoch = $envoyData->consumption[0]->readingTime;
     $envoyDate = YYYYMMDDFromEpoch($envoyDateEpoch);
     $envoyDateTime = datetimeFromEpoch($envoyDateEpoch);

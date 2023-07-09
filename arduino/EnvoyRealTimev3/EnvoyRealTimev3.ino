@@ -38,7 +38,7 @@
 #define IST_OFFSET 19800
 #define MAX_PARAMS 8
 time_t prevDisplay = 0;
-static const char url[] PROGMEM = "http://envoy.local/production.json";
+static const char url[] PROGMEM = "https://envoy.local/production.json";
 static const char urlUsage [] PROGMEM = "http://lamp.local/envoy/srvmonthly.php";
 
 static const char MainPage[] PROGMEM = R"(
@@ -432,7 +432,9 @@ String httpGETRequest(const char* serverName)
     
   // Your Domain name with URL path or IP address with path
   http.begin(client, serverName);
-  
+  http.addHeader("Accept", "application/json");
+  http.addHeader("Authorization", bearer_auth);
+  http.addHeader("Content-Type", "application/json");
   // Send HTTP POST request
   int httpResponseCode = http.GET();
   
