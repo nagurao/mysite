@@ -3,8 +3,52 @@
 <head>
     <title>Energy Data</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta http-equiv="refresh" content="61"/>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<style>
+		.container {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 20px;
+		}
+
+		.data-section {
+			display: flex;
+			justify-content: space-between;
+		}
+
+		.data-section div {
+			flex-basis: 50%;
+			text-align: center;
+			padding: 20px;
+			background-color: #f2f2f2;
+			border-radius: 5px;
+		}
+
+		.data-section h2 {
+			font-size: 20px;
+		}
+
+		.data-section p {
+			font-size: 24px;
+			font-weight: bold;
+		}
+		
+		.sensorData {
+            margin-bottom: 20px;
+        }
+        .timeRemainingBarContainer {
+            width: 200px;
+            height: 10px;
+            background-color: #f3f3f3;
+            margin-bottom: 20px;
+        }
+        .timeRemainingBar {
+            height: 100%;
+            background-color: #4caf50;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -35,6 +79,79 @@
             </div>
         </div>
     </div>
-    <script src="script.js"></script>
+	    <div id="sensorData"></div>
+    <div id="timeRemainingBarContainer">
+        <div id="timeRemainingBar"></div>
+    </div>
+    <script>
+		
+		function updateSensorData(data) {
+            var sensorDataElement = $("#sensorData");
+
+            // Clear previous data
+            sensorDataElement.empty();
+
+            // Extract the required values
+            var consumptionWNow = data.consumption[0].wNow;
+            var production1WNow = data.production[1].wNow;
+
+            // Create a new paragraph element for each value and append it to the sensorData div
+            $("<p>").text("Consumption W Now: " + consumptionWNow).appendTo(sensorDataElement);
+            $("<p>").text("Production 1 W Now: " + production1WNow).appendTo(sensorDataElement);
+        
+			document.getElementById("production-value").innerText = production1WNow + " kWh";
+			document.getElementById("consumption-value").innerText = consumptionWNow + " kWh";
+			//document.getElementById("net-energy-value").innerText = netEnergyData + " kWh";
+		}
+		
+		// Function to update the time remaining progress bar
+        function updateTimeRemainingBar(remainingTime) {
+            var progressBar = $("#timeRemainingBar");
+            var progress = (remainingTime / 60) * 100; // Assuming the auto-refresh interval is 60 seconds
+			
+            progressBar.css("width", progress + "%");
+        }
+		// Function to fetch sensor data and update the webpage
+        function fetchSensorData() {
+            $.ajax({
+                url: "http://lamp.local/envoy/srvenvoy.php",
+                method: "GET",
+                dataType: "json",
+                success: function (data) {
+                    // Update the sensor data on the webpage
+                    updateSensorData(data);
+                },
+                error: function (xhr, status, error) {
+                    console.log("Failed to retrieve data from the URL. Status: " + xhr.status + " Error: " + error);
+                }
+            });
+        }
+		
+		// Function to update the time remaining progress bar and fetch sensor data
+        function updateTimeRemainingBarAndData() {
+            var remainingTime = 60; // Set the auto-refresh interval (in seconds)
+
+            // Update the time remaining progress bar
+            updateTimeRemainingBar(remainingTime);
+
+            // Fetch sensor data
+            fetchSensorData();
+
+            // Update the time remaining progress bar and fetch sensor data every second
+            var timer = setInterval(function () {
+                remainingTime--;
+                updateTimeRemainingBar(remainingTime);
+
+                if (remainingTime <= 0) {
+                    clearInterval(timer);
+                    updateTimeRemainingBarAndData();
+                }
+            }, 1000);
+        }
+
+        // Initial update of the time remaining progress bar and fetch sensor data
+        updateTimeRemainingBarAndData();
+		
+	</script>
 </body>
 </html>

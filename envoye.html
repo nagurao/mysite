@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BHR's Envoy Energy Data</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" crossorigin="anonymous" href="http://me.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cDovL2xhbXAubG9jYWwvZW52b3kuaHRtbA" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .data-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .data-section h2 {
+            font-size: 20px;
+        }
+
+        .data-section p {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        #sensorData {
+            margin-bottom: 20px;
+        }
+
+        #timeRemainingBarContainer {
+            width: 100%;
+            height: 10px;
+            background-color: #f3f3f3;
+            margin-bottom: 20px;
+        }
+
+        #timeRemainingBar {
+            height: 100%;
+            background-color: #4caf50;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Current Energy Data</h1>
+        <div class="data-section">
+            <h2>Production</h2>
+            <p id="production-value">Loading...</p>
+        </div>
+        <div class="data-section">
+            <h2>Consumption</h2>
+            <p id="consumption-value">Loading...</p>
+        </div>
+        <div class="data-section">
+            <h2>Net Energy</h2>
+            <p id="net-energy-value">Loading...</p>
+        </div>
+        <h1>Today's Energy Data</h1>
+        <div class="data-section">
+            <h2>Production</h2>
+            <p id="day-production-value">Loading...</p>
+        </div>
+        <div class="data-section">
+            <h2>Consumption</h2>
+            <p id="day-consumption-value">Loading...</p>
+        </div>
+        <h1>Lifetime Energy Data</h1>
+        <div class="data-section">
+            <h2>Production</h2>
+            <p id="lifetime-production-value">Loading...</p>
+        </div>
+        <div class="data-section">
+            <h2>Consumption</h2>
+            <p id="lifetime-consumption-value">Loading...</p>
+        </div>
+        <div class="data-section">
+            <h2>Net Consumption</h2>
+            <p id="lifetime-net-consumption-value">Loading...</p>
+        </div>
+        <div id="sensorData"></div>
+        <div id="timeRemainingBarContainer">
+            <div id="timeRemainingBar"></div>
+        </div>
+    </div>
+
+    <script>
+        function updateSensorData(data) {
+            var sensorDataElement = $("#sensorData");
+
+            // Clear previous data
+            sensorDataElement.empty();
+
+            // Extract the required values
+            var consumptionNow = data.consumption[0].wNow;
+            var productionNow = data.production[1].wNow;
+            var dayproduction = data.production[1].whToday;
+            var dayconsumption = data.consumption[0].whToday;
+            var netConsumptionNow = data.consumption[1].wNow;
+            var productionLifeTime = data.production[1].whLifetime;
+            var consumptionLifeTime = data.consumption[0].whLifetime;
+            var netLifeTime = data.consumption[1].whLifetime;
+            var dayPUnit = " W";
+            var dayCUnit = " W";
+            var lifePUnit = " W";
+            var lifeCUnit = " W";
+            var lifeNUnit = " W";
+            if (dayproduction > 1000) { dayPUnit = " kW"; dayproduction = (dayproduction / 1000).toFixed(2); }
+            if (dayconsumption > 1000) { dayCUnit = " kW"; dayconsumption = (dayconsumption / 1000).toFixed(2); }
+            var textImportExport = "Export";
+            var textLifeImportExport = " Export";
+            if (netConsumptionNow > 0) textImportExport = "Import";
+            if (netLifeTime > 0) textLifeImportExport = "Import";
+
+            if (productionLifeTime > 1000000) { lifePUnit = " MWh"; productionLifeTime = (productionLifeTime / 1000000).toFixed(4); }
+            if (consumptionLifeTime > 1000000) { lifeCUnit = " MWh"; consumptionLifeTime = (consumptionLifeTime / 1000000).toFixed(4); }
+            if (Math.abs(netLifeTime) > 1000000) { lifeNUnit = " MWh"; netLifeTime = (netLifeTime / 1000000).toFixed(4); }
+
+            document.getElementById("production-value").innerText = productionNow + " W";
+            document.getElementById("consumption-value").innerText = consumptionNow + " W";
+            document.getElementById("net-energy-value").innerText = Math.abs(netConsumptionNow) + " W " + textImportExport;
+            document.getElementById("day-production-value").innerText = dayproduction + dayPUnit;
+            document.getElementById("day-consumption-value").innerText = dayconsumption + dayCUnit;
+
+            document.getElementById("lifetime-production-value").innerText = productionLifeTime + lifePUnit;
+            document.getElementById("lifetime-consumption-value").innerText = consumptionLifeTime + lifeCUnit;
+            document.getElementById("lifetime-net-consumption-value").innerText = Math.abs(netLifeTime) + lifeNUnit + textLifeImportExport;
+        }
+
+        // Function to update the time remaining progress bar
+        function updateTimeRemainingBar(remainingTime) {
+            var progressBar = $("#timeRemainingBar");
+            var progress = (remainingTime / 60) * 100; // Assuming the auto-refresh interval is 60 seconds
+
+            progressBar.css("width", progress + "%");
+        }
+
+        // Function to fetch sensor data and update the webpage
+        function fetchSensorData() {
+            $.ajax({
+                url: "http://lamp.local/envoy/srvenvoy.php",
+                method: "GET",
+                dataType: "json",
+                success: function (data) {
+                    // Update the sensor data on the webpage
+                    updateSensorData(data);
+                },
+                error: function (xhr, status, error) {
+                    console.log("Failed to retrieve data from the URL. Status: " + xhr.status + " Error: " + error);
+                }
+            });
+        }
+
+        // Function to update the time remaining progress bar and fetch sensor data
+        function updateTimeRemainingBarAndData() {
+            var remainingTime = 60; // Set the auto-refresh interval (in seconds)
+
+            // Update the time remaining progress bar
+            updateTimeRemainingBar(remainingTime);
+
+            // Fetch sensor data
+            fetchSensorData();
+
+            // Update the time remaining progress bar and fetch sensor data every second
+            var timer = setInterval(function () {
+                remainingTime--;
+                updateTimeRemainingBar(remainingTime);
+
+                if (remainingTime <= 0) {
+                    clearInterval(timer);
+                    updateTimeRemainingBarAndData();
+                }
+            }, 1000);
+        }
+
+        // Initial update of the time remaining progress bar and fetch sensor data
+        updateTimeRemainingBarAndData();
+    </script>
+</body>
+</html>
