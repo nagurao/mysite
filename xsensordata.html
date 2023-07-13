@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <style>
+        /* Add your custom CSS here */
+        body {
+            font-family: Segoe UI, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e1e;
+        }
+        
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: center;
+            height: 100vh;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        
+        .sensor {
+            width: 200px;
+            height: 200px;
+            background-color: #0078D7;
+            margin: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            color: white;
+        }
+        
+        .sensor h2 {
+            font-size: 24px;
+            margin: 0;
+        }
+        
+        .sensor p {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sensor">
+            <h2>Temperature</h2>
+            <p id="temperature">--</p>
+        </div>
+        
+        <div class="sensor">
+            <h2>Humidity</h2>
+            <p id="humidity">--</p>
+        </div>
+        
+        <div class="sensor">
+            <h2>Pressure</h2>
+            <p id="pressure">--</p>
+        </div>
+		
+        <div class="sensor">
+            <h2>Pressure</h2>
+            <p id="pressure">--</p>
+        </div>
+		
+        <div class="sensor">
+            <h2>Pressure</h2>
+            <p id="pressure">--</p>
+        </div>
+
+        <div class="sensor">
+            <h2>Pressure</h2>
+            <p id="pressure">--</p>
+        </div>
+
+        <div class="sensor">
+            <h2>Pressure</h2>
+            <p id="pressure">--</p>
+        </div>
+
+        <div class="sensor">
+            <h2>Pressure</h2>
+            <p id="pressure">--</p>
+        </div>
+        <div class="sensor">
+            <h2>Pressure</h2>
+            <p id="pressure">--</p>
+        </div>		
+    </div>
+
+    <script>
+        // Add your JavaScript code here to fetch and update sensor data dynamically
+        window.addEventListener("DOMContentLoaded", () => {
+            // Example code to fetch sensor data using JavaScript
+            // Replace with your own code to fetch real-time data
+            
+            // Temperature data
+            const temperatureElement = document.getElementById("temperature");
+            temperatureElement.textContent = "25°C";
+            
+            // Humidity data
+            const humidityElement = document.getElementById("humidity");
+            humidityElement.textContent = "50%";
+            
+            // Pressure data
+            const pressureElement = document.getElementById("pressure");
+            pressureElement.textContent = "1013 hPa";
+        });
+    </script>
+</body>
+</html>

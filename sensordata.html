@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <style>
+        /* Add your custom CSS here */
+        body {
+            font-family: Segoe UI, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e1e;
+        }
+        
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: center;
+            height: 100vh;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        
+        .sensor {
+            width: 150px;
+            height: 150px;
+            background-color: #0078D7;
+            margin: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            color: white;
+        }
+        
+        .sensor h2 {
+            font-size: 24px;
+            text-align: center;
+            margin: 0;
+        }
+        
+        .sensor p {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+        
+        /* Media queries for responsive layout */
+        @media (max-width: 768px) {
+            .sensor {
+                width: 45%;
+                max-height: 150px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .sensor {
+                width: 90%;
+                max-height: 100px;
+            }
+        }
+
+        /* Progress bar styles */
+        #progress-bar {
+            width: 100%;
+            height: 05px;
+            background-color: #f2f2f2;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            z-index: 9999;
+        }
+        
+        #progress-bar .progress {
+            width: 0;
+            height: 100%;
+            background-color: #0078D7;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sensor">
+            <h2>Production</h2>
+            <p id="curr-production">--</p>
+        </div>
+        
+        <div class="sensor">
+            <h2>Consumption</h2>
+            <p id="curr-consumption">--</p>
+        </div>
+        
+        <div class="sensor">
+            <h2>Net Imp/Exp</h2>
+            <p id="curr-net-imp-exp">--</p>
+        </div>
+        <div class="sensor">
+            <h2>Produced</h2>
+            <p id="day-production">--</p>
+        </div>
+        
+        <div class="sensor">
+            <h2>Consumed</h2>
+            <p id="day-consumption">--</p>
+        </div>
+       
+        <div class="sensor">
+            <h2>Month Production</h2>
+            <p id="month-production">--</p>
+        </div>
+        
+        <div class="sensor">
+            <h2>Month Consumption</h2>
+            <p id="month-consumption">--</p>
+        </div>
+
+        <div class="sensor">
+            <h2>Import Units (kWh)</h2>
+            <p id="day-max-production">--</p>
+        </div>
+
+        <div class="sensor">
+            <h2>Export Units (kWh)</h2>
+            <p id="day-max-consumption">--</p>
+        </div>
+        
+        <div class="sensor">
+            <h2>Net Units (kWh)</h2>
+            <p id="net-units-energy-meter">--</p>
+        </div>
+        <div id="progress-bar">
+            <div class="progress"></div>
+        </div>
+    </div>
+
+    <script>
+window.addEventListener("DOMContentLoaded", () => {
+    // Function to fetch sensor data
+    const fetchSensorData = () => {
+        fetch("http://lamp.local/envoy/srvenvoy.php")
+            .then(response => response.json())
+            .then(data => {
+                // Update sensor data with fetched values
+                var textImportExport = " (Exp)";
+                var dayPUnit = " Wh";
+                var dayCUnit = " Wh";
+                const currProductionElement = document.getElementById("curr-production");
+                currProductionElement.textContent = data.production[1].wNow + " W";
+
+                const currConsumptionElement = document.getElementById("curr-consumption");
+                currConsumptionElement.textContent = data.consumption[0].wNow + " W";
+
+                const currNetImpExpElement = document.getElementById("curr-net-imp-exp");
+                if (data.consumption[1].wNow > 0) textImportExport = " (Imp)";
+                currNetImpExpElement.textContent = data.consumption[1].wNow + " W" + textImportExport;
+
+                const dayProductionElement = document.getElementById("day-production");
+                var dayproduction = data.production[1].whToday;
+                if (dayproduction > 1000) { dayPUnit = " kWh"; dayproduction = (dayproduction / 1000).toFixed(2); }
+                dayProductionElement.textContent = dayproduction + dayPUnit;
+
+                const dayConsumptionElement = document.getElementById("day-consumption");
+                var dayconsumption = data.consumption[0].whToday;
+                if (dayconsumption > 1000) { dayCUnit = " kWh"; dayconsumption = (dayconsumption / 1000).toFixed(2); }
+                dayConsumptionElement.textContent = dayconsumption + dayCUnit;
+                 
+                //http://192.168.0.245/srv/srvlatest.php
+                const fetchMeterData = () => {
+                    fetch("http://192.168.0.245/srv/srvlatest.php")
+                    .then(response => response.json())
+                    .then(meterdata => {
+
+                    })
+                    .catch(error => {
+                        console.error("Error fetching sensor data:", error);
+                    });
+                };
+                // Reset progress bar
+                progressBar.style.width = "100%";
+
+                // Start countdown for next data fetch
+                startCountdown();
+            })
+            .catch(error => {
+                console.error("Error fetching sensor data:", error);
+            });
+    };
+
+    // Initial data fetch
+    fetchSensorData();
+
+    // Fetch sensor data every 60 seconds
+    setInterval(fetchSensorData, 60000);
+
+    // Progress bar animation
+    const progressBar = document.querySelector(".progress");
+
+    const updateProgressBar = (progress, remainingTime) => {
+        progressBar.style.width = progress + "%";
+        //progressBar.textContent = remainingTime + "s";
+    };
+
+    const startCountdown = () => {
+        let progress = 100;
+        let remainingTime = 60;
+        const decrement = 100 / remainingTime;
+        const interval = setInterval(() => {
+            progress -= decrement;
+            remainingTime -= 1;
+            updateProgressBar(progress, remainingTime);
+            if (progress <= 0) {
+                clearInterval(interval);
+                progressBar.style.width = "0";
+                progressBar.textContent = "";
+            }
+        }, 1000); // Adjust the interval duration for smoother animation
+    };
+
+    startCountdown();
+    });
+    </script>
+</body>
+</html>

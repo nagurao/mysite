@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <style>
+        /* Add your custom CSS here */
+        body {
+            font-family: Segoe UI, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e1e;
+        }
+        
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: center;
+            height: 100vh;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        
+        .sensor {
+            width: 200px;
+            height: 200px;
+            background-color: #0078D7;
+            margin: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            color: white;
+        }
+        
+        .sensor h2 {
+            font-size: 24px;
+            margin: 0;
+        }
+        
+        .sensor p {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+        
+        /* Media queries for responsive layout */
+        @media (max-width: 768px) {
+            .sensor {
+                width: 45%;
+                height: 150px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .sensor {
+                width: 90%;
+                height: 100px;
+            }
+        }
+		
+		/* Progress bar styles */
+        #progress-bar {
+            width: 100%;
+            height: 05px;
+            background-color: #f2f2f2;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            z-index: 9999;
+        }
+        
+        #progress-bar .progress {
+            width: 0;
+            height: 100%;
+            background-color: #0078D7;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sensor">
+            <h2>Temperature</h2>
+            <p id="temperature">--</p>
+        </div>
+        
+        <div class="sensor">
+            <h2>Humidity</h2>
+            <p id="humidity">--</p>
+        </div>
+        
+        <div class="sensor">
+            <h2>Pressure</h2>
+            <p id="pressure">--</p>
+        </div>
+		
+		<div id="progress-bar">
+        <div class="progress"></div>
+    </div>
+    </div>
+
+    <script>
+window.addEventListener("DOMContentLoaded", () => {
+    // Function to fetch sensor data
+    const fetchSensorData = () => {
+        fetch("http://lamp.local/envoy/srvenvoy.php")
+            .then(response => response.json())
+            .then(data => {
+                // Update sensor data with fetched values
+                const temperatureElement = document.getElementById("temperature");
+                temperatureElement.textContent = data.temperature + "°C";
+
+                const humidityElement = document.getElementById("humidity");
+                humidityElement.textContent = data.humidity + "%";
+
+                const pressureElement = document.getElementById("pressure");
+                pressureElement.textContent = data.pressure + " hPa";
+
+                // Reset progress bar
+                progressBar.style.width = "100%";
+
+                // Start countdown for next data fetch
+                startCountdown();
+            })
+            .catch(error => {
+                console.error("Error fetching sensor data:", error);
+            });
+    };
+
+    // Initial data fetch
+    fetchSensorData();
+
+    // Fetch sensor data every 60 seconds
+    setInterval(fetchSensorData, 60000);
+
+    // Progress bar animation
+    const progressBar = document.querySelector(".progress");
+
+    const updateProgressBar = (progress, remainingTime) => {
+        progressBar.style.width = progress + "%";
+        //progressBar.textContent = remainingTime + "s";
+    };
+
+    const startCountdown = () => {
+        let progress = 100;
+        let remainingTime = 60;
+        const decrement = 100 / remainingTime;
+        const interval = setInterval(() => {
+            progress -= decrement;
+            remainingTime -= 1;
+            updateProgressBar(progress, remainingTime);
+            if (progress <= 0) {
+                clearInterval(interval);
+                progressBar.style.width = "0";
+                progressBar.textContent = "";
+            }
+        }, 1000); // Adjust the interval duration for smoother animation
+    };
+
+    startCountdown();
+});
+
+
+    </script>
+</body>
+</html>
