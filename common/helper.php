@@ -449,6 +449,8 @@ function getDataFromEnvoy()
               )
             )
           );
+        $message = "Error pulling data from Envoy, please check".PHP_EOL."Error Code : ".$httpCode;
+        sendTelegramMessage($message);
         return json_encode($zeroData);
     }
 }

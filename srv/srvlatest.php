@@ -23,20 +23,23 @@ else
 
     $latestBillReadingQuery = "SELECT BillImportReading,BillExportReading,MeterImportReading,MeterExportReading FROM NetMeterBillData ORDER BY BillDate DESC LIMIT 0,1";
     $latestBillReadingStmt =  $conn->prepare($latestBillReadingQuery);
+    
+    $latestMonthProdConsQuery = "SELECT CurrMonthProd,CurrMonthCons FROM EnvoyMonthlyReadings ORDER BY NetMeterYYYYMM DESC LIMIT 0, 1";
+    $latestMonthProdConsStmt = $conn->prepare($latestMonthProdConsQuery);
 
     $latestMeterReadingStmt->execute();
     $result = $latestMeterReadingStmt->get_result();
     if (mysqli_num_rows($result) == 0)
     {
-        $echoResponse["ReadingImport"] = 0;
-        $echoResponse["ReadingExport"] = 0;
+        $echoResponse["readingImport"] = floatval(0);
+        $echoResponse["readingExport"] = floatval(0);
     }
     else
     {
         while ($row = $result->fetch_assoc())
         {
-            $echoResponse["ReadingImport"] = $row["ReadingImport"];
-            $echoResponse["ReadingExport"] = $row["ReadingExport"];
+            $echoResponse["readingImport"] = floatval($row["ReadingImport"]);
+            $echoResponse["readingExport"] = floatval($row["ReadingExport"]);
         }
     }
 
@@ -44,21 +47,38 @@ else
     $result = $latestBillReadingStmt->get_result();
     if (mysqli_num_rows($result) == 0)
     {
-        $echoResponse["BillImportReading"] = 0;
-        $echoResponse["BillExportReading"] = 0;
-        $echoResponse["MeterImportReading"] = 0;
-        $echoResponse["MeterExportReading"] = 0;
+        $echoResponse["billImportReading"] = floatval(0);
+        $echoResponse["billExportReading"] = floatval(0);
+        $echoResponse["meterImportReading"] = floatval(0);
+        $echoResponse["meterExportReading"] = floatval(0);
     }
     else
     {
         while ($row = $result->fetch_assoc())
         {
-            $echoResponse["BillImportReading"] = $row["BillImportReading"];
-            $echoResponse["BillExportReading"] = $row["BillExportReading"];
-            $echoResponse["MeterImportReading"] = $row["MeterImportReading"];
-            $echoResponse["MeterExportReading"] = $row["MeterExportReading"];
+            $echoResponse["billImportReading"] = floatval($row["BillImportReading"]);
+            $echoResponse["billExportReading"] = floatval($row["BillExportReading"]);
+            $echoResponse["meterImportReading"] = floatval($row["MeterImportReading"]);
+            $echoResponse["meterExportReading"] = floatval($row["MeterExportReading"]);
         }
     }
+
+    $latestMonthProdConsStmt->execute();
+    $result = $latestMonthProdConsStmt->get_result();
+    if (mysqli_num_rows($result) == 0)
+    {
+        $echoResponse["currMonthProd"] = floatval(0);
+        $echoResponse["currMonthCons"] = floatval(0);
+    }
+    else
+    {
+        while ($row = $result->fetch_assoc())
+        {
+            $echoResponse["currMonthProd"] = floatval($row["CurrMonthProd"]);
+            $echoResponse["currMonthCons"] = floatval($row["CurrMonthCons"]);
+        }
+    }
+
     echo json_encode($echoResponse);
 }
 ?>
