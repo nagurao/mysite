@@ -384,8 +384,9 @@ function insertLocalEnvoyHourlyData()
 
     $envoyProductionPrevHour = $envoyProductionDay - $envoyProductionDayPrevHour;
     $envoyConsumptionPrevHour = $envoyConsumptionDay - $envoyConsumptionDayPrevHour;
-
-    if($insertEnvoyHourlyStmt->bind_param("sssssss",$envoyDate, $envoyDateEpoch,  $envoyDateTime , $envoyProductionPrevHour, $envoyConsumptionPrevHour,$envoyProductionDay, $envoyConsumptionDay ));
+    $envoyPMonth = $envoyProductionMonth + $envoyProductionPrevHour;
+    $envoyCMonth = $envoyConsumptionMonth + $envoyConsumptionPrevHour;
+    if($insertEnvoyHourlyStmt->bind_param("sssssssss",$envoyDate, $envoyDateEpoch,  $envoyDateTime , $envoyProductionPrevHour, $envoyConsumptionPrevHour,$envoyProductionDay, $envoyConsumptionDay, $envoyPMonth, $envoyCMonth ));
     {
         $insertEnvoyHourlyStmt->execute();
         $result = $insertEnvoyHourlyStmt->get_result();

@@ -27,6 +27,8 @@ $envoyProductionDay = 0;
 $envoyConsumptionDay = 0;
 $envoyProductionDayPrevHour = 0;
 $envoyConsumptionDayPrevHour = 0;
+$envoyProdMonth = 0;
+$envoyConsMonth = 0;
 $envoyMaxProdPeriod = 0;
 $envoyMaxConsPeriod = 0;
 $envoyMinProdPeriod = 0;
@@ -54,11 +56,11 @@ if ($conn->connect_error)
 else
 {
     $conn->autocommit(TRUE);
-    $insertEnvoyHourlyQuery = "INSERT INTO EnvoyHourlyReadings (EnvoyReadingDate,EnvoyReadingTimeEpoch, EnvoyReadingTime, EnvoyProdHour, EnvoyConsHour, EnvoyProdDay,EnvoyConsDay) VALUE (?, ?, ?, ?, ?, ?, ?)";
+    $insertEnvoyHourlyQuery = "INSERT INTO EnvoyHourlyReadings (EnvoyReadingDate,EnvoyReadingTimeEpoch, EnvoyReadingTime, EnvoyProdHour, EnvoyConsHour, EnvoyProdDay,EnvoyConsDay, EnvoyProdMonth, EnvoyConsMonth) VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $insertEnvoyHourlyStmt = $conn->prepare($insertEnvoyHourlyQuery);
-    $lastEnvoyHourlySelQuery = "SELECT EnvoyReadingDate, EnvoyReadingTimeEpoch, EnvoyReadingTime, EnvoyProdHour, EnvoyConsHour, EnvoyProdDay,EnvoyConsDay,EnvoyReadingTimestamp  FROM EnvoyHourlyReadings ORDER BY EnvoyReadingTimeEpoch DESC LIMIT 0,1";
+    $lastEnvoyHourlySelQuery = "SELECT EnvoyReadingDate, EnvoyReadingTimeEpoch, EnvoyReadingTime, EnvoyProdHour, EnvoyConsHour, EnvoyProdDay,EnvoyConsDay,EnvoyProdMonth, EnvoyConsMonth,EnvoyReadingTimestamp  FROM EnvoyHourlyReadings ORDER BY EnvoyReadingTimeEpoch DESC LIMIT 0,1";
     $lastEnvoyHourlySelStmt = $conn->prepare($lastEnvoyHourlySelQuery);
-    $prevEnvoyHourlySelQuery = "SELECT EnvoyReadingDate, EnvoyReadingTimeEpoch, EnvoyReadingTime, EnvoyProdHour, EnvoyConsHour, EnvoyProdDay,EnvoyConsDay,EnvoyReadingTimestamp  FROM EnvoyHourlyReadings ORDER BY EnvoyReadingTimeEpoch DESC LIMIT 1,1";
+    $prevEnvoyHourlySelQuery = "SELECT EnvoyReadingDate, EnvoyReadingTimeEpoch, EnvoyReadingTime, EnvoyProdHour, EnvoyConsHour, EnvoyProdDay,EnvoyConsDay,EnvoyProdMonth, EnvoyConsMonth, EnvoyReadingTimestamp  FROM EnvoyHourlyReadings ORDER BY EnvoyReadingTimeEpoch DESC LIMIT 1,1";
     $prevEnvoyHourlySelStmt = $conn->prepare($prevEnvoyHourlySelQuery);
 
     $maxminQuery = "SELECT EnvoyMaxMinDate, ProductionMax, ProductionMaxTime, ProductionMin, ProductionMinTime, ConsumptionMax, ConsumptionMaxTime, ConsumptionMin, ConsumptionMinTime, EnvoyMaxMinUpdateTimestamp FROM EnvoyDailyMaxMin WHERE EnvoyMaxMinDate = ?";

@@ -69,6 +69,12 @@ function hhFromTimestamp($timestamp)
 {
     return date("H",strtotime($timestamp));    
 }
+
+function ddFromTimestamp($timestamp)
+{
+    return date("d",strtotime($timestamp));    
+}
+
 function mmFromEpoch($epochTime)
 {
     return date("i",@$epochTime);

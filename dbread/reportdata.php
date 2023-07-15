@@ -294,6 +294,8 @@ function fetchEnvoyHourlyData()
     global $envoyConsumptionPrevHour;
     global $envoyProductionDayPrevHour;
     global $envoyConsumptionDayPrevHour;
+    global $envoyProductionMonth;
+    global $envoyConsumptionMonth;
     global $envoyMaxProdPeriod;
     global $envoyMaxConsPeriod;
     global $envoyMinProdPeriod;
@@ -322,6 +324,11 @@ function fetchEnvoyHourlyData()
         {
             $envoyProductionDayPrevHour = 0;
             $envoyConsumptionDayPrevHour = 0;
+            if (ddFromTimestamp($row["EnvoyReadingTimestamp"]) == "01")
+            {
+                $envoyProductionMonth = 0;
+                $envoyConsumtionMonth = 0;
+            }
             return;
         }
         $envoyDateEpoch = $row["EnvoyReadingTimeEpoch"];
@@ -330,6 +337,8 @@ function fetchEnvoyHourlyData()
         $envoyConsumptionPrevHour = $row["EnvoyConsHour"];
         $envoyProductionDayPrevHour = $row["EnvoyProdDay"];
         $envoyConsumptionDayPrevHour = $row["EnvoyConsDay"];
+        $envoyProductionMonth = $row["EnvoyProdMonth"];
+        $envoyConsumptionMonth = $row["EnvoyConsMonth"];
     }
 }
 
