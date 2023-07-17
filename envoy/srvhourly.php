@@ -33,6 +33,8 @@ $envoyMaxProdPeriod = 0;
 $envoyMaxConsPeriod = 0;
 $envoyMinProdPeriod = 0;
 $envoyMinConsPeriod = 0;
+$envoyProductionMonth = 0;
+$envoyConsumptionMonth = 0;
 $prevMaxProdHour = $prevMaxConsHour = $prevMinProdHour = $prevMinConsHour = "";
 $currMaxProdHour = $currMaxConsHour = $currMinProdHour = $currMinConsHour = "";
 $echoResponse["version"] = $scriptVersion;
