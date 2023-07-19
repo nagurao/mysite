@@ -124,6 +124,8 @@ else
     $echoResponse["envoyConsumptionPrevHour"] = sprintf("%05.2f",$envoyConsumptionPrevHour);
     $echoResponse["envoyProductionDay"] = sprintf("%05.2f",$envoyProductionDayPrevHour);
     $echoResponse["envoyConsumptionDay"] = sprintf("%05.2f",$envoyConsumptionDayPrevHour);
+    $echoResponse["envoyProductionMonth"] = floatval($envoyProductionMonth);
+    $echoResponse["envoyConsumptionMonth"] = floatval($envoyConsumptionMonth);
     $echoResponse["result"] = "OK";
     if($prevAction == "INS" && $action == "REP")
         $echoResponse["message"] = $responseArray["8"];

@@ -372,7 +372,8 @@ function insertLocalEnvoyHourlyData()
     global $envoyConsumptionDay;
     global $envoyProductionDayPrevHour;
     global $envoyConsumptionDayPrevHour;
-    
+    global $envoyProductionMonth;
+    global $envoyConsumptionMonth;
     //$envoyURL = "http://envoy.local/production.json";
     //$envoyData = json_decode(file_get_contents($envoyURL));
     $envoyData = json_decode(getDataFromEnvoy(),false);
