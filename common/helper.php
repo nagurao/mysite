@@ -446,39 +446,33 @@ function getDataFromEnvoy()
 
         return $response;
     }
-    else
+    $envoyReadStmt->execute();
+    $result = $envoyReadStmt->get_result();
+    while ($row = $result->fetch_assoc())
     {
-        if($envoyReadStmt->bind_param())
-        {
-            $envoyReadStmt->execute();
-            $result = $envoyReadStmt->get_result();
-            while ($row = $result->fetch_assoc())
-            {
-                $response = $row["EnvoyData"];
-            }
-            $response["consumption"][0]["wNow"] = 0;
-            $response["consumption"][1]["wNow"] = 0;
-            $response["production"][0]["wNow"] = 0;
-            $response["production"][1]["wNow"] = 0;
-            $response["storage"][0]["wNow"] = 0;
-            $current_reading_time = time();
-            $response["consumption"][0]["readingTime"] = $current_reading_time;
-            $response["consumption"][1]["readingTime"] = $current_reading_time;
-            $response["production"][0]["readingTime"] = $current_reading_time;
-            $response["production"][1]["readingTime"] = $current_reading_time;
-            $response["storage"][0]["readingTime"] = $current_reading_time;
-            $responseZero = json_encode($response);
-            if($envoyInsStmt->bind_param("s",$responseZero))
-            {
-                $envoyInsStmt->execute();
-                $result = $envoyInsStmt->get_result();
-                commitNow(__FUNCTION__);
-            }
-            $message = "Error pulling data from Envoy, Zero Data insrted.".PHP_EOL."Error Code : ".$httpCode;
-            sendTelegramMessage($message);
-            return  $responseZero;
-        }
+        $response = json_decode($row["EnvoyData"],true);
     }
+    $response["consumption"][0]["wNow"] = 0;
+    $response["consumption"][1]["wNow"] = 0;
+    $response["production"][0]["wNow"] = 0;
+    $response["production"][1]["wNow"] = 0;
+    $response["storage"][0]["wNow"] = 0;
+    $current_reading_time = time();
+    $response["consumption"][0]["readingTime"] = $current_reading_time;
+    $response["consumption"][1]["readingTime"] = $current_reading_time;
+    $response["production"][0]["readingTime"] = $current_reading_time;
+    $response["production"][1]["readingTime"] = $current_reading_time;
+    $response["storage"][0]["readingTime"] = $current_reading_time;
+    $responseZero = json_encode($response);
+    if($envoyInsStmt->bind_param("s",$responseZero))
+    {
+        $envoyInsStmt->execute();
+        $result = $envoyInsStmt->get_result();
+        commitNow(__FUNCTION__);
+    }
+    $message = "Error pulling data from Envoy, Zero Data inserted.".PHP_EOL."Error Code : ".$httpCode;
+    sendTelegramMessage($message);
+    return  $responseZero;
 }
 
 function getDataFromEnphase($envoyReadingDate,$url,$key)
