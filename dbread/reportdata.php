@@ -324,6 +324,8 @@ function fetchEnvoyHourlyData()
         {
             $envoyProductionDayPrevHour = 0;
             $envoyConsumptionDayPrevHour = 0;
+            $envoyProductionMonth = $row["EnvoyProdMonth"];
+            $envoyConsumptionMonth = $row["EnvoyConsMonth"];
             if (ddFromTimestamp($row["EnvoyReadingTimestamp"]) == "01")
             {
                 $envoyProductionMonth = 0;
